@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Li Shuai — LNG Trading Analyst & Quant Developer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@300;400;500&family=Noto+Serif+SC:wght@500;700;900&family=Noto+Sans+SC:wght@300;400;500&family=ZCOOL+XiaoWei&family=Ma+Shan+Zheng&family=LXGW+WenKai+TC&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+
+<style>
+  @font-face {
+    font-family: 'HuaWenXingKai';
+    src: url('fonts/HuaWenXingKai.ttf') format('truetype');
+    font-display: swap;
+    unicode-range: U+4E00-9FFF, U+3000-303F, U+FF00-FFEF;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  /* DARK (default) */
+  :root {
+    --bg: #0b0e14;
+    --bg2: #111520;
+    --bg3: #161b27;
+    --fg: #eeeae2;
+    --fg2: #9a9488;
+    --fg3: #5a5650;
+    --amber: oklch(76% 0.17 65);
+    --amber-dim: oklch(60% 0.12 65);
+    --teal: oklch(68% 0.14 195);
+    --line: #1e2330;
+    --line2: #2a3040;
+    --grid-opacity: 0.35;
+    --font-display: 'Syne', sans-serif;
+    --font-serif: 'Instrument Serif', serif;
+    --font-mono: 'JetBrains Mono', monospace;
+    --nav-h: 68px;
+    --gutter: 56px;
+  }
+
+  /* LIGHT mode */
+  body.light {
+    --bg: #f7f4ef;
+    --bg2: #f0ebe2;
+    --bg3: #e8e2d6;
+    --fg: #1a1714;
+    --fg2: #4a4540;
+    --fg3: #8a8278;
+    --amber: oklch(58% 0.15 50);
+    --amber-dim: oklch(70% 0.13 50);
+    --teal: oklch(50% 0.12 195);
+    --line: #ddd8ce;
+    --line2: #c9c2b3;
+    --grid-opacity: 0.18;
+  }
+
+  /* CN font swap */
+  body.cn {
+    --font-display: 'ZCOOL XiaoWei', 'Noto Serif SC', serif;
+    --font-mono: 'JetBrains Mono', 'Noto Sans SC', monospace;
+  }
+  body.cn .hero-name-serif { font-family: 'ZCOOL XiaoWei', serif; font-style: normal; font-weight: 400; }
+  /* Hero CN name — elegant 华文行楷 brush-style display */
+  body.cn .hero-name .lang-cn {
+    font-family: 'HuaWenXingKai', 'STXingkai', 'STKaiti', 'KaiTi', '楷体', cursive;
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    line-height: 1;
+    font-style: normal;
+  }
+  /* Nav logo CN — clean modern serif */
+  body.cn .nav-logo .lang-cn {
+    font-family: 'ZCOOL XiaoWei', 'Noto Serif SC', serif;
+    font-weight: 400;
+    letter-spacing: 0.1em;
+  }
+  /* Section titles + body CN — readable serif */
+  body.cn .sec-title .lang-cn,
+  body.cn h2 .lang-cn, body.cn h3 .lang-cn {
+    font-family: 'ZCOOL XiaoWei', 'Noto Serif SC', serif;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-display);
+    font-size: 16px;
+    line-height: 1.6;
+    transition: background 0.3s, color 0.3s;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size: 48px 48px;
+    opacity: var(--grid-opacity);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  * { position: relative; z-index: 1; }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    height: var(--nav-h);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 var(--gutter);
+    background: color-mix(in srgb, var(--bg) 92%, transparent);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--line2);
+    z-index: 200;
+  }
+
+  .nav-logo {
+    font-family: var(--font-display); font-weight: 800; font-size: 18px;
+    color: var(--fg); text-decoration: none; letter-spacing: -0.02em;
+    display: flex; align-items: center; gap: 10px;
+  }
+
+  .nav-logo-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--amber);
+    animation: blink 2.5s ease-in-out infinite;
+  }
+
+  @keyframes blink {
+    0%, 80%, 100% { opacity: 1; }
+    40% { opacity: 0.3; }
+  }
+
+  .nav-links {
+    display: flex; gap: 28px; list-style: none; align-items: center;
+  }
+
+  .nav-links a {
+    font-family: var(--font-mono); font-size: 11px; font-weight: 400;
+    letter-spacing: 0.08em; color: var(--fg2); text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--amber); }
+  body.cn .nav-links a { font-family: var(--font-display); font-size: 13px; letter-spacing: 0.04em; }
+
+  .nav-controls {
+    display: flex; align-items: center; gap: 12px;
+  }
+
+  .nav-btn {
+    background: transparent;
+    border: 1px solid var(--line2);
+    color: var(--fg2);
+    padding: 6px 11px;
+    border-radius: 3px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .nav-btn:hover { border-color: var(--amber-dim); color: var(--amber); }
+
+  /* LAYOUT */
+  main { padding-top: var(--nav-h); }
+  section { padding: 100px 0; }
+  .container { max-width: 1040px; margin: 0 auto; padding: 0 var(--gutter); }
+
+  /* HERO */
+  #hero { padding: 0; min-height: calc(100vh - var(--nav-h)); display: flex; align-items: center; }
+
+  .hero-wrap {
+    max-width: 1040px; margin: 0 auto; padding: 80px var(--gutter);
+    display: grid; grid-template-columns: 1fr 340px; gap: 80px; align-items: center;
+  }
+
+  .hero-pre {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 32px;
+  }
+  .hero-pre-line { width: 32px; height: 1px; background: var(--amber); }
+  .hero-pre-text {
+    font-family: var(--font-mono); font-size: 11px; color: var(--amber);
+    letter-spacing: 0.14em; text-transform: uppercase;
+  }
+  body.cn .hero-pre-text { font-family: var(--font-display); letter-spacing: 0.06em; text-transform: none; font-size: 12px; }
+
+  .hero-name {
+    font-family: var(--font-display); font-weight: 800;
+    font-size: clamp(60px, 9vw, 110px); line-height: 0.9;
+    letter-spacing: -0.04em; color: var(--fg); margin-bottom: 8px;
+  }
+
+  .hero-name-serif {
+    font-family: var(--font-serif); font-style: italic; font-weight: 400;
+    font-size: clamp(56px, 8.5vw, 100px); color: var(--amber);
+    display: block; letter-spacing: -0.02em; line-height: 1;
+  }
+
+  .hero-divider { width: 60px; height: 2px; background: var(--amber); margin: 32px 0; }
+
+  .hero-desc {
+    font-family: var(--font-display); font-weight: 400; font-size: 17px;
+    color: var(--fg2); line-height: 1.75; max-width: 500px;
+    margin-bottom: 40px; text-wrap: pretty;
+  }
+
+  .hero-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 44px; }
+
+  .chip {
+    font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.05em;
+    padding: 5px 12px; border: 1px solid var(--line2); border-radius: 2px;
+    color: var(--fg3); background: var(--bg2); transition: all 0.15s;
+  }
+  .chip:hover { border-color: var(--amber-dim); color: var(--amber); }
+  body.cn .chip { font-family: var(--font-display); font-size: 12px; letter-spacing: 0; }
+
+  .hero-actions { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+
+  .cta-primary {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 13px 28px; background: var(--amber); color: var(--bg);
+    font-family: var(--font-display); font-weight: 700; font-size: 13px;
+    letter-spacing: 0.04em; border-radius: 3px; text-decoration: none;
+    transition: all 0.2s;
+  }
+  .cta-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px color-mix(in srgb, var(--amber) 30%, transparent);
+  }
+
+  .cta-ghost {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 13px 28px; border: 1px solid var(--line2); color: var(--fg2);
+    font-family: var(--font-display); font-weight: 500; font-size: 13px;
+    border-radius: 3px; text-decoration: none; transition: all 0.2s;
+  }
+  .cta-ghost:hover { border-color: var(--fg2); color: var(--fg); }
+
+  /* Code panel */
+  .hero-panel {
+    background: var(--bg2); border: 1px solid var(--line2);
+    border-radius: 4px; overflow: hidden;
+  }
+  .hero-panel-header {
+    padding: 14px 20px; border-bottom: 1px solid var(--line2);
+    display: flex; align-items: center; gap: 8px; background: var(--bg3);
+  }
+  .panel-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--line2); }
+  .panel-dot.r { background: #ff5f57; }
+  .panel-dot.y { background: #febc2e; }
+  .panel-dot.g { background: #28c840; }
+  .panel-title {
+    font-family: var(--font-mono); font-size: 11px; color: var(--fg3);
+    margin-left: 4px; letter-spacing: 0.06em;
+  }
+  .hero-panel-body {
+    padding: 24px 20px; font-family: var(--font-mono);
+    font-size: 12px; line-height: 1.9;
+  }
+  .code-line { display: flex; gap: 16px; }
+  .code-ln { color: var(--fg3); user-select: none; min-width: 20px; text-align: right; }
+  .code-amber { color: var(--amber); }
+  .code-teal { color: var(--teal); }
+  .code-white { color: var(--fg); }
+  .code-dim { color: var(--fg3); }
+  .code-str { color: oklch(72% 0.14 145); }
+
+  /* SECTION HEADER */
+  .sec-head { display: flex; align-items: center; gap: 16px; margin-bottom: 60px; }
+  .sec-num {
+    font-family: var(--font-mono); font-size: 11px; color: var(--amber);
+    letter-spacing: 0.1em;
+  }
+  .sec-title {
+    font-family: var(--font-display); font-weight: 800;
+    font-size: clamp(28px, 3.5vw, 44px); letter-spacing: -0.03em; color: var(--fg);
+  }
+  .sec-rule { flex: 1; height: 1px; background: var(--line2); }
+
+  /* ABOUT */
+  #about { background: var(--bg2); border-top: 1px solid var(--line2); border-bottom: 1px solid var(--line2); }
+
+  .about-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: start; }
+  .about-text { font-size: 15px; font-weight: 400; color: var(--fg2); line-height: 1.85; }
+  .about-text p + p { margin-top: 14px; }
+  .about-text strong { color: var(--fg); font-weight: 600; }
+  .about-text .amber { color: var(--amber); font-weight: 600; }
+
+  .kpi-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 1px;
+    background: var(--line2); border: 1px solid var(--line2);
+    border-radius: 4px; overflow: hidden;
+  }
+  .kpi { background: var(--bg); padding: 28px 24px; }
+  .kpi-val {
+    font-family: var(--font-display); font-weight: 800; font-size: 40px;
+    letter-spacing: -0.04em; color: var(--amber); line-height: 1; margin-bottom: 6px;
+  }
+  .kpi-desc {
+    font-family: var(--font-mono); font-size: 11px; color: var(--fg3);
+    letter-spacing: 0.04em; line-height: 1.5;
+  }
+  body.cn .kpi-desc { font-family: var(--font-display); font-size: 12px; letter-spacing: 0; }
+
+  /* NOW SECTION */
+  .now-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .now-card {
+    background: var(--bg2); border: 1px solid var(--line2);
+    border-radius: 4px; padding: 28px; transition: all 0.2s;
+  }
+  .now-card:hover { border-color: var(--amber-dim); transform: translateY(-2px); }
+  .now-card-icon {
+    width: 36px; height: 36px; border-radius: 4px;
+    background: color-mix(in srgb, var(--amber) 12%, transparent);
+    border: 1px solid color-mix(in srgb, var(--amber) 25%, transparent);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--amber); margin-bottom: 18px;
+  }
+  .now-card-label {
+    font-family: var(--font-mono); font-size: 10px; color: var(--teal);
+    letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 10px;
+  }
+  .now-card-title {
+    font-family: var(--font-display); font-weight: 700; font-size: 17px;
+    letter-spacing: -0.02em; color: var(--fg); margin-bottom: 10px; line-height: 1.25;
+  }
+  .now-card-desc { font-size: 13px; color: var(--fg2); line-height: 1.6; }
+  .now-meta {
+    font-family: var(--font-mono); font-size: 10px; color: var(--fg3);
+    letter-spacing: 0.06em; margin-top: 14px; padding-top: 12px;
+    border-top: 1px dashed var(--line2);
+  }
+
+  /* PROJECTS */
+  .proj-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .proj-card {
+    background: var(--bg2); border: 1px solid var(--line2);
+    border-radius: 4px; padding: 32px; transition: all 0.2s; cursor: default;
+  }
+  .proj-card:hover {
+    border-color: var(--amber-dim); background: var(--bg3);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 40px color-mix(in srgb, var(--amber) 8%, transparent);
+  }
+  .proj-type {
+    font-family: var(--font-mono); font-size: 10px; color: var(--teal);
+    letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 14px;
+  }
+  .proj-name {
+    font-family: var(--font-display); font-weight: 700; font-size: 18px;
+    letter-spacing: -0.02em; color: var(--fg); margin-bottom: 12px; line-height: 1.2;
+  }
+  .proj-desc { font-size: 13px; color: var(--fg2); line-height: 1.65; margin-bottom: 20px; }
+  .proj-tech { display: flex; flex-wrap: wrap; gap: 6px; }
+  .t-tag {
+    font-family: var(--font-mono); font-size: 10px; padding: 3px 8px;
+    border: 1px solid var(--line2); border-radius: 2px; color: var(--fg3);
+    letter-spacing: 0.04em;
+  }
+
+  /* SKILLS */
+  #skills { background: var(--bg2); border-top: 1px solid var(--line2); border-bottom: 1px solid var(--line2); }
+  .skills-layout { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .skill-blk {
+    background: var(--bg); border: 1px solid var(--line2);
+    border-radius: 4px; padding: 28px;
+  }
+  .skill-blk-title {
+    font-family: var(--font-mono); font-size: 10px; color: var(--amber);
+    letter-spacing: 0.12em; text-transform: uppercase;
+    margin-bottom: 18px; padding-bottom: 10px; border-bottom: 1px solid var(--line2);
+  }
+  body.cn .skill-blk-title { font-family: var(--font-display); font-size: 12px; letter-spacing: 0.04em; }
+  .skill-items { display: flex; flex-direction: column; gap: 8px; }
+  .skill-row { display: flex; align-items: center; gap: 10px; }
+  .skill-name { font-size: 13px; color: var(--fg2); flex: 1; }
+  .skill-bar-wrap {
+    width: 80px; height: 3px; background: var(--line2);
+    border-radius: 2px; overflow: hidden;
+  }
+  .skill-bar { height: 100%; background: var(--amber-dim); border-radius: 2px; transition: width 1s ease; }
+
+  /* EXPERIENCE — TIMELINE */
+  .timeline {
+    position: relative;
+    padding-left: 32px;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 8px; bottom: 0;
+    width: 1px; background: var(--line2);
+  }
+  .timeline-item { position: relative; padding-bottom: 52px; }
+  .timeline-item:last-child { padding-bottom: 0; }
+  .timeline-dot {
+    position: absolute; left: -36px; top: 8px;
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--amber); border: 2px solid var(--bg);
+    box-shadow: 0 0 0 2px var(--amber);
+  }
+  .timeline-dot.current { animation: pulse 2s infinite; }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 2px var(--amber); }
+    50% { box-shadow: 0 0 0 5px color-mix(in srgb, var(--amber) 25%, transparent); }
+  }
+  .timeline-meta {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 8px; flex-wrap: wrap;
+  }
+  .timeline-period {
+    font-family: var(--font-mono); font-size: 11px;
+    color: var(--fg3); letter-spacing: 0.05em;
+  }
+  .timeline-current-badge {
+    font-family: var(--font-mono); font-size: 10px; padding: 2px 8px;
+    background: color-mix(in srgb, var(--amber) 15%, transparent);
+    color: var(--amber);
+    border: 1px solid color-mix(in srgb, var(--amber) 40%, transparent);
+    border-radius: 3px; letter-spacing: 0.06em;
+  }
+  .timeline-co {
+    font-family: var(--font-display); font-weight: 800; font-size: 24px;
+    letter-spacing: -0.02em; color: var(--fg); margin-bottom: 2px;
+  }
+  .timeline-role {
+    font-family: var(--font-mono); font-size: 12px; color: var(--amber);
+    letter-spacing: 0.06em; margin-bottom: 4px;
+  }
+  body.cn .timeline-role { font-family: var(--font-display); font-size: 14px; letter-spacing: 0.02em; }
+  .timeline-loc { font-family: var(--font-mono); font-size: 11px; color: var(--fg3); margin-bottom: 16px; }
+  .timeline-bullets { list-style: none; display: flex; flex-direction: column; gap: 9px; }
+  .timeline-bullets li {
+    font-size: 13px; color: var(--fg2); line-height: 1.65;
+    padding-left: 18px; position: relative;
+  }
+  .timeline-bullets li::before {
+    content: '▸'; position: absolute; left: 0; color: var(--amber-dim);
+    font-size: 10px; top: 3px;
+  }
+  .timeline-sub { margin-top: 24px; padding-top: 20px; border-top: 1px dashed var(--line2); }
+
+  /* EDUCATION */
+  #education { background: var(--bg2); border-top: 1px solid var(--line2); border-bottom: 1px solid var(--line2); }
+  .edu-list { display: grid; gap: 20px; }
+  .edu-item {
+    background: var(--bg); border: 1px solid var(--line2);
+    border-radius: 4px; padding: 36px;
+    display: grid; grid-template-columns: 160px 1fr; gap: 32px;
+    transition: border-color 0.2s;
+  }
+  .edu-item:hover { border-color: var(--amber-dim); }
+  .edu-period {
+    font-family: var(--font-mono); font-size: 11px; color: var(--fg3);
+    letter-spacing: 0.05em; line-height: 1.6;
+  }
+  .edu-school {
+    font-family: var(--font-display); font-weight: 700; font-size: 20px;
+    letter-spacing: -0.02em; color: var(--fg); margin-bottom: 4px;
+  }
+  .edu-deg {
+    font-family: var(--font-mono); font-size: 11px; color: var(--amber);
+    letter-spacing: 0.06em; margin-bottom: 14px;
+  }
+  body.cn .edu-deg { font-family: var(--font-display); font-size: 13px; letter-spacing: 0.02em; }
+  .edu-pts { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+  .edu-pts li {
+    font-size: 13px; color: var(--fg2); line-height: 1.5;
+    padding-left: 14px; position: relative;
+  }
+  .edu-pts li::before {
+    content: '·'; position: absolute; left: 4px;
+    color: var(--amber); font-weight: 700;
+  }
+
+  /* BLOG */
+  .blog-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+  }
+  .blog-card {
+    background: var(--bg2); border: 1px solid var(--line2);
+    border-radius: 4px; padding: 32px;
+    text-decoration: none; transition: all 0.2s;
+    display: flex; flex-direction: column;
+    min-height: 240px;
+  }
+  .blog-card:hover {
+    border-color: var(--amber-dim);
+    transform: translateY(-2px);
+  }
+  .blog-card.coming-soon {
+    opacity: 0.55;
+    border-style: dashed;
+  }
+  .blog-date {
+    font-family: var(--font-mono); font-size: 10px; color: var(--fg3);
+    letter-spacing: 0.08em; margin-bottom: 16px;
+  }
+  .blog-title {
+    font-family: var(--font-display); font-weight: 700; font-size: 18px;
+    color: var(--fg); letter-spacing: -0.02em; line-height: 1.3;
+    margin-bottom: 12px;
+  }
+  .blog-excerpt { font-size: 13px; color: var(--fg2); line-height: 1.6; flex: 1; }
+  .blog-meta {
+    margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--line2);
+    font-family: var(--font-mono); font-size: 10px; color: var(--fg3);
+    letter-spacing: 0.06em; display: flex; justify-content: space-between;
+  }
+  .blog-cta { color: var(--amber); }
+
+  /* CONTACT */
+  #contact { background: var(--bg2); border-top: 1px solid var(--line2); }
+  .contact-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
+  .contact-big {
+    font-family: var(--font-display); font-weight: 800;
+    font-size: clamp(38px, 5vw, 60px); letter-spacing: -0.04em;
+    line-height: 1; color: var(--fg); margin-bottom: 20px;
+  }
+  .contact-big .amber { color: var(--amber); }
+  .contact-tagline {
+    font-size: 14px; color: var(--fg2); line-height: 1.7;
+    margin-bottom: 36px; max-width: 380px;
+  }
+  .contact-items { display: flex; flex-direction: column; gap: 12px; }
+  .c-item {
+    display: flex; align-items: center; gap: 14px;
+    padding: 16px 20px; background: var(--bg);
+    border: 1px solid var(--line2); border-radius: 4px;
+    text-decoration: none; transition: all 0.2s;
+  }
+  .c-item:hover {
+    border-color: var(--amber-dim); transform: translateX(6px);
+    box-shadow: -4px 0 0 var(--amber);
+  }
+  .c-icon {
+    width: 36px; height: 36px; border-radius: 4px;
+    background: color-mix(in srgb, var(--amber) 10%, transparent);
+    border: 1px solid color-mix(in srgb, var(--amber) 25%, transparent);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--amber); flex-shrink: 0;
+  }
+  .c-label { font-family: var(--font-mono); font-size: 10px; color: var(--fg3); letter-spacing: 0.08em; }
+  .c-val { font-family: var(--font-display); font-size: 14px; font-weight: 500; color: var(--fg); }
+  .c-arr { margin-left: auto; color: var(--fg3); font-size: 14px; transition: all 0.2s; }
+  .c-item:hover .c-arr { color: var(--amber); transform: translateX(2px); }
+
+  /* FOOTER */
+  footer {
+    padding: 28px var(--gutter); border-top: 1px solid var(--line2);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .footer-mark {
+    font-family: var(--font-display); font-weight: 800; font-size: 15px;
+    letter-spacing: -0.02em; color: var(--fg2);
+  }
+  .footer-mark span { color: var(--amber); }
+  .footer-info {
+    font-family: var(--font-mono); font-size: 10px; color: var(--fg3);
+    letter-spacing: 0.06em;
+  }
+
+  /* ENTRY ANIMATIONS */
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .animate-in { opacity: 0; animation: slideIn 0.6s ease forwards; }
+  .delay-1 { animation-delay: 0.1s; }
+  .delay-2 { animation-delay: 0.2s; }
+  .delay-3 { animation-delay: 0.3s; }
+  .delay-4 { animation-delay: 0.4s; }
+  .delay-5 { animation-delay: 0.5s; }
+
+  /* RESPONSIVE */
+  @media (max-width: 800px) {
+    :root { --gutter: 24px; }
+    .nav-links { display: none; }
+    .hero-wrap { grid-template-columns: 1fr; }
+    .hero-panel { display: none; }
+    .about-layout, .contact-layout { grid-template-columns: 1fr; gap: 40px; }
+    .now-grid, .proj-grid, .skills-layout, .blog-grid { grid-template-columns: 1fr; }
+    .edu-item { grid-template-columns: 1fr; gap: 12px; padding: 24px; }
+    footer { flex-direction: column; gap: 8px; }
+  }
+
+  /* hide elements with .lang-en/.lang-cn based on body class */
+  body:not(.cn) .lang-cn { display: none; }
+  body.cn .lang-en { display: none; }
+</style>
+</head>
+<body>
+<template id="__bundler_thumbnail">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+  <rect width="400" height="400" fill="#0b0e14"/>
+  <text x="200" y="180" text-anchor="middle" font-family="serif" font-style="italic" font-size="80" fill="#e8a64c">Li</text>
+  <text x="200" y="260" text-anchor="middle" font-family="sans-serif" font-weight="800" font-size="64" fill="#eeeae2">Shuai</text>
+  <line x1="160" y1="290" x2="240" y2="290" stroke="#e8a64c" stroke-width="3"/>
+</svg>
+</template>
+
+<nav>
+  <a href="#hero" class="nav-logo">
+    <span class="nav-logo-dot"></span>
+    <span class="lang-en">Li Shuai</span>
+    <span class="lang-cn">李帅</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#about"><span class="lang-en">about</span><span class="lang-cn">关于</span></a></li>
+    <li><a href="#now"><span class="lang-en">now</span><span class="lang-cn">现在</span></a></li>
+    <li><a href="#projects"><span class="lang-en">projects</span><span class="lang-cn">项目</span></a></li>
+    <li><a href="#skills"><span class="lang-en">skills</span><span class="lang-cn">技能</span></a></li>
+    <li><a href="#experience"><span class="lang-en">experience</span><span class="lang-cn">经历</span></a></li>
+    <li><a href="#education"><span class="lang-en">education</span><span class="lang-cn">教育</span></a></li>
+    <li><a href="#blog"><span class="lang-en">blog</span><span class="lang-cn">文章</span></a></li>
+    <li><a href="#contact"><span class="lang-en">contact</span><span class="lang-cn">联系</span></a></li>
+  </ul>
+  <div class="nav-controls">
+    <button class="nav-btn" id="langToggle" title="Switch language">EN / 中</button>
+    <button class="nav-btn" id="themeToggle" title="Toggle theme">☾</button>
+  </div>
+</nav>
+
+<main>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-wrap">
+      <div>
+        <div class="hero-pre animate-in delay-1">
+          <div class="hero-pre-line"></div>
+          <span class="hero-pre-text">
+            <span class="lang-en">Senior LNG Trading Analyst · Centrica LNG</span>
+            <span class="lang-cn">高级 LNG 交易分析师 · Centrica LNG</span>
+          </span>
+        </div>
+        <h1 class="hero-name animate-in delay-2">
+          <span class="lang-en">LI<span class="hero-name-serif">Shuai</span></span>
+          <span class="lang-cn" style="display: block; font-family: &quot;Permanent Marker&quot;; color: rgb(249, 150, 3)"><span style="color: rgb(238, 234, 226);">李帅</span></span>
+        </h1>
+        <div class="hero-divider animate-in delay-3"></div>
+        <p class="hero-desc animate-in delay-3">
+          <span class="lang-en">Quant analyst building pricing tools, algo systems, and market analytics — at the intersection of LNG trading and Python.</span>
+          <span class="lang-cn">量化分析师，专注于定价工具、算法系统和市场分析——在 LNG 交易与 Python 的交汇处构建工具。</span>
+        </p>
+        <div class="hero-chips animate-in delay-4">
+          <span class="chip lang-en">LNG · Gas · Oil</span>
+          <span class="chip lang-cn">液化天然气 · 天然气 · 原油</span>
+          <span class="chip lang-en">Option Pricing</span>
+          <span class="chip lang-cn">期权定价</span>
+          <span class="chip lang-en">Python / LLMs</span>
+          <span class="chip lang-cn">Python / 大语言模型</span>
+          <span class="chip lang-en">Stochastic Models</span>
+          <span class="chip lang-cn">随机模型</span>
+          <span class="chip">NUS MFE</span>
+          <span class="chip lang-en">9+ Yrs Experience</span>
+          <span class="chip lang-cn">九年以上经验</span>
+        </div>
+        <div class="hero-actions animate-in delay-5">
+          <a href="#contact" class="cta-primary">
+            <span class="lang-en">Get in touch →</span>
+            <span class="lang-cn">联系我 →</span>
+          </a>
+          <a href="Li_Shuai_CV.pdf" target="_blank" class="cta-ghost">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="7 10 12 15 17 10"/>
+              <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            <span class="lang-en">Download CV</span>
+            <span class="lang-cn">下载简历</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Code panel -->
+      <div class="hero-panel animate-in delay-4">
+        <div class="hero-panel-header">
+          <span class="panel-dot r"></span>
+          <span class="panel-dot y"></span>
+          <span class="panel-dot g"></span>
+          <span class="panel-title">profile.py</span>
+        </div>
+        <div class="hero-panel-body">
+          <div class="code-line"><span class="code-ln">1</span><span class="code-amber">class</span><span class="code-white"> LiShuai:</span></div>
+          <div class="code-line"><span class="code-ln">2</span><span class="code-dim">  &nbsp;</span></div>
+          <div class="code-line"><span class="code-ln">3</span><span class="code-dim">  </span><span class="code-teal">role</span><span class="code-white"> = </span><span class="code-str">"Sr. LNG Analyst"</span></div>
+          <div class="code-line"><span class="code-ln">4</span><span class="code-dim">  </span><span class="code-teal">firm</span><span class="code-white"> = </span><span class="code-str">"Centrica LNG"</span></div>
+          <div class="code-line"><span class="code-ln">5</span><span class="code-dim">  </span><span class="code-teal">edu</span><span class="code-white"> = </span><span class="code-str">"NUS MFE"</span></div>
+          <div class="code-line"><span class="code-ln">6</span><span class="code-dim">  &nbsp;</span></div>
+          <div class="code-line"><span class="code-ln">7</span><span class="code-dim">  </span><span class="code-teal">skills</span><span class="code-white"> = [</span></div>
+          <div class="code-line"><span class="code-ln">8</span><span class="code-dim">    </span><span class="code-str">"LNG Trading"</span><span class="code-white">,</span></div>
+          <div class="code-line"><span class="code-ln">9</span><span class="code-dim">    </span><span class="code-str">"Option Pricing"</span><span class="code-white">,</span></div>
+          <div class="code-line"><span class="code-ln">10</span><span class="code-dim">    </span><span class="code-str">"Python / LLMs"</span><span class="code-white">,</span></div>
+          <div class="code-line"><span class="code-ln">11</span><span class="code-dim">    </span><span class="code-str">"Quant Modeling"</span></div>
+          <div class="code-line"><span class="code-ln">12</span><span class="code-dim">  </span><span class="code-white">]</span></div>
+          <div class="code-line"><span class="code-ln">13</span><span class="code-dim">  &nbsp;</span></div>
+          <div class="code-line"><span class="code-ln">14</span><span class="code-dim">  </span><span class="code-teal">location</span><span class="code-white"> = </span><span class="code-str">"Singapore 🇸🇬"</span></div>
+          <div class="code-line"><span class="code-ln">15</span><span class="code-dim">  </span><span class="code-teal">yrs_exp</span><span class="code-white"> = </span><span class="code-amber">9</span></div>
+          <div class="code-line"><span class="code-ln">16</span><span class="code-dim">  &nbsp;</span></div>
+          <div class="code-line"><span class="code-ln">17</span><span class="code-dim">  </span><span class="code-amber">def</span><span class="code-white"> contact():</span></div>
+          <div class="code-line"><span class="code-ln">18</span><span class="code-dim">    </span><span class="code-amber">return</span><span class="code-str"> "↓ scroll down"</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="container">
+      <div class="sec-head">
+        <span class="sec-num">01 /</span>
+        <h2 class="sec-title"><span class="lang-en">About</span><span class="lang-cn">关于</span></h2>
+        <div class="sec-rule"></div>
+      </div>
+      <div class="about-layout">
+        <div class="about-text">
+          <div class="lang-en">
+            <p>I'm a <strong>Singapore-based LNG Trading Analyst</strong> with deep front-office experience spanning physical LNG, natural gas, oil, and energy derivatives across ENGIE, Woodside Energy, and Centrica LNG.</p>
+            <p>Armed with an <strong>NUS Master of Financial Engineering</strong>, I apply rigorous quant methods — stochastic calculus, option pricing, machine learning — to real commercial problems: pricing exotic structures, evaluating contract optionality, and finding alpha in the LNG basis.</p>
+            <p>I'm obsessive about <span class="amber">automating what shouldn't be manual</span>. I build Python-based pricing tools, curve construction frameworks, and optimization dashboards used directly by front-office traders.</p>
+            <p>On the side, I prototype systematic trading signals on energy/equity ETFs, and explore how LLMs can be applied to market intelligence and decision-support workflows.</p>
+          </div>
+          <div class="lang-cn">
+            <p>我是一名常驻新加坡的 <strong>LNG 交易分析师</strong>，在 ENGIE、Woodside Energy 和 Centrica LNG 等公司积累了丰富的前台交易经验，覆盖实物 LNG、天然气、原油以及能源衍生品。</p>
+            <p>凭借 <strong>新加坡国立大学金融工程硕士学位</strong>，我擅长运用严谨的量化方法——随机微积分、期权定价、机器学习——解决真实的商业问题：定价复杂结构、评估合约期权价值、并在 LNG 价差中寻找 alpha。</p>
+            <p>我对 <span class="amber">"将本不该手动的任务自动化"</span> 充满执着。我构建基于 Python 的定价工具、曲线构建框架和优化仪表盘，直接服务于前台交易员。</p>
+            <p>业余时间，我研究能源 / 股票 ETF 的系统性交易信号，并探索如何将大语言模型应用到市场情报与决策支持流程中。</p>
+          </div>
+        </div>
+        <div class="kpi-grid">
+          <div class="kpi">
+            <div class="kpi-val">9+</div>
+            <div class="kpi-desc">
+              <span class="lang-en">Years in energy trading & derivatives</span>
+              <span class="lang-cn">能源交易与衍生品从业年限</span>
+            </div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-val">3</div>
+            <div class="kpi-desc">
+              <span class="lang-en">Major firms: ENGIE, Woodside, Centrica</span>
+              <span class="lang-cn">主要雇主：ENGIE、Woodside、Centrica</span>
+            </div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-val">MFE</div>
+            <div class="kpi-desc">
+              <span class="lang-en">NUS Master of Financial Engineering</span>
+              <span class="lang-cn">新加坡国立大学金融工程硕士</span>
+            </div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-val">4.43</div>
+            <div class="kpi-desc">
+              <span class="lang-en">NUS GPA / 5.0 — Honors with Distinction</span>
+              <span class="lang-cn">新国大 GPA / 5.0 — 优等荣誉</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NOW -->
+  <section id="now">
+    <div class="container">
+      <div class="sec-head">
+        <span class="sec-num">02 /</span>
+        <h2 class="sec-title"><span class="lang-en">Now</span><span class="lang-cn">现在</span></h2>
+        <div class="sec-rule"></div>
+      </div>
+      <div class="now-grid">
+        <div class="now-card">
+          <div class="now-card-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+          </div>
+          <div class="now-card-label"><span class="lang-en">Reading</span><span class="lang-cn">在读</span></div>
+          <div class="now-card-title"><span class="lang-en">Stochastic Calculus for Finance II</span><span class="lang-cn">金融随机微积分（第二册）</span></div>
+          <div class="now-card-desc"><span class="lang-en">Steven Shreve's continuous-time treatment — going deeper on Girsanov, change of numeraire, and exotic option pricing.</span><span class="lang-cn">Steven Shreve 的连续时间金融数学经典——深入研究 Girsanov 定理、计价单位变换以及奇异期权定价。</span></div>
+          <div class="now-meta"><span class="lang-en">📚 Self-study · Book 2 of 2</span><span class="lang-cn">📚 自学 · 第二册</span></div>
+        </div>
+        <div class="now-card">
+          <div class="now-card-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          </div>
+          <div class="now-card-label"><span class="lang-en">Building</span><span class="lang-cn">在做</span></div>
+          <div class="now-card-title"><span class="lang-en">LLM-powered LNG market intel</span><span class="lang-cn">基于大语言模型的 LNG 市场情报</span></div>
+          <div class="now-card-desc"><span class="lang-en">Prototyping a daily news + vessel-tracking summarizer that surfaces signal from noise across LNG sources.</span><span class="lang-cn">原型一个每日新闻 + 船舶追踪摘要工具，从大量 LNG 数据源中提取关键信号。</span></div>
+          <div class="now-meta"><span class="lang-en">⚡ In progress · Python · LLM API</span><span class="lang-cn">⚡ 进行中 · Python · LLM API</span></div>
+        </div>
+        <div class="now-card">
+          <div class="now-card-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          </div>
+          <div class="now-card-label"><span class="lang-en">Researching</span><span class="lang-cn">在研究</span></div>
+          <div class="now-card-title"><span class="lang-en">Cross-asset signal blends</span><span class="lang-cn">跨资产信号组合</span></div>
+          <div class="now-card-desc"><span class="lang-en">Backtesting carry, momentum, and term-structure factors across energy ETFs and macro indices in Python.</span><span class="lang-cn">在 Python 中回测能源 ETF 和宏观指数上的 carry、动量与期限结构因子。</span></div>
+          <div class="now-meta"><span class="lang-en">📈 Personal research · Q2 2026</span><span class="lang-cn">📈 个人研究 · 2026 Q2</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROJECTS -->
+  <section id="projects">
+    <div class="container">
+      <div class="sec-head">
+        <span class="sec-num">03 /</span>
+        <h2 class="sec-title"><span class="lang-en">Projects</span><span class="lang-cn">项目</span></h2>
+        <div class="sec-rule"></div>
+      </div>
+      <div class="proj-grid">
+        <div class="proj-card">
+          <div class="proj-type">Trading Tool · Python</div>
+          <div class="proj-name"><span class="lang-en">LNG Optimization Dashboard</span><span class="lang-cn">LNG 组合优化仪表盘</span></div>
+          <div class="proj-desc"><span class="lang-en">Automated portfolio optimization dashboard tracking contract optionality, in/out-of-money positions, and P&L attribution across the LNG book. Used directly by front-office traders at Centrica LNG.</span><span class="lang-cn">自动化的组合优化仪表盘，跟踪合约期权价值、价内/价外仓位以及 P&L 归因。被 Centrica LNG 前台交易员直接使用。</span></div>
+          <div class="proj-tech">
+            <span class="t-tag">Python</span>
+            <span class="t-tag">Excel/VBA</span>
+            <span class="t-tag">Bloomberg</span>
+            <span class="t-tag">Kpler</span>
+          </div>
+        </div>
+        <div class="proj-card">
+          <div class="proj-type">Research · Quant Finance</div>
+          <div class="proj-name"><span class="lang-en">Spread Option in LNG Arbitrage</span><span class="lang-cn">LNG 套利中的价差期权</span></div>
+          <div class="proj-desc"><span class="lang-en">MFE thesis applying spread option pricing to LNG geographical arbitrage. Implemented Kirk's Approximation and Change-of-Numeraire methods to model Atlantic–Pacific price differentials.</span><span class="lang-cn">金融工程硕士毕业论文，将价差期权定价应用于 LNG 地理套利。实现了 Kirk 近似法和计价单位变换法，建模大西洋—太平洋的价差。</span></div>
+          <div class="proj-tech">
+            <span class="t-tag">Python</span>
+            <span class="t-tag">Stochastic Calc</span>
+            <span class="t-tag">Option Pricing</span>
+          </div>
+        </div>
+        <div class="proj-card">
+          <div class="proj-type">Algo System · Personal Research</div>
+          <div class="proj-name"><span class="lang-en">Systematic Signal Research</span><span class="lang-cn">系统性信号研究</span></div>
+          <div class="proj-desc"><span class="lang-en">Backtesting Python framework for energy and equity ETF signals using mean-reversion, carry/term-structure, and volatility strategies. Tracks Sharpe, turnover, and max drawdown metrics.</span><span class="lang-cn">基于 Python 的回测框架，应用均值回归、carry/期限结构和波动率策略于能源与股票 ETF。跟踪夏普比率、换手率与最大回撤等指标。</span></div>
+          <div class="proj-tech">
+            <span class="t-tag">Python</span>
+            <span class="t-tag">Backtesting</span>
+            <span class="t-tag">ETFs</span>
+            <span class="t-tag">Quant Signals</span>
+          </div>
+        </div>
+        <div class="proj-card">
+          <div class="proj-type">Automation · Ops</div>
+          <div class="proj-name"><span class="lang-en">P&L Automation & ADP Planner</span><span class="lang-cn">P&L 自动化与 ADP 规划工具</span></div>
+          <div class="proj-desc"><span class="lang-en">Automated daily P&L and exposure analytics at Woodside (−30% manual process). Built an Annual Delivery Programme planning tool at Centrica for streamlined operational scheduling and nomination tracking.</span><span class="lang-cn">在 Woodside 自动化每日 P&L 和敞口分析（手动流程减少 30%）。在 Centrica 构建了年度交付计划（ADP）规划工具，简化运营排程与提名跟踪。</span></div>
+          <div class="proj-tech">
+            <span class="t-tag">Python</span>
+            <span class="t-tag">Excel/VBA</span>
+            <span class="t-tag">Kpler</span>
+            <span class="t-tag">Dataloy</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section id="skills">
+    <div class="container">
+      <div class="sec-head">
+        <span class="sec-num">04 /</span>
+        <h2 class="sec-title"><span class="lang-en">Skills</span><span class="lang-cn">技能</span></h2>
+        <div class="sec-rule"></div>
+      </div>
+      <div class="skills-layout">
+        <div class="skill-blk">
+          <div class="skill-blk-title"><span class="lang-en">Markets & Trading</span><span class="lang-cn">市场与交易</span></div>
+          <div class="skill-items">
+            <div class="skill-row"><span class="skill-name"><span class="lang-en">LNG Trading</span><span class="lang-cn">LNG 交易</span></span><div class="skill-bar-wrap"><div class="skill-bar" style="width:98%"></div></div></div>
+            <div class="skill-row"><span class="skill-name"><span class="lang-en">Option Pricing</span><span class="lang-cn">期权定价</span></span><div class="skill-bar-wrap"><div class="skill-bar" style="width:92%"></div></div></div>
+            <div class="skill-row"><span class="skill-name"><span class="lang-en">Commodity Derivatives</span><span class="lang-cn">商品衍生品</span></span><div class="skill-bar-wrap"><div class="skill-bar" style="width:90%"></div></div></div>
+            <div class="skill-row"><span class="skill-name"><span class="lang-en">Market Risk</span><span class="lang-cn">市场风险</span></span><div class="skill-bar-wrap"><div class="skill-bar" style="width:85%"></div></div></div>
+            <div class="skill-row"><span class="skill-name"><span class="lang-en">Arbitrage Analysis</span><span class="lang-cn">套利分析</span></span><div class="skill-bar-wrap"><div class="skill-bar" style="width:88%"></div></div></div>
+          </div>
+        </div>
+        <div class="skill-blk">
+          <div class="skill-blk-title"><span class="lang-en">Quant & Programming</span><span class="lang-cn">量化与编程</span></div>
+          <div class="skill-items">
+            <div class="skill-row"><span class="skill-name">Python</span><div class="skill-bar-wrap"><div class="skill-bar" style="width:90%"></div></div></div>
+            <div class="skill-row"><span class="skill-name">Excel / VBA</span><div class="skill-bar-wrap"><div class="skill-bar" style="width:95%"></div></div></div>
+            <div class="skill-row"><span class="skill-name"><span class="lang-en">Stochastic Calculus</span><span class="lang-cn">随机微积分</span></span><div class="skill-bar-wrap"><div class="skill-bar" style="width:85%"></div></div></div>
+            <div class="skill-row"><span class="skill-name"><span class="lang-en">Machine Learning</span><span class="lang-cn">机器学习</span></span><div class="skill-bar-wrap"><div class="skill-bar" style="width:78%"></div></div></div>
+            <div class="skill-row"><span class="skill-name"><span class="lang-en">LLMs / AI</span><span class="lang-cn">大模型 / AI</span></span><div class="skill-bar-wrap"><div class="skill-bar" style="width:72%"></div></div></div>
+          </div>
+        </div>
+        <div class="skill-blk">
+          <div class="skill-blk-title"><span class="lang-en">Data & Tools</span><span class="lang-cn">数据与工具</span></div>
+          <div class="skill-items">
+            <div class="skill-row"><span class="skill-name">Bloomberg</span><div class="skill-bar-wrap"><div class="skill-bar" style="width:93%"></div></div></div>
+            <div class="skill-row"><span class="skill-name">Kpler</span><div class="skill-bar-wrap"><div class="skill-bar" style="width:88%"></div></div></div>
+            <div class="skill-row"><span class="skill-name">Power BI / Tableau</span><div class="skill-bar-wrap"><div class="skill-bar" style="width:80%"></div></div></div>
+            <div class="skill-row"><span class="skill-name">Dataloy</span><div class="skill-bar-wrap"><div class="skill-bar" style="width:82%"></div></div></div>
+            <div class="skill-row"><span class="skill-name">MATLAB / R</span><div class="skill-bar-wrap"><div class="skill-bar" style="width:70%"></div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXPERIENCE — TIMELINE -->
+  <section id="experience">
+    <div class="container">
+      <div class="sec-head">
+        <span class="sec-num">05 /</span>
+        <h2 class="sec-title"><span class="lang-en">Experience</span><span class="lang-cn">经历</span></h2>
+        <div class="sec-rule"></div>
+      </div>
+      <div class="timeline">
+
+        <div class="timeline-item">
+          <div class="timeline-dot current"></div>
+          <div class="timeline-meta">
+            <span class="timeline-period">JUL 2023 — PRESENT</span>
+            <span class="timeline-current-badge"><span class="lang-en">CURRENT</span><span class="lang-cn">在职</span></span>
+          </div>
+          <div class="timeline-co">Centrica LNG</div>
+          <div class="timeline-role"><span class="lang-en">SENIOR LNG TRADING ANALYST</span><span class="lang-cn">高级 LNG 交易分析师</span></div>
+          <div class="timeline-loc">Singapore</div>
+          <ul class="timeline-bullets">
+            <li><span class="lang-en">Monitor contract optionality, in/out-of-money positions; automate optimization dashboards to maximize portfolio P&L.</span><span class="lang-cn">监控合约期权价值与价内/价外仓位；自动化优化仪表盘，最大化组合 P&L。</span></li>
+            <li><span class="lang-en">Track LNG vessels for unusual movements and Atlantic-Pacific cargo diversions for arbitrage monitoring.</span><span class="lang-cn">跟踪 LNG 船舶的异常动向以及大西洋—太平洋货物转向，监控套利机会。</span></li>
+            <li><span class="lang-en">Apply advanced option pricing and stochastic models to evaluate LNG trading structures, optionality, and value drivers across term and spot deals.</span><span class="lang-cn">应用高级期权定价与随机模型，评估长协和现货 LNG 交易的结构、期权价值与价值驱动因素。</span></li>
+            <li><span class="lang-en">Build and maintain Python/Excel pricing tools and curve construction frameworks used directly by LNG traders.</span><span class="lang-cn">构建和维护 Python/Excel 定价工具与曲线框架，供 LNG 交易员直接使用。</span></li>
+            <li><span class="lang-en">Developed an ADP planning tool; semi-automated nomination and scheduling deadline tracking to enhance operational coordination.</span><span class="lang-cn">开发 ADP 规划工具；半自动化提名与排程截止日期跟踪，提升运营协调效率。</span></li>
+            <li><span class="lang-en">Perform in-depth deal analysis across short/mid/long-term opportunities with insights on term structure, volatility, and contract optionality.</span><span class="lang-cn">深入分析短/中/长期交易机会，提供期限结构、波动率与合约期权价值的洞察。</span></li>
+          </ul>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-meta">
+            <span class="timeline-period">JUL 2022 — JUL 2023</span>
+          </div>
+          <div class="timeline-co">Woodside Energy Trading</div>
+          <div class="timeline-role"><span class="lang-en">LNG TRADING ANALYST</span><span class="lang-cn">LNG 交易分析师</span></div>
+          <div class="timeline-loc">Singapore</div>
+          <ul class="timeline-bullets">
+            <li><span class="lang-en">Conducted market analysis and formulated forward-looking views on gas market developments impacting LNG trading decisions.</span><span class="lang-cn">进行市场分析并形成前瞻性观点，影响 LNG 交易决策。</span></li>
+            <li><span class="lang-en">Automated daily P&L and exposure analytics across portfolios; reduced manual process by 30%.</span><span class="lang-cn">自动化各组合的每日 P&L 与敞口分析；手动流程减少 30%。</span></li>
+            <li><span class="lang-en">Delivered trading write-ups with scenario backtests and risk/return summaries.</span><span class="lang-cn">输出交易研究报告，包含情景回测与风险/收益总结。</span></li>
+            <li><span class="lang-en">Coordinated with Market Risk, Shipping, and Ops to align pricing assumptions and reduce pricing-to-booking discrepancies throughout the trade lifecycle.</span><span class="lang-cn">与市场风险、航运和运营团队协作，统一定价假设，减少交易生命周期中的定价—入账偏差。</span></li>
+          </ul>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-meta">
+            <span class="timeline-period">FEB 2017 — APR 2022</span>
+          </div>
+          <div class="timeline-co">ENGIE Global Markets</div>
+          <div class="timeline-role"><span class="lang-en">SALES & TRADING — COMMODITY DERIVATIVES</span><span class="lang-cn">销售与交易 — 商品衍生品</span></div>
+          <div class="timeline-loc">Singapore · May 2019 – Apr 2022</div>
+          <ul class="timeline-bullets">
+            <li><span class="lang-en">Quoted APAC clients on energy derivatives (oil, gas, power, coal); developed valuation methods for options/swaps with standardized Greeks checks.</span><span class="lang-cn">为亚太客户报价能源衍生品（原油、天然气、电力、煤炭）；开发期权 / 互换估值方法，并标准化 Greeks 检查。</span></li>
+            <li><span class="lang-en">Worked closely with research team; recommended strategies to clients based on physical hedging needs.</span><span class="lang-cn">与研究团队紧密合作；基于客户的实物对冲需求推荐策略。</span></li>
+            <li><span class="lang-en">Expanded business by sourcing new clients and deepening existing relationships.</span><span class="lang-cn">通过开拓新客户与深化现有关系来拓展业务。</span></li>
+          </ul>
+          <div class="timeline-sub">
+            <div class="timeline-role"><span class="lang-en">TRADE SUPPORT ANALYST</span><span class="lang-cn">交易支持分析师</span> <span style="color:var(--fg3);font-size:11px;"> · FEB 2017 – MAY 2019</span></div>
+            <ul class="timeline-bullets" style="margin-top:10px;">
+              <li><span class="lang-en">Managed full trade lifecycle (booking, confirmations, settlements) for futures and options.</span><span class="lang-cn">管理期货与期权的完整交易生命周期（入账、确认、结算）。</span></li>
+              <li><span class="lang-en">Led automation projects; contributed to portfolio migrations and exotic product management.</span><span class="lang-cn">主导自动化项目；参与投资组合迁移与奇异产品管理。</span></li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- EDUCATION -->
+  <section id="education">
+    <div class="container">
+      <div class="sec-head">
+        <span class="sec-num">06 /</span>
+        <h2 class="sec-title"><span class="lang-en">Education</span><span class="lang-cn">教育</span></h2>
+        <div class="sec-rule"></div>
+      </div>
+      <div class="edu-list">
+        <div class="edu-item">
+          <div class="edu-period">AUG 2022<br>DEC 2024</div>
+          <div>
+            <div class="edu-school"><span class="lang-en">National University of Singapore</span><span class="lang-cn">新加坡国立大学</span></div>
+            <div class="edu-deg"><span class="lang-en">MASTER OF FINANCIAL ENGINEERING</span><span class="lang-cn">金融工程硕士</span></div>
+            <ul class="edu-pts">
+              <li><span class="lang-en">Option pricing, stochastic calculus, ML for financial risk modeling and trading strategy optimization.</span><span class="lang-cn">期权定价、随机微积分、机器学习在金融风险建模和交易策略优化中的应用。</span></li>
+              <li><span class="lang-en">FYP: <em>Application of Spread Option in LNG Geographical Arbitrage</em> — Kirk's Approximation & Change-of-Numeraire methods.</span><span class="lang-cn">毕业论文：《价差期权在 LNG 地理套利中的应用》——Kirk 近似法与计价单位变换法。</span></li>
+            </ul>
+          </div>
+        </div>
+        <div class="edu-item">
+          <div class="edu-period">AUG 2014<br>DEC 2017</div>
+          <div>
+            <div class="edu-school"><span class="lang-en">National University of Singapore</span><span class="lang-cn">新加坡国立大学</span></div>
+            <div class="edu-deg"><span class="lang-en">BBA — FINANCE & SUPPLY CHAIN (DOUBLE SPEC.)</span><span class="lang-cn">工商管理学士 — 金融与供应链管理（双专业）</span></div>
+            <ul class="edu-pts">
+              <li><span class="lang-en">CAP 4.43 / 5.0 — Honors with Distinction · Dean's Lister (Top 5%)</span><span class="lang-cn">CAP 4.43 / 5.0 — 优等荣誉 · 院长名单（前 5%）</span></li>
+              <li><span class="lang-en">NUS CFA Scholarship · MOE SM1 Programme Scholarship</span><span class="lang-cn">新国大 CFA 奖学金 · 教育部 SM1 奖学金</span></li>
+              <li><span class="lang-en">President, NUS Business Analytics Consulting Society (BACS)</span><span class="lang-cn">新国大商业分析咨询社（BACS）主席</span></li>
+            </ul>
+          </div>
+        </div>
+        <div class="edu-item">
+          <div class="edu-period">JAN 2013<br>DEC 2014</div>
+          <div>
+            <div class="edu-school"><span class="lang-en">Victoria Junior College</span><span class="lang-cn">维多利亚初级学院</span></div>
+            <div class="edu-deg"><span class="lang-en">GCE 'A' LEVELS</span><span class="lang-cn">GCE A 水准考试</span></div>
+            <ul class="edu-pts">
+              <li><span class="lang-en">Distinctions in Chemistry, Mathematics, Chinese, Physics, and Project Work.</span><span class="lang-cn">化学、数学、中文、物理、专题作业均获优等。</span></li>
+              <li><span class="lang-en">Gold Award — Singapore Mathematics Competition</span><span class="lang-cn">新加坡数学竞赛金奖</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BLOG -->
+  <section id="blog">
+    <div class="container">
+      <div class="sec-head">
+        <span class="sec-num">07 /</span>
+        <h2 class="sec-title"><span class="lang-en">Writing</span><span class="lang-cn">文章</span></h2>
+        <div class="sec-rule"></div>
+      </div>
+      <div class="blog-grid">
+        <div class="blog-card coming-soon">
+          <div class="blog-date"><span class="lang-en">COMING SOON</span><span class="lang-cn">即将发布</span></div>
+          <div class="blog-title"><span class="lang-en">Pricing the LNG Atlantic-Pacific Spread Option</span><span class="lang-cn">为 LNG 大西洋—太平洋价差期权定价</span></div>
+          <div class="blog-excerpt"><span class="lang-en">A practitioner's walkthrough of Kirk's Approximation vs. Change-of-Numeraire methods, with code samples and intuition for when each one breaks.</span><span class="lang-cn">从从业者视角对比 Kirk 近似法与计价单位变换法，附代码示例与各自失效边界的直观解释。</span></div>
+          <div class="blog-meta">
+            <span><span class="lang-en">Quant Finance</span><span class="lang-cn">量化金融</span></span>
+            <span class="blog-cta">·</span>
+          </div>
+        </div>
+        <div class="blog-card coming-soon">
+          <div class="blog-date"><span class="lang-en">COMING SOON</span><span class="lang-cn">即将发布</span></div>
+          <div class="blog-title"><span class="lang-en">LLMs for LNG Market Intelligence</span><span class="lang-cn">大语言模型在 LNG 市场情报中的应用</span></div>
+          <div class="blog-excerpt"><span class="lang-en">Building a daily news + vessel-tracking summarizer that ranks events by trade-floor relevance — what works, what doesn't.</span><span class="lang-cn">构建一个每日新闻 + 船舶追踪摘要工具，按交易桌面相关性排序——哪些可行，哪些不行。</span></div>
+          <div class="blog-meta">
+            <span><span class="lang-en">AI / Trading</span><span class="lang-cn">AI / 交易</span></span>
+            <span class="blog-cta">·</span>
+          </div>
+        </div>
+        <div class="blog-card coming-soon">
+          <div class="blog-date"><span class="lang-en">COMING SOON</span><span class="lang-cn">即将发布</span></div>
+          <div class="blog-title"><span class="lang-en">Term-structure Signals in Energy ETFs</span><span class="lang-cn">能源 ETF 的期限结构信号</span></div>
+          <div class="blog-excerpt"><span class="lang-en">A backtest study of carry, momentum, and term-structure factor blends across UNG, USO, and energy equity ETFs.</span><span class="lang-cn">对 UNG、USO 及能源股 ETF 上的 carry、动量与期限结构因子进行回测研究。</span></div>
+          <div class="blog-meta">
+            <span><span class="lang-en">Systematic Trading</span><span class="lang-cn">系统化交易</span></span>
+            <span class="blog-cta">·</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="container">
+      <div class="contact-layout">
+        <div>
+          <div class="sec-num" style="margin-bottom:16px;">08 / Contact</div>
+          <h2 class="contact-big">
+            <span class="lang-en">Let's<br><span class="amber">connect.</span></span>
+            <span class="lang-cn">让我们<br><span class="amber">联系吧。</span></span>
+          </h2>
+          <p class="contact-tagline">
+            <span class="lang-en">Open to discussing energy markets, quant finance, algo systems, or new opportunities. Always up for a good market conversation.</span>
+            <span class="lang-cn">乐于交流能源市场、量化金融、算法系统或新的机会。期待一场关于市场的精彩对话。</span>
+          </p>
+          <a href="Li_Shuai_CV.pdf" target="_blank" class="cta-primary">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="7 10 12 15 17 10"/>
+              <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            <span class="lang-en">Download CV</span>
+            <span class="lang-cn">下载简历</span>
+          </a>
+        </div>
+        <div class="contact-items">
+          <a href="mailto:li.shuai@u.nus.edu" class="c-item">
+            <div class="c-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="4" width="20" height="16" rx="2"/>
+                <path d="m22 7-10 6L2 7"/>
+              </svg>
+            </div>
+            <div>
+              <div class="c-label">EMAIL</div>
+              <div class="c-val">li.shuai@u.nus.edu</div>
+            </div>
+            <span class="c-arr">→</span>
+          </a>
+          <a href="https://www.linkedin.com/in/li-shuai-trading/" target="_blank" class="c-item">
+            <div class="c-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/>
+                <rect x="2" y="9" width="4" height="12"/>
+                <circle cx="4" cy="4" r="2"/>
+              </svg>
+            </div>
+            <div>
+              <div class="c-label">LINKEDIN</div>
+              <div class="c-val">li-shuai-trading</div>
+            </div>
+            <span class="c-arr">→</span>
+          </a>
+          <a href="tel:+6584508412" class="c-item">
+            <div class="c-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.18 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.6a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
+              </svg>
+            </div>
+            <div>
+              <div class="c-label">MOBILE</div>
+              <div class="c-val">+65 8450 8412</div>
+            </div>
+            <span class="c-arr">→</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="footer-mark">Li <span>Shuai</span></div>
+  <div class="footer-info">© 2026 · Singapore · LNG Trading & Quant Finance</div>
+</footer>
+
+<script>
+// THEME TOGGLE
+const themeBtn = document.getElementById('themeToggle');
+function applyTheme(mode) {
+  if (mode === 'light') {
+    document.body.classList.add('light');
+    themeBtn.textContent = '☀';
+  } else {
+    document.body.classList.remove('light');
+    themeBtn.textContent = '☾';
+  }
+  try { localStorage.setItem('theme', mode); } catch(e) {}
+}
+themeBtn.addEventListener('click', () => {
+  applyTheme(document.body.classList.contains('light') ? 'dark' : 'light');
+});
+try { applyTheme(localStorage.getItem('theme') || 'dark'); } catch(e) {}
+
+// LANGUAGE TOGGLE
+const langBtn = document.getElementById('langToggle');
+function applyLang(lang) {
+  if (lang === 'cn') {
+    document.body.classList.add('cn');
+    document.documentElement.lang = 'zh';
+    langBtn.textContent = '中 / EN';
+  } else {
+    document.body.classList.remove('cn');
+    document.documentElement.lang = 'en';
+    langBtn.textContent = 'EN / 中';
+  }
+  try { localStorage.setItem('lang', lang); } catch(e) {}
+}
+langBtn.addEventListener('click', () => {
+  applyLang(document.body.classList.contains('cn') ? 'en' : 'cn');
+});
+try { applyLang(localStorage.getItem('lang') || 'en'); } catch(e) {}
+
+// NAV ACTIVE LINK
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav-links a');
+const obs = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      navLinks.forEach(link => {
+        link.style.color = '';
+        if (link.getAttribute('href') === '#' + entry.target.id) {
+          link.style.color = 'var(--amber)';
+        }
+      });
+    }
+  });
+}, { rootMargin: '-40% 0px -50% 0px' });
+sections.forEach(s => obs.observe(s));
+</script>
+
+</body>
+</html>

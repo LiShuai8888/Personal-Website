@@ -1,0 +1,1297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Li Shuai — LNG Trading Analyst & Quant Developer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  /* ── THEME TOKENS ── */
+  :root {
+    --bg: #f7f4ef;
+    --bg2: #f0ebe2;
+    --fg: #1a1714;
+    --fg2: #4a4540;
+    --fg3: #8a8278;
+    --accent: oklch(62% 0.13 45);
+    --accent2: oklch(55% 0.13 200);
+    --line: #ddd8ce;
+    --card: #fff;
+    --font-display: 'DM Serif Display', serif;
+    --font-body: 'DM Sans', sans-serif;
+    --font-mono: 'Space Mono', monospace;
+    --nav-h: 64px;
+  }
+
+  body.dark {
+    --bg: #0f1117;
+    --bg2: #181d27;
+    --fg: #f0ede8;
+    --fg2: #b0aaa0;
+    --fg3: #6a6460;
+    --accent: oklch(72% 0.16 45);
+    --accent2: oklch(65% 0.16 200);
+    --line: #2a2e38;
+    --card: #181d27;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.6;
+    transition: background 0.3s, color 0.3s;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: var(--nav-h);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 48px;
+    background: var(--bg);
+    border-bottom: 1px solid var(--line);
+    z-index: 100;
+    transition: background 0.3s, border-color 0.3s;
+  }
+
+  .nav-logo {
+    font-family: var(--font-display);
+    font-size: 20px;
+    color: var(--fg);
+    text-decoration: none;
+    letter-spacing: -0.02em;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 32px;
+    list-style: none;
+    align-items: center;
+  }
+
+  .nav-links a {
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--fg2);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--accent); }
+
+  .nav-theme-btn {
+    background: none;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 6px 10px;
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--fg2);
+    transition: all 0.2s;
+  }
+  .nav-theme-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* ── SECTIONS ── */
+  main { padding-top: var(--nav-h); }
+  section { padding: 96px 0; }
+  .container { max-width: 960px; margin: 0 auto; padding: 0 48px; }
+  .container-wide { max-width: 1200px; margin: 0 auto; padding: 0 48px; }
+
+  /* ── HERO ── */
+  #hero {
+    padding: 120px 0 80px;
+    background: var(--bg);
+  }
+
+  .hero-inner {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 64px;
+    align-items: end;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 48px;
+  }
+
+  .hero-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--accent);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .hero-name {
+    font-family: var(--font-display);
+    font-size: clamp(56px, 8vw, 92px);
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    color: var(--fg);
+    margin-bottom: 28px;
+  }
+
+  .hero-name em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .hero-tagline {
+    font-size: 17px;
+    font-weight: 300;
+    color: var(--fg2);
+    max-width: 560px;
+    line-height: 1.7;
+    margin-bottom: 36px;
+    text-wrap: pretty;
+  }
+
+  .hero-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 40px;
+  }
+
+  .badge {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    padding: 5px 12px;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    color: var(--fg2);
+    background: var(--bg2);
+  }
+
+  .hero-cta {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    background: var(--accent);
+    color: #fff;
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: opacity 0.2s, transform 0.2s;
+  }
+  .btn-primary:hover { opacity: 0.88; transform: translateY(-1px); }
+
+  .btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border: 1px solid var(--line);
+    color: var(--fg2);
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .btn-ghost:hover { border-color: var(--fg2); color: var(--fg); }
+
+  .hero-avatar-wrap {
+    position: relative;
+  }
+
+  .hero-avatar {
+    width: 200px;
+    height: 240px;
+    background: var(--bg2);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .avatar-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: var(--fg3);
+  }
+
+  .avatar-placeholder svg { opacity: 0.3; }
+  .avatar-placeholder span { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.05em; }
+
+  .hero-location {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--fg3);
+    margin-top: 12px;
+    letter-spacing: 0.05em;
+    text-align: center;
+  }
+
+  /* ── DIVIDER ── */
+  .section-divider {
+    height: 1px;
+    background: var(--line);
+    max-width: 960px;
+    margin: 0 auto;
+  }
+
+  /* ── SECTION HEADER ── */
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 20px;
+    margin-bottom: 56px;
+  }
+
+  .section-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    flex-shrink: 0;
+  }
+
+  .section-title {
+    font-family: var(--font-display);
+    font-size: clamp(32px, 4vw, 46px);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: var(--fg);
+  }
+
+  .section-line {
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+  }
+
+  /* ── ABOUT ── */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+    align-items: start;
+  }
+
+  .about-bio {
+    font-size: 16px;
+    font-weight: 300;
+    color: var(--fg2);
+    line-height: 1.8;
+  }
+
+  .about-bio p + p { margin-top: 16px; }
+
+  .about-bio strong {
+    color: var(--fg);
+    font-weight: 500;
+  }
+
+  .about-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+  }
+
+  .stat-card {
+    background: var(--bg2);
+    padding: 24px;
+    border: 1px solid var(--line);
+  }
+
+  .stat-card:first-child { border-radius: 8px 0 0 0; }
+  .stat-card:nth-child(2) { border-radius: 0 8px 0 0; }
+  .stat-card:nth-child(3) { border-radius: 0 0 0 8px; }
+  .stat-card:last-child { border-radius: 0 0 8px 0; }
+
+  .stat-number {
+    font-family: var(--font-display);
+    font-size: 36px;
+    color: var(--accent);
+    letter-spacing: -0.02em;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .stat-label {
+    font-size: 13px;
+    color: var(--fg3);
+    font-weight: 400;
+    line-height: 1.4;
+  }
+
+  /* ── EXPERIENCE TIMELINE ── */
+  .timeline {
+    position: relative;
+    padding-left: 32px;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 8px;
+    bottom: 0;
+    width: 1px;
+    background: var(--line);
+  }
+
+  .timeline-item {
+    position: relative;
+    padding-bottom: 52px;
+  }
+
+  .timeline-item:last-child { padding-bottom: 0; }
+
+  .timeline-dot {
+    position: absolute;
+    left: -36px;
+    top: 8px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: 2px solid var(--bg);
+    box-shadow: 0 0 0 2px var(--accent);
+  }
+
+  .timeline-dot.current {
+    background: var(--accent);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 2px var(--accent); }
+    50% { box-shadow: 0 0 0 5px color-mix(in srgb, var(--accent) 20%, transparent); }
+  }
+
+  .timeline-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+  }
+
+  .timeline-period {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--fg3);
+    letter-spacing: 0.05em;
+  }
+
+  .timeline-current-badge {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    padding: 2px 8px;
+    background: color-mix(in srgb, var(--accent) 15%, transparent);
+    color: var(--accent);
+    border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+    border-radius: 4px;
+    letter-spacing: 0.06em;
+  }
+
+  .timeline-company {
+    font-family: var(--font-display);
+    font-size: 22px;
+    letter-spacing: -0.01em;
+    color: var(--fg);
+    margin-bottom: 2px;
+  }
+
+  .timeline-role {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--accent);
+    margin-bottom: 4px;
+  }
+
+  .timeline-location {
+    font-size: 13px;
+    color: var(--fg3);
+    margin-bottom: 16px;
+  }
+
+  .timeline-bullets {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .timeline-bullets li {
+    font-size: 14px;
+    font-weight: 300;
+    color: var(--fg2);
+    line-height: 1.6;
+    padding-left: 16px;
+    position: relative;
+  }
+
+  .timeline-bullets li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-size: 12px;
+  }
+
+  .timeline-sub-role {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px dashed var(--line);
+  }
+
+  /* ── EDUCATION ── */
+  .edu-grid {
+    display: grid;
+    gap: 24px;
+  }
+
+  .edu-card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 32px;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 24px;
+    transition: border-color 0.2s;
+  }
+
+  .edu-card:hover { border-color: var(--accent); }
+
+  .edu-year {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--fg3);
+    letter-spacing: 0.05em;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    transform: rotate(180deg);
+    align-self: center;
+    white-space: nowrap;
+  }
+
+  .edu-body {}
+
+  .edu-school {
+    font-family: var(--font-display);
+    font-size: 22px;
+    color: var(--fg);
+    letter-spacing: -0.01em;
+    margin-bottom: 4px;
+  }
+
+  .edu-degree {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+
+  .edu-notes {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .edu-notes li {
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--fg2);
+    padding-left: 16px;
+    position: relative;
+    line-height: 1.55;
+  }
+
+  .edu-notes li::before {
+    content: '·';
+    position: absolute;
+    left: 4px;
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  /* ── SKILLS ── */
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+
+  .skill-group {
+    background: var(--bg2);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 28px;
+  }
+
+  .skill-group-title {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+  }
+
+  .skill-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .skill-tag {
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 400;
+    padding: 5px 12px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    color: var(--fg2);
+    transition: all 0.15s;
+  }
+
+  .skill-tag:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* ── PROJECTS ── */
+  .projects-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .project-card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 32px;
+    transition: all 0.2s;
+    cursor: default;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .project-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.25s;
+  }
+
+  .project-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px color-mix(in srgb, var(--fg) 6%, transparent);
+  }
+
+  .project-card:hover::before { transform: scaleX(1); }
+
+  .project-type {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent2);
+    margin-bottom: 12px;
+  }
+
+  .project-title {
+    font-family: var(--font-display);
+    font-size: 20px;
+    color: var(--fg);
+    letter-spacing: -0.01em;
+    margin-bottom: 12px;
+    line-height: 1.2;
+  }
+
+  .project-desc {
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--fg2);
+    line-height: 1.6;
+    margin-bottom: 20px;
+  }
+
+  .project-tech {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .tech-tag {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    padding: 3px 8px;
+    background: var(--bg2);
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    color: var(--fg3);
+  }
+
+  /* ── CONTACT ── */
+  #contact {
+    background: var(--bg2);
+    border-top: 1px solid var(--line);
+  }
+
+  .contact-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+    align-items: center;
+  }
+
+  .contact-headline {
+    font-family: var(--font-display);
+    font-size: clamp(32px, 4vw, 52px);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: var(--fg);
+    margin-bottom: 16px;
+  }
+
+  .contact-sub {
+    font-size: 15px;
+    font-weight: 300;
+    color: var(--fg2);
+    line-height: 1.7;
+    margin-bottom: 32px;
+  }
+
+  .contact-links {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .contact-link {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 20px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+
+  .contact-link:hover {
+    border-color: var(--accent);
+    transform: translateX(4px);
+  }
+
+  .contact-link-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    background: color-mix(in srgb, var(--accent) 12%, transparent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: var(--accent);
+  }
+
+  .contact-link-text { flex: 1; }
+  .contact-link-label { font-size: 11px; color: var(--fg3); font-family: var(--font-mono); letter-spacing: 0.06em; }
+  .contact-link-value { font-size: 14px; font-weight: 500; color: var(--fg); }
+  .contact-link-arrow { color: var(--fg3); transition: color 0.2s; }
+  .contact-link:hover .contact-link-arrow { color: var(--accent); }
+
+  /* ── FOOTER ── */
+  footer {
+    padding: 32px 48px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer-name {
+    font-family: var(--font-display);
+    font-size: 16px;
+    color: var(--fg2);
+  }
+
+  .footer-copy {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--fg3);
+    letter-spacing: 0.05em;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .fade-up {
+    opacity: 0;
+    animation: fadeUp 0.7s ease forwards;
+  }
+
+  .fade-up:nth-child(1) { animation-delay: 0.1s; }
+  .fade-up:nth-child(2) { animation-delay: 0.2s; }
+  .fade-up:nth-child(3) { animation-delay: 0.3s; }
+  .fade-up:nth-child(4) { animation-delay: 0.4s; }
+  .fade-up:nth-child(5) { animation-delay: 0.5s; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    nav { padding: 0 24px; }
+    .nav-links { display: none; }
+    .container, .container-wide { padding: 0 24px; }
+    .hero-inner { grid-template-columns: 1fr; }
+    .hero-avatar-wrap { display: none; }
+    .about-grid { grid-template-columns: 1fr; }
+    .skills-grid { grid-template-columns: 1fr; }
+    .projects-grid { grid-template-columns: 1fr; }
+    .contact-inner { grid-template-columns: 1fr; }
+    footer { flex-direction: column; gap: 8px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#hero" class="nav-logo">Li Shuai</a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#education">Education</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <button class="nav-theme-btn" id="themeToggle" aria-label="Toggle theme">☀</button>
+</nav>
+
+<main>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-inner">
+      <div>
+        <p class="hero-eyebrow fade-up">Singapore · Open to opportunities</p>
+        <h1 class="hero-name fade-up">Li<br><em>Shuai</em></h1>
+        <p class="hero-tagline fade-up">Senior LNG Trading Analyst & Quant Developer — building pricing tools, algo systems, and market analytics at the intersection of energy markets and Python.</p>
+        <div class="hero-badges fade-up">
+          <span class="badge">LNG Trading</span>
+          <span class="badge">Quantitative Finance</span>
+          <span class="badge">Python / LLMs</span>
+          <span class="badge">Option Pricing</span>
+          <span class="badge">NUS MFE</span>
+        </div>
+        <div class="hero-cta fade-up">
+          <a href="#contact" class="btn-primary">Get in touch →</a>
+          <a href="#experience" class="btn-ghost">View experience</a>
+        </div>
+      </div>
+      <div class="hero-avatar-wrap">
+        <div class="hero-avatar">
+          <div class="avatar-placeholder">
+            <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+              <circle cx="24" cy="18" r="10" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M6 42c0-9.941 8.059-18 18-18s18 8.059 18 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            <span>Photo</span>
+          </div>
+        </div>
+        <p class="hero-location">📍 Singapore</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">01</span>
+        <h2 class="section-title">About</h2>
+        <div class="section-line"></div>
+      </div>
+      <div class="about-grid">
+        <div class="about-bio">
+          <p>I'm a <strong>Singapore-based LNG Trading Analyst</strong> with front-office experience spanning physical LNG, natural gas, oil, and energy derivatives across some of the world's leading energy traders.</p>
+          <p>With an <strong>NUS Master of Financial Engineering</strong>, I blend rigorous quantitative methods — option pricing, stochastic calculus, machine learning — with real commercial instincts developed across 9+ years in energy markets.</p>
+          <p>I spend a lot of time <strong>automating what shouldn't be manual</strong>: building Python-based pricing tools, optimization dashboards, and curve construction frameworks used directly by traders to sharpen decisions.</p>
+          <p>Outside of markets, I explore systematic trading signals on energy and equity ETFs, and I'm fascinated by how LLMs can be applied to market intelligence workflows.</p>
+        </div>
+        <div class="about-stats">
+          <div class="stat-card">
+            <div class="stat-number">9+</div>
+            <div class="stat-label">Years in energy trading & derivatives</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">3</div>
+            <div class="stat-label">Major energy firms — ENGIE, Woodside, Centrica</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">MFE</div>
+            <div class="stat-label">NUS Master of Financial Engineering</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">4.43</div>
+            <div class="stat-label">NUS GPA / 5.0 — Honors with Distinction</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <section id="projects">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">02</span>
+        <h2 class="section-title">Projects</h2>
+        <div class="section-line"></div>
+      </div>
+      <div class="projects-grid">
+        <div class="project-card">
+          <div class="project-type">Trading Tool · Python</div>
+          <div class="project-title">LNG Optimization Dashboard</div>
+          <div class="project-desc">Automated portfolio optimization dashboard tracking contract optionality, in/out-of-money positions, and P&L attribution across the LNG book. Used directly by front-office traders at Centrica LNG.</div>
+          <div class="project-tech">
+            <span class="tech-tag">Python</span>
+            <span class="tech-tag">Excel</span>
+            <span class="tech-tag">VBA</span>
+            <span class="tech-tag">Bloomberg</span>
+          </div>
+        </div>
+        <div class="project-card">
+          <div class="project-type">Research · Quantitative Finance</div>
+          <div class="project-title">Spread Option in LNG Arbitrage</div>
+          <div class="project-desc">MFE final-year project applying spread option pricing to LNG geographical arbitrage. Implemented Kirk's Approximation and Change-of-Numeraire methods to model Atlantic-Pacific price differentials.</div>
+          <div class="project-tech">
+            <span class="tech-tag">Python</span>
+            <span class="tech-tag">Stochastic Calculus</span>
+            <span class="tech-tag">Option Pricing</span>
+          </div>
+        </div>
+        <div class="project-card">
+          <div class="project-type">Algo System · Personal Research</div>
+          <div class="project-title">Systematic Signal Research</div>
+          <div class="project-desc">Prototyping Python backtests on energy and equity ETFs using mean-reversion, carry/term-structure, and volatility signals. Tracks Sharpe ratio, turnover, and max drawdown metrics.</div>
+          <div class="project-tech">
+            <span class="tech-tag">Python</span>
+            <span class="tech-tag">Backtesting</span>
+            <span class="tech-tag">ETFs</span>
+            <span class="tech-tag">Signals</span>
+          </div>
+        </div>
+        <div class="project-card">
+          <div class="project-type">Automation · Operations</div>
+          <div class="project-title">P&L Automation & ADP Planner</div>
+          <div class="project-desc">Automated daily P&L and exposure analytics at Woodside Energy, reducing manual reconciliation by 30%. Also built an Annual Delivery Programme planning tool at Centrica to streamline operational scheduling.</div>
+          <div class="project-tech">
+            <span class="tech-tag">Python</span>
+            <span class="tech-tag">Excel / VBA</span>
+            <span class="tech-tag">Kpler</span>
+            <span class="tech-tag">Dataloy</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <section id="skills">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">03</span>
+        <h2 class="section-title">Skills</h2>
+        <div class="section-line"></div>
+      </div>
+      <div class="skills-grid">
+        <div class="skill-group">
+          <div class="skill-group-title">Markets & Trading</div>
+          <div class="skill-tags">
+            <span class="skill-tag">LNG Trading</span>
+            <span class="skill-tag">Natural Gas</span>
+            <span class="skill-tag">Oil Derivatives</span>
+            <span class="skill-tag">Commodity Derivatives</span>
+            <span class="skill-tag">Option Pricing</span>
+            <span class="skill-tag">Spread Options</span>
+            <span class="skill-tag">Arbitrage</span>
+            <span class="skill-tag">Market Risk</span>
+          </div>
+        </div>
+        <div class="skill-group">
+          <div class="skill-group-title">Quantitative & Programming</div>
+          <div class="skill-tags">
+            <span class="skill-tag">Python</span>
+            <span class="skill-tag">Excel / VBA</span>
+            <span class="skill-tag">MATLAB</span>
+            <span class="skill-tag">R</span>
+            <span class="skill-tag">Stochastic Calculus</span>
+            <span class="skill-tag">Machine Learning</span>
+            <span class="skill-tag">LLMs</span>
+            <span class="skill-tag">Backtesting</span>
+          </div>
+        </div>
+        <div class="skill-group">
+          <div class="skill-group-title">Data & Tools</div>
+          <div class="skill-tags">
+            <span class="skill-tag">Bloomberg</span>
+            <span class="skill-tag">Kpler</span>
+            <span class="skill-tag">Dataloy</span>
+            <span class="skill-tag">Power BI</span>
+            <span class="skill-tag">Tableau</span>
+            <span class="skill-tag">Curve Construction</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <section id="experience">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">04</span>
+        <h2 class="section-title">Experience</h2>
+        <div class="section-line"></div>
+      </div>
+      <div class="timeline">
+
+        <!-- Centrica -->
+        <div class="timeline-item">
+          <div class="timeline-dot current"></div>
+          <div class="timeline-meta">
+            <span class="timeline-period">Jul 2023 — Present</span>
+            <span class="timeline-current-badge">Current</span>
+          </div>
+          <div class="timeline-company">Centrica LNG</div>
+          <div class="timeline-role">Senior LNG Trading Analyst</div>
+          <div class="timeline-location">Singapore</div>
+          <ul class="timeline-bullets">
+            <li>Monitor contract optionality, in/out-of-money positions; automate optimization dashboards to maximize portfolio P&L.</li>
+            <li>Track LNG vessels for unusual movements and Atlantic-Pacific cargo diversions for arbitrage monitoring.</li>
+            <li>Apply advanced option pricing and stochastic models to evaluate LNG trading structures, optionality, and value drivers across term and spot deals.</li>
+            <li>Build and maintain pricing / scenario tools and curve construction frameworks in Python / Excel used directly by LNG traders.</li>
+            <li>Developed an ADP planning tool to enhance operational coordination; semi-automated nomination and scheduling deadline tracking.</li>
+            <li>Perform in-depth deal analysis across short / mid / long-term opportunities with insights on term structure, market trends, and price volatility.</li>
+          </ul>
+        </div>
+
+        <!-- Woodside -->
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-meta">
+            <span class="timeline-period">Jul 2022 — Jul 2023</span>
+          </div>
+          <div class="timeline-company">Woodside Energy Trading</div>
+          <div class="timeline-role">LNG Trading Analyst</div>
+          <div class="timeline-location">Singapore</div>
+          <ul class="timeline-bullets">
+            <li>Conducted market analysis and formulated forward-looking views on gas market developments impacting LNG trading decisions.</li>
+            <li>Automated daily P&L and exposure analytics across portfolios; implemented reconciliation that reduced manual process by 30%.</li>
+            <li>Delivered trading and optimization write-ups with scenario backtests and risk/return summaries.</li>
+            <li>Coordinated with Market Risk, Shipping, and Ops to align pricing assumptions and delivery optionality; reduced pricing-to-booking discrepancies across the trade lifecycle.</li>
+          </ul>
+        </div>
+
+        <!-- ENGIE -->
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-meta">
+            <span class="timeline-period">Feb 2017 — Apr 2022</span>
+          </div>
+          <div class="timeline-company">ENGIE Global Markets</div>
+          <div class="timeline-role">Sales & Trading — Commodity Derivatives</div>
+          <div class="timeline-location">Singapore</div>
+          <ul class="timeline-bullets">
+            <li>Quoted APAC clients on energy derivatives (oil, gas, power, coal); developed valuation methods for options/swaps with standardized Greeks checks.</li>
+            <li>Worked closely with research team and recommended strategies to clients based on their physical hedging needs.</li>
+            <li>Expanded business by actively sourcing new clients and deepening existing relationships.</li>
+          </ul>
+          <div class="timeline-sub-role">
+            <div class="timeline-role">Trade Support Analyst <span style="color:var(--fg3);font-weight:300;font-size:12px;">Feb 2017 – May 2019</span></div>
+            <ul class="timeline-bullets" style="margin-top:10px;">
+              <li>Managed full trade lifecycle (booking, confirmations, settlements) for futures and options.</li>
+              <li>Led automation projects implementing new systems; contributed to portfolio migrations and exotic product management.</li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <section id="education">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">05</span>
+        <h2 class="section-title">Education</h2>
+        <div class="section-line"></div>
+      </div>
+      <div class="edu-grid">
+        <div class="edu-card">
+          <div class="edu-year">Aug 2022 — Dec 2024</div>
+          <div class="edu-body">
+            <div class="edu-school">National University of Singapore</div>
+            <div class="edu-degree">Master of Financial Engineering (MFE)</div>
+            <ul class="edu-notes">
+              <li>Focused on option pricing, stochastic calculus, and applying machine learning techniques to model financial risks and optimize trading strategies.</li>
+              <li>Final Year Project: <em>Application of Spread Option in LNG Geographical Arbitrage</em> — implemented Kirk's Approximation and Change-of-Numeraire methods for spread option pricing.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="edu-card">
+          <div class="edu-year">Aug 2014 — Dec 2017</div>
+          <div class="edu-body">
+            <div class="edu-school">National University of Singapore</div>
+            <div class="edu-degree">BBA — Finance & Supply Chain Management (Double Specialization)</div>
+            <ul class="edu-notes">
+              <li>CAP 4.43 / 5.0 — Honors with Distinction</li>
+              <li>Dean's Lister (Top 5%)</li>
+              <li>NUS CFA Scholarship · MOE SM1 Programme Scholarship</li>
+            </ul>
+          </div>
+        </div>
+        <div class="edu-card">
+          <div class="edu-year">Jan 2013 — Dec 2014</div>
+          <div class="edu-body">
+            <div class="edu-school">Victoria Junior College</div>
+            <div class="edu-degree">GCE 'A' Levels</div>
+            <ul class="edu-notes">
+              <li>Distinctions in Chemistry, Mathematics, Chinese, Physics, and Project Work.</li>
+              <li>Gold Award — Singapore Mathematics Competition</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <section id="contact">
+    <div class="container">
+      <div class="contact-inner">
+        <div>
+          <div class="section-label" style="margin-bottom:16px;">06 — Contact</div>
+          <h2 class="contact-headline">Let's connect.</h2>
+          <p class="contact-sub">Whether you're looking to discuss energy markets, quantitative finance, Python tooling, or new opportunities — I'm always open to a conversation.</p>
+          <a href="#about" class="btn-primary">View my work ↑</a>
+        </div>
+        <div class="contact-links">
+          <a href="mailto:li.shuai@u.nus.edu" class="contact-link">
+            <div class="contact-link-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="4" width="20" height="16" rx="2"/>
+                <path d="m22 7-10 6L2 7"/>
+              </svg>
+            </div>
+            <div class="contact-link-text">
+              <div class="contact-link-label">Email</div>
+              <div class="contact-link-value">li.shuai@u.nus.edu</div>
+            </div>
+            <span class="contact-link-arrow">→</span>
+          </a>
+          <a href="https://www.linkedin.com/in/li-shuai-trading/" target="_blank" class="contact-link">
+            <div class="contact-link-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/>
+                <rect x="2" y="9" width="4" height="12"/>
+                <circle cx="4" cy="4" r="2"/>
+              </svg>
+            </div>
+            <div class="contact-link-text">
+              <div class="contact-link-label">LinkedIn</div>
+              <div class="contact-link-value">li-shuai-trading</div>
+            </div>
+            <span class="contact-link-arrow">→</span>
+          </a>
+          <a href="tel:+6584508412" class="contact-link">
+            <div class="contact-link-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.18 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.6a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
+              </svg>
+            </div>
+            <div class="contact-link-text">
+              <div class="contact-link-label">Mobile</div>
+              <div class="contact-link-value">+65 8450 8412</div>
+            </div>
+            <span class="contact-link-arrow">→</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <span class="footer-name">Li Shuai</span>
+  <span class="footer-copy">© 2026 · Singapore · LNG Trading & Quant Finance</span>
+</footer>
+
+<!-- REACT TWEAKS PANEL -->
+<div id="tweaks-root"></div>
+
+<script type="text/babel">
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "variant": "warm",
+  "accentHue": 45,
+  "fontStyle": "serif",
+  "showPhone": true,
+  "compactNav": false
+}/*EDITMODE-END*/;
+
+function App() {
+  const { tweaks, setTweak } = useTweaks(TWEAK_DEFAULTS);
+
+  React.useEffect(() => {
+    // Apply variant
+    if (tweaks.variant === 'dark') {
+      document.body.classList.add('dark');
+    } else {
+      document.body.classList.remove('dark');
+    }
+  }, [tweaks.variant]);
+
+  React.useEffect(() => {
+    // Apply accent hue
+    const accent = `oklch(62% 0.13 ${tweaks.accentHue})`;
+    const accent2 = `oklch(55% 0.13 ${tweaks.accentHue + 155})`;
+    document.documentElement.style.setProperty('--accent', accent);
+    document.documentElement.style.setProperty('--accent2', accent2);
+    if (tweaks.variant === 'dark') {
+      document.documentElement.style.setProperty('--accent', `oklch(72% 0.16 ${tweaks.accentHue})`);
+    }
+  }, [tweaks.accentHue, tweaks.variant]);
+
+  React.useEffect(() => {
+    const fontVar = tweaks.fontStyle === 'sans'
+      ? "'DM Sans', sans-serif"
+      : "'DM Serif Display', serif";
+    document.documentElement.style.setProperty('--font-display', fontVar);
+  }, [tweaks.fontStyle]);
+
+  React.useEffect(() => {
+    const phone = document.querySelector('.contact-link[href^="tel"]');
+    if (phone) phone.style.display = tweaks.showPhone ? 'flex' : 'none';
+  }, [tweaks.showPhone]);
+
+  return (
+    <TweaksPanel>
+      <TweakSection label="Theme">
+        <TweakRadio
+          label="Color Mode"
+          value={tweaks.variant}
+          options={[{ label: 'Light', value: 'warm' }, { label: 'Dark', value: 'dark' }]}
+          onChange={v => setTweak('variant', v)}
+        />
+        <TweakSlider
+          label="Accent Hue"
+          value={tweaks.accentHue}
+          min={0}
+          max={360}
+          step={5}
+          onChange={v => setTweak('accentHue', v)}
+        />
+        <TweakRadio
+          label="Headline Font"
+          value={tweaks.fontStyle}
+          options={[{ label: 'Serif', value: 'serif' }, { label: 'Sans', value: 'sans' }]}
+          onChange={v => setTweak('fontStyle', v)}
+        />
+      </TweakSection>
+      <TweakSection label="Content">
+        <TweakToggle
+          label="Show Phone Number"
+          value={tweaks.showPhone}
+          onChange={v => setTweak('showPhone', v)}
+        />
+      </TweakSection>
+    </TweaksPanel>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('tweaks-root')).render(<App />);
+</script>
+
+<script>
+// Theme toggle button
+const btn = document.getElementById('themeToggle');
+btn.addEventListener('click', () => {
+  document.body.classList.toggle('dark');
+  btn.textContent = document.body.classList.contains('dark') ? '☀' : '☾';
+});
+
+// Smooth scroll active nav highlight
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav-links a');
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      navLinks.forEach(link => {
+        link.style.color = '';
+        if (link.getAttribute('href') === '#' + entry.target.id) {
+          link.style.color = 'var(--accent)';
+        }
+      });
+    }
+  });
+}, { rootMargin: '-40% 0px -50% 0px' });
+
+sections.forEach(s => observer.observe(s));
+</script>
+
+</body>
+</html>
