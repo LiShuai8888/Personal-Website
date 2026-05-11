@@ -1,6 +1,9 @@
 # Local copies / export folders
 Personal Website/
 
+# Build scripts
+gen_og.py
+
 # OS files
 .DS_Store
 Thumbs.db
