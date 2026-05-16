@@ -600,6 +600,15 @@
   .delay-4 { animation-delay: 0.4s; }
   .delay-5 { animation-delay: 0.5s; }
 
+  /* SCROLL-TRIGGERED FADE-UP */
+  @media (prefers-reduced-motion: no-preference) {
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.55s ease, transform 0.55s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-delay-1 { transition-delay: 0.08s; }
+    .reveal-delay-2 { transition-delay: 0.16s; }
+    .reveal-delay-3 { transition-delay: 0.24s; }
+  }
+
   /* RESPONSIVE */
   @media (max-width: 800px) {
     :root { --gutter: 24px; }
@@ -736,7 +745,7 @@
   <!-- ABOUT -->
   <section id="about">
     <div class="container">
-      <div class="sec-head">
+      <div class="sec-head reveal">
         <span class="sec-num">01 /</span>
         <h2 class="sec-title"><span class="lang-en">About</span><span class="lang-cn">关于</span></h2>
         <div class="sec-rule"></div>
@@ -793,7 +802,7 @@
   <!-- NOW -->
   <section id="now">
     <div class="container">
-      <div class="sec-head">
+      <div class="sec-head reveal">
         <span class="sec-num">02 /</span>
         <h2 class="sec-title"><span class="lang-en">Now</span><span class="lang-cn">现在</span></h2>
         <div class="sec-rule"></div>
@@ -833,13 +842,13 @@
   <!-- PROJECTS -->
   <section id="projects">
     <div class="container">
-      <div class="sec-head">
+      <div class="sec-head reveal">
         <span class="sec-num">03 /</span>
         <h2 class="sec-title"><span class="lang-en">Projects</span><span class="lang-cn">项目</span></h2>
         <div class="sec-rule"></div>
       </div>
       <div class="proj-grid">
-        <div class="proj-card">
+        <div class="proj-card reveal">
           <div class="proj-type">Trading Tool · Python</div>
           <div class="proj-name"><span class="lang-en">LNG Optimization Dashboard</span><span class="lang-cn">LNG 组合优化仪表盘</span></div>
           <div class="proj-desc"><span class="lang-en">Automated portfolio optimization dashboard tracking contract optionality, in/out-of-money positions, and P&L attribution across the LNG book. Used directly by front-office traders at Centrica LNG.</span><span class="lang-cn">自动化的组合优化仪表盘，跟踪合约期权价值、价内/价外仓位以及 P&L 归因。被 Centrica LNG 前台交易员直接使用。</span></div>
@@ -850,7 +859,7 @@
             <span class="t-tag">Kpler</span>
           </div>
         </div>
-        <div class="proj-card">
+        <div class="proj-card reveal">
           <div class="proj-type">Research · Quant Finance</div>
           <div class="proj-name"><span class="lang-en">Spread Option in LNG Arbitrage</span><span class="lang-cn">LNG 套利中的价差期权</span></div>
           <div class="proj-desc"><span class="lang-en">MFE thesis applying spread option pricing to LNG geographical arbitrage. Implemented Kirk's Approximation and Change-of-Numeraire methods to model Atlantic–Pacific price differentials.</span><span class="lang-cn">金融工程硕士毕业论文，将价差期权定价应用于 LNG 地理套利。实现了 Kirk 近似法和计价单位变换法，建模大西洋—太平洋的价差。</span></div>
@@ -860,7 +869,7 @@
             <span class="t-tag">Option Pricing</span>
           </div>
         </div>
-        <div class="proj-card">
+        <div class="proj-card reveal">
           <div class="proj-type">Quant Tool · In Development</div>
           <div class="proj-name"><span class="lang-en">LNG Diversion Analysis Tool</span><span class="lang-cn">LNG 转运分析工具</span></div>
           <div class="proj-desc"><span class="lang-en">Implementing Kirk's Approximation for LNG geographical arbitrage — computing spread option value across JKM/TTF corridors, shipping cost strike, and cargo-level DIVERT/HOLD signals. Extends my MFE thesis into a live trading tool within Equity Hub.</span><span class="lang-cn">将 Kirk 近似法应用于 LNG 地理套利，计算 JKM/TTF 价差期权价值、运输成本行权价及逐货轮 DIVERT/HOLD 信号。基于金融工程硕士论文，集成至 Equity Hub 交易平台。</span></div>
@@ -872,7 +881,7 @@
             <span class="t-tag">JKM/TTF</span>
           </div>
         </div>
-        <div class="proj-card">
+        <div class="proj-card reveal">
           <div class="proj-type">Algo System · Personal Project</div>
           <div class="proj-name"><span class="lang-en">IBKR Algo Trading System</span><span class="lang-cn">IBKR 算法交易系统</span></div>
           <div class="proj-desc"><span class="lang-en">Event-driven Python algo trading system live on IBKR paper account. RSI 2nd-derivative signal with dual-mode execution (CLI + Telegram), Streamlit backtest dashboard with 144-combo grid optimizer, volume profile S/R detection, and walk-forward period analysis.</span><span class="lang-cn">基于事件驱动的 Python 算法交易系统，在 IBKR 模拟账户实时运行。采用 RSI 二阶导数信号，双模式执行（CLI + Telegram），含 Streamlit 回测仪表盘、144 组合网格优化器及成交量轮廓支撑阻力检测。</span></div>
@@ -884,7 +893,7 @@
             <span class="t-tag">IBKR TWS</span>
           </div>
         </div>
-        <div class="proj-card">
+        <div class="proj-card reveal">
           <div class="proj-type">Full-Stack App · Personal Project</div>
           <div class="proj-name"><span class="lang-en">Equity Hub</span><span class="lang-cn">交易智能平台</span></div>
           <div class="proj-desc"><span class="lang-en">Personal trading intelligence platform — live equity &amp; options portfolio tracker with Black-Scholes Greeks, LNG market analytics, trade journal, task system, and 7AM email digest. Deployed to Vercel + Render.</span><span class="lang-cn">个人交易智能平台——实时股票与期权组合追踪，含 Black-Scholes 希腊值、LNG 市场分析、交易日志、任务系统及每日 7AM 邮件摘要。部署于 Vercel + Render。</span></div>
@@ -899,7 +908,7 @@
             <a href="https://github.com/AwesomeLee0301/equity-hub" class="proj-link" target="_blank" rel="noopener noreferrer">GITHUB</a>
           </div>
         </div>
-        <div class="proj-card">
+        <div class="proj-card reveal">
           <div class="proj-type">Automation · Ops</div>
           <div class="proj-name"><span class="lang-en">P&L Automation & ADP Planner</span><span class="lang-cn">P&L 自动化与 ADP 规划工具</span></div>
           <div class="proj-desc"><span class="lang-en">Automated daily P&L and exposure analytics at Woodside (−30% manual process). Built an Annual Delivery Programme planning tool at Centrica for streamlined operational scheduling and nomination tracking.</span><span class="lang-cn">在 Woodside 自动化每日 P&L 和敞口分析（手动流程减少 30%）。在 Centrica 构建了年度交付计划（ADP）规划工具，简化运营排程与提名跟踪。</span></div>
@@ -917,13 +926,13 @@
   <!-- SKILLS -->
   <section id="skills">
     <div class="container">
-      <div class="sec-head">
+      <div class="sec-head reveal">
         <span class="sec-num">04 /</span>
         <h2 class="sec-title"><span class="lang-en">Skills</span><span class="lang-cn">技能</span></h2>
         <div class="sec-rule"></div>
       </div>
       <div class="skills-layout">
-        <div class="skill-blk">
+        <div class="skill-blk reveal">
           <div class="skill-blk-title"><span class="lang-en">Markets & Trading</span><span class="lang-cn">市场与交易</span></div>
           <div class="skill-items">
             <div class="skill-row"><span class="skill-name"><span class="lang-en">LNG Trading</span><span class="lang-cn">LNG 交易</span></span><div class="skill-bar-wrap"><div class="skill-bar" style="width:98%"></div></div></div>
@@ -933,7 +942,7 @@
             <div class="skill-row"><span class="skill-name"><span class="lang-en">Arbitrage Analysis</span><span class="lang-cn">套利分析</span></span><div class="skill-bar-wrap"><div class="skill-bar" style="width:88%"></div></div></div>
           </div>
         </div>
-        <div class="skill-blk">
+        <div class="skill-blk reveal">
           <div class="skill-blk-title"><span class="lang-en">Quant & Programming</span><span class="lang-cn">量化与编程</span></div>
           <div class="skill-items">
             <div class="skill-row"><span class="skill-name">Python</span><div class="skill-bar-wrap"><div class="skill-bar" style="width:90%"></div></div></div>
@@ -943,7 +952,7 @@
             <div class="skill-row"><span class="skill-name"><span class="lang-en">LLMs / AI</span><span class="lang-cn">大模型 / AI</span></span><div class="skill-bar-wrap"><div class="skill-bar" style="width:72%"></div></div></div>
           </div>
         </div>
-        <div class="skill-blk">
+        <div class="skill-blk reveal">
           <div class="skill-blk-title"><span class="lang-en">Data & Tools</span><span class="lang-cn">数据与工具</span></div>
           <div class="skill-items">
             <div class="skill-row"><span class="skill-name">Bloomberg</span><div class="skill-bar-wrap"><div class="skill-bar" style="width:93%"></div></div></div>
@@ -960,7 +969,7 @@
   <!-- EXPERIENCE — TIMELINE -->
   <section id="experience">
     <div class="container">
-      <div class="sec-head">
+      <div class="sec-head reveal">
         <span class="sec-num">05 /</span>
         <h2 class="sec-title"><span class="lang-en">Experience</span><span class="lang-cn">经历</span></h2>
         <div class="sec-rule"></div>
@@ -1031,7 +1040,7 @@
   <!-- EDUCATION -->
   <section id="education">
     <div class="container">
-      <div class="sec-head">
+      <div class="sec-head reveal">
         <span class="sec-num">06 /</span>
         <h2 class="sec-title"><span class="lang-en">Education</span><span class="lang-cn">教育</span></h2>
         <div class="sec-rule"></div>
@@ -1078,7 +1087,7 @@
   <!-- BLOG -->
   <section id="blog">
     <div class="container">
-      <div class="sec-head">
+      <div class="sec-head reveal">
         <span class="sec-num">07 /</span>
         <h2 class="sec-title"><span class="lang-en">Writing</span><span class="lang-cn">文章</span></h2>
         <div class="sec-rule"></div>
@@ -1244,6 +1253,17 @@ const obs = new IntersectionObserver((entries) => {
   });
 }, { rootMargin: '-40% 0px -50% 0px' });
 sections.forEach(s => obs.observe(s));
+
+// SCROLL-TRIGGERED REVEAL
+const revealObs = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      revealObs.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.12 });
+document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
 </script>
 
 </body>
