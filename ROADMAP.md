@@ -36,13 +36,13 @@ Static single-page portfolio site. Deployed to GitHub Pages.
 
 - [x] Add algo trading system to projects — IBKR Algo Trading System card (RSI d2, 144-combo optimizer, paper trading)
 - [x] Add Equity Hub to projects — personal trading intelligence platform card (React + FastAPI, deployed)
-- [ ] Add LNG diversion analysis to projects (Kirk's approximation, spread option pricing)
+- [x] Add LNG diversion analysis to projects (Kirk's approximation, spread option pricing)
 - [ ] Add a writing/blog section (research notes, market commentary)
 - [ ] Update resume PDF — ensure `Li_Shuai_CV.pdf` is latest version
 
 ### UX
 
-- [ ] Smooth scroll with active nav highlight
+- [x] Smooth scroll with active nav highlight (IntersectionObserver — already implemented)
 - [ ] Project cards: add live demo link + GitHub link per card
 - [ ] Add a skills section with visual proficiency bars or tag cloud
 - [ ] Animated entrance for sections (CSS intersection observer)
