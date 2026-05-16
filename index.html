@@ -378,6 +378,13 @@
     border: 1px solid var(--line2); border-radius: 2px; color: var(--fg3);
     letter-spacing: 0.04em;
   }
+  .proj-links { display: flex; gap: 10px; margin-top: 16px; }
+  .proj-link {
+    font-family: var(--font-mono); font-size: 10px; padding: 4px 10px;
+    border: 1px solid var(--amber-dim); border-radius: 2px; color: var(--amber);
+    text-decoration: none; letter-spacing: 0.06em; transition: all 0.18s;
+  }
+  .proj-link:hover { background: var(--amber-dim); color: var(--bg); }
 
   /* SKILLS */
   #skills { background: var(--bg2); border-top: 1px solid var(--line2); border-bottom: 1px solid var(--line2); }
@@ -887,6 +894,9 @@
             <span class="t-tag">SQLite</span>
             <span class="t-tag">Black-Scholes</span>
             <span class="t-tag">IBKR</span>
+          </div>
+          <div class="proj-links">
+            <a href="https://github.com/AwesomeLee0301/equity-hub" class="proj-link" target="_blank" rel="noopener noreferrer">GITHUB</a>
           </div>
         </div>
         <div class="proj-card">
