@@ -43,16 +43,16 @@ Static single-page portfolio site. Deployed to GitHub Pages.
 ### UX
 
 - [x] Smooth scroll with active nav highlight (IntersectionObserver — already implemented)
-- [ ] Project cards: add live demo link + GitHub link per card
-- [ ] Add a skills section with visual proficiency bars or tag cloud
-- [ ] Animated entrance for sections (CSS intersection observer)
+- [x] Skills section with visual proficiency bars (3 categories × 5 skills each)
+- [x] Animated entrance for sections (scroll-triggered reveal via IntersectionObserver)
+- [ ] Project cards: add live demo link + GitHub link per card (GitHub links added; live demo TBD)
 - [ ] Print-friendly CV stylesheet
 
 ### Technical
 
+- [x] Add sitemap.xml for SEO (with `<link rel="sitemap">` in head)
 - [ ] Move to a proper build pipeline (Vite) to support component reuse
 - [ ] Self-host fonts to avoid Google Fonts dependency
-- [ ] Add sitemap.xml for SEO
 - [ ] Lighthouse audit — aim for 100/100 performance + accessibility
 
 ---
