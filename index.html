@@ -610,6 +610,20 @@
     .reveal-delay-3 { transition-delay: 0.24s; }
   }
 
+  /* PRINT */
+  @media print {
+    :root {
+      --bg: #fff; --bg2: #f9f9f9; --bg3: #f4f4f4;
+      --fg: #111; --fg2: #444; --fg3: #777;
+      --line: #ddd; --line2: #e4e4e4; --amber: #c47c00;
+    }
+    nav, .nav-lang-row, .hero-panel, .footer-info { display: none !important; }
+    body { font-size: 11pt; }
+    section { break-inside: avoid; }
+    a { color: inherit; text-decoration: none; }
+    .reveal { opacity: 1 !important; transform: none !important; }
+  }
+
   /* RESPONSIVE */
   @media (max-width: 800px) {
     :root { --gutter: 24px; }
