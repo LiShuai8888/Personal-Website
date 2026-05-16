@@ -2,7 +2,7 @@
 
 Static single-page portfolio site. Deployed to GitHub Pages.
 
-**Live:** https://lishuai8888.github.io/Personal-Website/
+**Live:** [lishuai8888.github.io/Personal-Website](https://lishuai8888.github.io/Personal-Website/)
 
 **Stack:** Vanilla HTML/CSS/JS — no build step, no framework. Single `index.html`.
 
@@ -46,7 +46,7 @@ Static single-page portfolio site. Deployed to GitHub Pages.
 - [x] Skills section with visual proficiency bars (3 categories × 5 skills each)
 - [x] Animated entrance for sections (scroll-triggered reveal via IntersectionObserver)
 - [ ] Project cards: add live demo link + GitHub link per card (GitHub links added; live demo TBD)
-- [ ] Print-friendly CV stylesheet
+- [x] Print-friendly CV stylesheet (white bg, hides nav/code panels, reveal override)
 
 ### Technical
 
