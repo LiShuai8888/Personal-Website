@@ -879,17 +879,6 @@
       </div>
       <div class="proj-grid">
         <div class="proj-card reveal">
-          <div class="proj-type">Trading Tool · Python</div>
-          <div class="proj-name"><span class="lang-en">LNG Optimization Dashboard</span><span class="lang-cn">LNG 组合优化仪表盘</span></div>
-          <div class="proj-desc"><span class="lang-en">Automated portfolio optimization dashboard tracking contract optionality, in/out-of-money positions, and P&L attribution across the LNG book. Used directly by front-office traders at Centrica LNG.</span><span class="lang-cn">自动化的组合优化仪表盘，跟踪合约期权价值、价内/价外仓位以及 P&L 归因。被 Centrica LNG 前台交易员直接使用。</span></div>
-          <div class="proj-tech">
-            <span class="t-tag">Python</span>
-            <span class="t-tag">Excel/VBA</span>
-            <span class="t-tag">Bloomberg</span>
-            <span class="t-tag">Kpler</span>
-          </div>
-        </div>
-        <div class="proj-card reveal">
           <div class="proj-type">Research · Quant Finance</div>
           <div class="proj-name"><span class="lang-en">Spread Option in LNG Arbitrage</span><span class="lang-cn">LNG 套利中的价差期权</span></div>
           <div class="proj-desc"><span class="lang-en">MFE thesis applying spread option pricing to LNG geographical arbitrage. Implemented Kirk's Approximation and Change-of-Numeraire methods to model Atlantic–Pacific price differentials.</span><span class="lang-cn">金融工程硕士毕业论文，将价差期权定价应用于 LNG 地理套利。实现了 Kirk 近似法和计价单位变换法，建模大西洋—太平洋的价差。</span></div>
@@ -903,24 +892,37 @@
           </div>
         </div>
         <div class="proj-card reveal">
-          <div class="proj-type">Quant Tool · Done</div>
-          <div class="proj-name"><span class="lang-en">LNG Diversion Analysis Tool</span><span class="lang-cn">LNG 转运分析工具</span></div>
-          <div class="proj-desc"><span class="lang-en">Kirk's Approximation for LNG geographical arbitrage — computing spread option value across JKM/TTF corridors, shipping cost strike, and cargo-level DIVERT/HOLD signals. Extends my MFE thesis into a live trading tool within Equity Hub.</span><span class="lang-cn">将 Kirk 近似法应用于 LNG 地理套利，计算 JKM/TTF 价差期权价值、运输成本行权价及逐货轮 DIVERT/HOLD 信号。基于金融工程硕士论文，集成至 Equity Hub 交易平台。</span></div>
+          <div class="proj-type">LNG Quant Tooling · Python</div>
+          <div class="proj-name"><span class="lang-en">LNG Portfolio &amp; Diversion Analytics</span><span class="lang-cn">LNG 组合优化与转运分析</span></div>
+          <div class="proj-desc">
+            <span class="lang-en">
+              Two-layer LNG quant stack.
+              <strong>(1)</strong> Portfolio optimization dashboard tracking contract optionality, ITM/OTM positions and P&amp;L attribution — in production use by Centrica LNG front-office traders.
+              <strong>(2)</strong> Personal cargo-level diversion model inside Equity Hub: Kirk's Approximation on JKM/TTF spread options with shipping-cost strike, giving per-cargo DIVERT/HOLD signals. Built on the math from my MFE thesis.
+            </span>
+            <span class="lang-cn">
+              双层 LNG 量化工具。
+              <strong>（1）</strong>组合优化仪表盘——跟踪合约期权价值、价内/价外仓位及 P&amp;L 归因，被 Centrica LNG 前台交易员实际使用。
+              <strong>（2）</strong>个人项目：Equity Hub 内的逐货轮转运模型——基于 Kirk 近似法、以运输成本为行权价的 JKM/TTF 价差期权，输出 DIVERT/HOLD 信号。源自金融工程硕士论文。
+            </span>
+          </div>
           <div class="proj-tech">
             <span class="t-tag">Python</span>
             <span class="t-tag">FastAPI</span>
+            <span class="t-tag">Excel/VBA</span>
+            <span class="t-tag">Bloomberg</span>
+            <span class="t-tag">Kpler</span>
             <span class="t-tag">Kirk's Approx</span>
-            <span class="t-tag">Spread Options</span>
             <span class="t-tag">JKM/TTF</span>
           </div>
           <div class="proj-links">
-            <a href="https://github.com/AwesomeLee0301/equity-hub" class="proj-link" target="_blank" rel="noopener noreferrer" data-goatcounter-click="github-lng-diversion" data-goatcounter-title="GitHub — LNG Diversion Tool">GITHUB</a>
+            <a href="https://github.com/AwesomeLee0301/equity-hub" class="proj-link" target="_blank" rel="noopener noreferrer" data-goatcounter-click="github-lng-quant" data-goatcounter-title="GitHub — Equity Hub LNG">GITHUB</a>
           </div>
         </div>
         <div class="proj-card reveal">
           <div class="proj-type">Algo System · Personal Project</div>
           <div class="proj-name"><span class="lang-en">IBKR Algo Trading System</span><span class="lang-cn">IBKR 算法交易系统</span></div>
-          <div class="proj-desc"><span class="lang-en">Event-driven Python algo trading system live on IBKR paper account. RSI 2nd-derivative signal with dual-mode execution (CLI + Telegram), Streamlit backtest dashboard with 144-combo grid optimizer, volume profile S/R detection, and walk-forward period analysis.</span><span class="lang-cn">基于事件驱动的 Python 算法交易系统，在 IBKR 模拟账户实时运行。采用 RSI 二阶导数信号，双模式执行（CLI + Telegram），含 Streamlit 回测仪表盘、144 组合网格优化器及成交量轮廓支撑阻力检测。</span></div>
+          <div class="proj-desc"><span class="lang-en">Event-driven Python algo trading system running on IBKR paper account via the official IB API. RSI 2nd-derivative entry signal with vol-filter, long-only universe with trend-gated shorts in weak-trend regimes, and warm-restart position sync so existing trades are re-evaluated against the current signal on every restart. Separate Streamlit backtest dashboard with 144-combo grid optimizer, walk-forward period analysis, and margin-call simulation.</span><span class="lang-cn">基于事件驱动的 Python 算法交易系统，通过 IB 官方 API 在 IBKR 模拟账户运行。RSI 二阶导数入场信号搭配波动率过滤，多头为主、弱趋势区间触发空头，启动时自动同步并按当前信号重新评估现有仓位。独立 Streamlit 回测仪表盘含 144 组合网格优化器、walk-forward 分析及保证金追缴模拟。</span></div>
           <div class="proj-tech">
             <span class="t-tag">Python</span>
             <span class="t-tag">ibapi</span>
