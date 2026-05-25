@@ -28,7 +28,9 @@
   /* Hero CN name uses Ma Shan Zheng (Google Fonts) — text-subset for speed */
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: no-preference) {
+    html { scroll-behavior: smooth; }
+  }
 
   /* DARK (default) */
   :root {
@@ -501,6 +503,12 @@
     content: '·'; position: absolute; left: 4px;
     color: var(--amber); font-weight: 700;
   }
+  .edu-paper-link {
+    color: var(--amber); text-decoration: none; font-weight: 500;
+    border-bottom: 1px dotted var(--amber); padding-bottom: 1px;
+    margin-left: 4px; white-space: nowrap; transition: color 0.15s;
+  }
+  .edu-paper-link:hover { color: var(--fg); border-bottom-color: var(--fg); }
 
   /* BLOG */
   .blog-grid {
@@ -610,6 +618,10 @@
     .reveal-delay-3 { transition-delay: 0.24s; }
   }
 
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+  }
+
   /* PRINT */
   @media print {
     :root {
@@ -668,8 +680,8 @@
     <li><a href="#contact"><span class="lang-en">contact</span><span class="lang-cn">联系</span></a></li>
   </ul>
   <div class="nav-controls">
-    <button class="nav-btn" id="langToggle" title="Switch language">EN / 中</button>
-    <button class="nav-btn" id="themeToggle" title="Toggle theme">☾</button>
+    <button class="nav-btn" id="langToggle" title="Switch language" aria-label="Switch language">EN / 中</button>
+    <button class="nav-btn" id="themeToggle" title="Toggle theme" aria-label="Toggle dark/light theme">☾</button>
   </div>
 </nav>
 
@@ -1087,7 +1099,14 @@
             <div class="edu-deg"><span class="lang-en">MASTER OF FINANCIAL ENGINEERING</span><span class="lang-cn">金融工程硕士</span></div>
             <ul class="edu-pts">
               <li><span class="lang-en">Option pricing, stochastic calculus, ML for financial risk modeling and trading strategy optimization.</span><span class="lang-cn">期权定价、随机微积分、机器学习在金融风险建模和交易策略优化中的应用。</span></li>
-              <li><span class="lang-en">FYP: <em>Application of Spread Option in LNG Geographical Arbitrage</em> — Kirk's Approximation & Change-of-Numeraire methods.</span><span class="lang-cn">毕业论文：《价差期权在 LNG 地理套利中的应用》——Kirk 近似法与计价单位变换法。</span></li>
+              <li>
+                <span class="lang-en">FYP: <em>Application of Spread Option in LNG Geographical Arbitrage</em> — Kirk's Approximation & Change-of-Numeraire methods.
+                  <a href="uploads/Final%20Year%20Project%20-%20Li%20Shuai.pdf" target="_blank" rel="noopener" class="edu-paper-link">Read paper ↗</a>
+                </span>
+                <span class="lang-cn">毕业论文：《价差期权在 LNG 地理套利中的应用》——Kirk 近似法与计价单位变换法。
+                  <a href="uploads/Final%20Year%20Project%20-%20Li%20Shuai.pdf" target="_blank" rel="noopener" class="edu-paper-link">阅读全文 ↗</a>
+                </span>
+              </li>
             </ul>
           </div>
         </div>
