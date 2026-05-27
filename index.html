@@ -392,6 +392,143 @@
   }
   .proj-link:hover { background: var(--amber-dim); color: var(--bg); }
 
+  /* LAB / SIDE PROJECTS (pulled from Equity Hub) */
+  .lab-pulse {
+    display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+    margin: -28px 0 36px;
+    padding: 12px 16px;
+    background: var(--bg2); border: 1px solid var(--line2);
+    border-radius: 4px;
+    font-family: var(--font-mono); font-size: 11px; color: var(--fg3);
+    letter-spacing: 0.04em;
+  }
+  .lab-pulse-label {
+    color: var(--amber); padding-right: 12px;
+    border-right: 1px solid var(--line2);
+    margin-right: 4px;
+    text-transform: uppercase; letter-spacing: 0.1em; font-size: 10px;
+  }
+  .lab-pulse-dot {
+    width: 6px; height: 6px; border-radius: 50%; background: var(--amber);
+    display: inline-block; margin-right: 6px; vertical-align: middle;
+    animation: blink 2.5s ease-in-out infinite;
+  }
+  .lab-pulse-item { color: var(--fg2); }
+  .lab-pulse-item .date { color: var(--fg3); margin-right: 6px; }
+  .lab-pulse-sep { color: var(--line2); margin: 0 4px; }
+  body.cn .lab-pulse { font-family: var(--font-display); font-size: 12px; }
+  body.cn .lab-pulse-label { font-family: var(--font-mono); }
+
+  .lab-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+  }
+  .lab-card {
+    background: var(--bg2); border: 1px solid var(--line2);
+    border-radius: 4px; padding: 28px;
+    display: flex; flex-direction: column; gap: 18px;
+    transition: border-color 0.2s;
+  }
+  .lab-card:hover { border-color: var(--amber-dim); }
+  .lab-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+  .lab-head-l { min-width: 0; flex: 1; }
+  .lab-name {
+    font-family: var(--font-display); font-weight: 700; font-size: 18px;
+    letter-spacing: -0.02em; color: var(--fg); margin-bottom: 4px;
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  }
+  .lab-badge {
+    font-family: var(--font-mono); font-size: 9px; font-weight: 700;
+    padding: 2px 6px; border-radius: 2px;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    border: 1px solid currentColor;
+  }
+  .lab-badge.active { color: var(--amber); }
+  .lab-badge.live { color: oklch(72% 0.14 145); }
+  body.cn .lab-badge { font-family: var(--font-mono); }
+  .lab-tagline { font-size: 12px; color: var(--fg2); line-height: 1.5; }
+  .lab-pct {
+    font-family: var(--font-mono); font-weight: 700; font-size: 20px;
+    color: var(--amber); line-height: 1; white-space: nowrap;
+  }
+  .lab-pct.done { color: oklch(72% 0.14 145); }
+
+  .lab-meta { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+  .lab-stack {
+    font-family: var(--font-mono); font-size: 10px; color: var(--fg3);
+    background: var(--bg3); padding: 3px 8px; border-radius: 2px;
+    border: 1px solid var(--line2);
+  }
+  .lab-link {
+    font-family: var(--font-mono); font-size: 10px; color: var(--amber);
+    text-decoration: none; padding: 3px 8px;
+    border: 1px solid color-mix(in srgb, var(--amber) 30%, transparent);
+    border-radius: 2px; transition: all 0.15s;
+  }
+  .lab-link:hover {
+    background: color-mix(in srgb, var(--amber) 10%, transparent);
+    border-color: var(--amber-dim);
+  }
+
+  .lab-phases { display: flex; flex-direction: column; gap: 10px; }
+  .lab-phase { display: grid; grid-template-columns: 14px 1fr; gap: 10px; }
+  .lab-phase-rail {
+    display: flex; flex-direction: column; align-items: center;
+    padding-top: 3px;
+  }
+  .lab-phase-dot {
+    width: 9px; height: 9px; border-radius: 50%;
+    background: var(--line2); border: 1.5px solid var(--line2);
+    flex-shrink: 0; box-sizing: border-box;
+  }
+  .lab-phase-dot.done { background: oklch(72% 0.14 145); border-color: oklch(72% 0.14 145); }
+  .lab-phase-dot.active { background: var(--amber); border-color: var(--amber); }
+  .lab-phase-line {
+    flex: 1; width: 1px; min-height: 8px;
+    background: var(--line2); margin-top: 2px;
+  }
+  .lab-phase-body { min-width: 0; }
+  .lab-phase-head {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 8px; margin-bottom: 5px;
+  }
+  .lab-phase-title {
+    font-family: var(--font-mono); font-size: 11px;
+    color: var(--fg2); letter-spacing: 0.02em;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  body.cn .lab-phase-title { font-family: var(--font-display); font-size: 12px; }
+  .lab-phase-title.done { color: var(--fg3); }
+  .lab-phase-stat {
+    font-family: var(--font-mono); font-size: 10px;
+    color: var(--fg3); white-space: nowrap; flex-shrink: 0;
+  }
+  .lab-phase-stat.done { color: oklch(72% 0.14 145); }
+  .lab-phase-stat.active { color: var(--amber); }
+  .lab-bar-wrap {
+    height: 3px; background: var(--bg3); border-radius: 2px;
+    overflow: hidden;
+  }
+  .lab-bar { height: 100%; background: var(--amber); border-radius: 2px; transition: width 0.6s ease; }
+  .lab-bar.done { background: oklch(72% 0.14 145); }
+
+  .lab-next {
+    border-top: 1px dashed var(--line2); padding-top: 14px;
+  }
+  .lab-next-label {
+    font-family: var(--font-mono); font-size: 9px; color: var(--fg3);
+    letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px;
+  }
+  body.cn .lab-next-label { font-family: var(--font-display); font-size: 11px; }
+  .lab-next-list { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+  .lab-next-list li {
+    font-size: 12px; color: var(--fg2); line-height: 1.5;
+    padding-left: 14px; position: relative;
+  }
+  .lab-next-list li::before {
+    content: '→'; position: absolute; left: 0; color: var(--amber-dim);
+    font-size: 10px; top: 3px;
+  }
+
   /* SKILLS */
   #skills { background: var(--bg2); border-top: 1px solid var(--line2); border-bottom: 1px solid var(--line2); }
   .skills-layout { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
@@ -646,7 +783,7 @@
     .hero-wrap { grid-template-columns: 1fr; }
     .hero-panel { display: none; }
     .about-layout, .contact-layout { grid-template-columns: 1fr; gap: 40px; }
-    .now-grid, .proj-grid, .skills-layout, .blog-grid { grid-template-columns: 1fr; }
+    .now-grid, .proj-grid, .lab-grid, .skills-layout, .blog-grid { grid-template-columns: 1fr; }
     .edu-item { grid-template-columns: 1fr; gap: 12px; padding: 24px; }
     footer { flex-direction: column; gap: 8px; }
   }
@@ -676,6 +813,7 @@
     <li><a href="#about"><span class="lang-en">about</span><span class="lang-cn">关于</span></a></li>
     <li><a href="#now"><span class="lang-en">now</span><span class="lang-cn">现在</span></a></li>
     <li><a href="#projects"><span class="lang-en">projects</span><span class="lang-cn">项目</span></a></li>
+    <li><a href="#lab"><span class="lang-en">lab</span><span class="lang-cn">实验室</span></a></li>
     <li><a href="#skills"><span class="lang-en">skills</span><span class="lang-cn">技能</span></a></li>
     <li><a href="#experience"><span class="lang-en">experience</span><span class="lang-cn">经历</span></a></li>
     <li><a href="#education"><span class="lang-en">education</span><span class="lang-cn">教育</span></a></li>
@@ -844,26 +982,35 @@
           </div>
           <div class="now-card-label"><span class="lang-en">Reading</span><span class="lang-cn">在读</span></div>
           <div class="now-card-title"><span class="lang-en">Stochastic Calculus for Finance II</span><span class="lang-cn">金融随机微积分（第二册）</span></div>
-          <div class="now-card-desc"><span class="lang-en">Steven Shreve's continuous-time treatment — going deeper on Girsanov, change of numeraire, and exotic option pricing.</span><span class="lang-cn">Steven Shreve 的连续时间金融数学经典——深入研究 Girsanov 定理、计价单位变换以及奇异期权定价。</span></div>
-          <div class="now-meta"><span class="lang-en">📚 Self-study · Book 2 of 2</span><span class="lang-cn">📚 自学 · 第二册</span></div>
+          <div class="now-card-desc"><span class="lang-en">Steven Shreve's continuous-time treatment — deeper on Girsanov, change of numeraire, and exotic option pricing.</span><span class="lang-cn">Steven Shreve 的连续时间金融数学经典——深入研究 Girsanov 定理、计价单位变换以及奇异期权定价。</span></div>
+          <div class="now-meta">
+            <span class="lang-en">📖 Self-study · Ch. 5 of 11 · ~45%</span>
+            <span class="lang-cn">📖 自学 · 第 5 章 / 11 · ~45%</span>
+          </div>
         </div>
         <div class="now-card reveal">
           <div class="now-card-icon">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
           </div>
-          <div class="now-card-label"><span class="lang-en">Building</span><span class="lang-cn">在做</span></div>
-          <div class="now-card-title"><span class="lang-en">Equity Hub — trading intelligence platform</span><span class="lang-cn">交易智能平台 Equity Hub</span></div>
-          <div class="now-card-desc"><span class="lang-en">Full-stack personal trading dashboard: equity + options portfolio with Black-Scholes Greeks, LNG diversion analysis (Kirk's approximation), VaR/CVaR, scenario stress testing, and email digest.</span><span class="lang-cn">全栈个人交易仪表盘：股票+期权组合与 Black-Scholes 希腊值、LNG 转运分析（Kirk 近似法）、VaR/CVaR、情景压力测试与邮件摘要。</span></div>
-          <div class="now-meta"><span class="lang-en">⚡ Active · FastAPI · React · Vercel + Render</span><span class="lang-cn">⚡ 进行中 · FastAPI · React · Vercel + Render</span></div>
+          <div class="now-card-label"><span class="lang-en">Shipping</span><span class="lang-cn">在发布</span></div>
+          <div class="now-card-title"><span class="lang-en">Equity Hub — Phase 3 wrap-up</span><span class="lang-cn">Equity Hub — 第三阶段收尾</span></div>
+          <div class="now-card-desc"><span class="lang-en">Personal trading-intel stack: FastAPI + React. VaR/CVaR, vol surface, correlation heatmap and TradingView charts all shipped this month — IBKR Gateway live positions is the final task.</span><span class="lang-cn">个人交易情报系统：FastAPI + React。本月已交付 VaR/CVaR、波动率曲面、相关性热图与 TradingView 图表——剩 IBKR Gateway 实时持仓一项。</span></div>
+          <div class="now-meta">
+            <span class="lang-en">⚡ Phase 3 · 13 of 14 · ~93%</span>
+            <span class="lang-cn">⚡ 第三阶段 · 13 / 14 · ~93%</span>
+          </div>
         </div>
         <div class="now-card reveal">
           <div class="now-card-icon">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
           </div>
-          <div class="now-card-label"><span class="lang-en">Researching</span><span class="lang-cn">在研究</span></div>
-          <div class="now-card-title"><span class="lang-en">Cross-asset signal blends</span><span class="lang-cn">跨资产信号组合</span></div>
-          <div class="now-card-desc"><span class="lang-en">Backtesting carry, momentum, and term-structure factors across energy ETFs and macro indices in Python.</span><span class="lang-cn">在 Python 中回测能源 ETF 和宏观指数上的 carry、动量与期限结构因子。</span></div>
-          <div class="now-meta"><span class="lang-en">📈 Personal research · Q2 2026</span><span class="lang-cn">📈 个人研究 · 2026 Q2</span></div>
+          <div class="now-card-label"><span class="lang-en">Learning</span><span class="lang-cn">在学习</span></div>
+          <div class="now-card-title"><span class="lang-en">Algo Trading System — 5-phase deep dive</span><span class="lang-cn">算法交易系统 — 五阶段深入</span></div>
+          <div class="now-card-desc"><span class="lang-en">RSI 2nd-derivative strategy now live on IBKR paper. Working through: codebase trace → backtests → statistics → strategy dev → live with risk controls.</span><span class="lang-cn">RSI 二阶导数策略已在 IBKR 模拟账户运行。学习路径：代码库梳理 → 回测 → 统计 → 策略开发 → 含风控的实盘。</span></div>
+          <div class="now-meta">
+            <span class="lang-en">📈 System: 12/12 ✓ · Learning: 0/14</span>
+            <span class="lang-cn">📈 系统：12/12 ✓ · 学习：0/14</span>
+          </div>
         </div>
       </div>
     </div>
@@ -977,11 +1124,303 @@
     </div>
   </section>
 
+  <!-- LAB -->
+  <section id="lab">
+    <div class="container">
+      <div class="sec-head reveal">
+        <span class="sec-num">04 /</span>
+        <h2 class="sec-title"><span class="lang-en">Lab</span><span class="lang-cn">实验室</span></h2>
+        <div class="sec-rule"></div>
+      </div>
+
+      <div class="lab-pulse reveal">
+        <span class="lab-pulse-label"><span class="lab-pulse-dot"></span><span class="lang-en">Recent</span><span class="lang-cn">最近</span></span>
+        <span class="lab-pulse-item"><span class="date">May 16</span><span class="lang-en">VaR/CVaR + vol surface + correlation heatmap shipped</span><span class="lang-cn">VaR/CVaR + 波动率曲面 + 相关性热图 已发布</span></span>
+        <span class="lab-pulse-sep">•</span>
+        <span class="lab-pulse-item"><span class="date">May 16</span><span class="lang-en">Algo Trading M12 — Sortino / Calmar / Profit Factor</span><span class="lang-cn">算法交易 M12 — Sortino / Calmar / 盈亏比</span></span>
+        <span class="lab-pulse-sep">•</span>
+        <span class="lab-pulse-item"><span class="date">May 10</span><span class="lang-en">IBKR Tier 2/3 parsers — NAV + Realized P&amp;L</span><span class="lang-cn">IBKR 第二/三级解析器 — NAV + 已实现 P&amp;L</span></span>
+        <span class="lab-pulse-sep">•</span>
+        <span class="lab-pulse-item"><span class="date">May 01</span><span class="lang-en">LNG diversion — Kirk's approximation live</span><span class="lang-cn">LNG 转向分析 — Kirk 近似法上线</span></span>
+      </div>
+
+      <div class="lab-grid">
+        <!-- Equity Hub -->
+        <div class="lab-card reveal">
+          <div class="lab-head">
+            <div class="lab-head-l">
+              <div class="lab-name">Equity Hub <span class="lab-badge active">Active</span></div>
+              <div class="lab-tagline"><span class="lang-en">Personal trading intelligence platform — positions, Greeks, journal, risk.</span><span class="lang-cn">个人交易情报平台——持仓、Greeks、交易日志、风险。</span></div>
+            </div>
+            <div class="lab-pct">99%</div>
+          </div>
+          <div class="lab-meta">
+            <span class="lab-stack">FastAPI · React/Vite · SQLite/Postgres</span>
+          </div>
+          <div class="lab-phases">
+            <div class="lab-phase">
+              <div class="lab-phase-rail"><span class="lab-phase-dot done"></span><span class="lab-phase-line"></span></div>
+              <div class="lab-phase-body">
+                <div class="lab-phase-head">
+                  <span class="lab-phase-title done"><span class="lang-en">Phase 1 — MVP</span><span class="lang-cn">第一阶段 — MVP</span></span>
+                  <span class="lab-phase-stat done">✓ Mar 2026</span>
+                </div>
+                <div class="lab-bar-wrap"><div class="lab-bar done" style="width:100%"></div></div>
+              </div>
+            </div>
+            <div class="lab-phase">
+              <div class="lab-phase-rail"><span class="lab-phase-dot done"></span><span class="lab-phase-line"></span></div>
+              <div class="lab-phase-body">
+                <div class="lab-phase-head">
+                  <span class="lab-phase-title done"><span class="lang-en">Phase 2 — Trader-Grade</span><span class="lang-cn">第二阶段 — 交易员级</span></span>
+                  <span class="lab-phase-stat done">✓ Apr 2026</span>
+                </div>
+                <div class="lab-bar-wrap"><div class="lab-bar done" style="width:100%"></div></div>
+              </div>
+            </div>
+            <div class="lab-phase">
+              <div class="lab-phase-rail"><span class="lab-phase-dot done"></span><span class="lab-phase-line"></span></div>
+              <div class="lab-phase-body">
+                <div class="lab-phase-head">
+                  <span class="lab-phase-title done"><span class="lang-en">Phase 2.5 — Extensions</span><span class="lang-cn">阶段 2.5 — 拓展</span></span>
+                  <span class="lab-phase-stat done">✓ May 2026</span>
+                </div>
+                <div class="lab-bar-wrap"><div class="lab-bar done" style="width:100%"></div></div>
+              </div>
+            </div>
+            <div class="lab-phase">
+              <div class="lab-phase-rail"><span class="lab-phase-dot active"></span><span class="lab-phase-line"></span></div>
+              <div class="lab-phase-body">
+                <div class="lab-phase-head">
+                  <span class="lab-phase-title"><span class="lang-en">Phase 3 — Pro Level</span><span class="lang-cn">第三阶段 — 专业级</span></span>
+                  <span class="lab-phase-stat active">13/14 · 93%</span>
+                </div>
+                <div class="lab-bar-wrap"><div class="lab-bar" style="width:93%"></div></div>
+              </div>
+            </div>
+            <div class="lab-phase">
+              <div class="lab-phase-rail"><span class="lab-phase-dot done"></span></div>
+              <div class="lab-phase-body">
+                <div class="lab-phase-head">
+                  <span class="lab-phase-title done"><span class="lang-en">LNG Diversion Analysis</span><span class="lang-cn">LNG 转向分析</span></span>
+                  <span class="lab-phase-stat done">✓ May 2026</span>
+                </div>
+                <div class="lab-bar-wrap"><div class="lab-bar done" style="width:100%"></div></div>
+              </div>
+            </div>
+          </div>
+          <div class="lab-next">
+            <div class="lab-next-label"><span class="lang-en">Next up</span><span class="lang-cn">接下来</span></div>
+            <ul class="lab-next-list">
+              <li><span class="lang-en">IBKR Gateway live positions — eliminate CSV uploads</span><span class="lang-cn">IBKR Gateway 实时持仓 — 取消 CSV 上传</span></li>
+              <li><span class="lang-en">Multi-underlying portfolio P&amp;L view</span><span class="lang-cn">多标的物组合 P&amp;L 视图</span></li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Algo Trading System -->
+        <div class="lab-card reveal">
+          <div class="lab-head">
+            <div class="lab-head-l">
+              <div class="lab-name"><span class="lang-en">Algo Trading System</span><span class="lang-cn">算法交易系统</span> <span class="lab-badge active">Active</span></div>
+              <div class="lab-tagline"><span class="lang-en">Event-driven RSI 2nd-derivative strategy — live on IBKR paper. Now learning the system end-to-end.</span><span class="lang-cn">事件驱动的 RSI 二阶导数策略——在 IBKR 模拟账户运行。正在系统性梳理。</span></div>
+            </div>
+            <div class="lab-pct">46%</div>
+          </div>
+          <div class="lab-meta">
+            <span class="lab-stack">Python · ibapi · SQLite · Streamlit</span>
+            <span class="lab-stack">IBKR TWS 7497</span>
+          </div>
+          <div class="lab-phases">
+            <div class="lab-phase">
+              <div class="lab-phase-rail"><span class="lab-phase-dot done"></span><span class="lab-phase-line"></span></div>
+              <div class="lab-phase-body">
+                <div class="lab-phase-head">
+                  <span class="lab-phase-title done"><span class="lang-en">System Build · M1–M12</span><span class="lang-cn">系统搭建 · M1–M12</span></span>
+                  <span class="lab-phase-stat done">✓ May 2026</span>
+                </div>
+                <div class="lab-bar-wrap"><div class="lab-bar done" style="width:100%"></div></div>
+              </div>
+            </div>
+            <div class="lab-phase">
+              <div class="lab-phase-rail"><span class="lab-phase-dot active"></span><span class="lab-phase-line"></span></div>
+              <div class="lab-phase-body">
+                <div class="lab-phase-head">
+                  <span class="lab-phase-title"><span class="lang-en">Learning · P1 — Codebase</span><span class="lang-cn">学习 · P1 — 代码库</span></span>
+                  <span class="lab-phase-stat">0/3</span>
+                </div>
+                <div class="lab-bar-wrap"><div class="lab-bar" style="width:2%"></div></div>
+              </div>
+            </div>
+            <div class="lab-phase">
+              <div class="lab-phase-rail"><span class="lab-phase-dot"></span><span class="lab-phase-line"></span></div>
+              <div class="lab-phase-body">
+                <div class="lab-phase-head">
+                  <span class="lab-phase-title"><span class="lang-en">Learning · P2 — Backtests</span><span class="lang-cn">学习 · P2 — 回测</span></span>
+                  <span class="lab-phase-stat">0/2</span>
+                </div>
+                <div class="lab-bar-wrap"><div class="lab-bar" style="width:0%"></div></div>
+              </div>
+            </div>
+            <div class="lab-phase">
+              <div class="lab-phase-rail"><span class="lab-phase-dot"></span><span class="lab-phase-line"></span></div>
+              <div class="lab-phase-body">
+                <div class="lab-phase-head">
+                  <span class="lab-phase-title"><span class="lang-en">Learning · P3 — Statistics</span><span class="lang-cn">学习 · P3 — 统计</span></span>
+                  <span class="lab-phase-stat">0/3</span>
+                </div>
+                <div class="lab-bar-wrap"><div class="lab-bar" style="width:0%"></div></div>
+              </div>
+            </div>
+            <div class="lab-phase">
+              <div class="lab-phase-rail"><span class="lab-phase-dot"></span><span class="lab-phase-line"></span></div>
+              <div class="lab-phase-body">
+                <div class="lab-phase-head">
+                  <span class="lab-phase-title"><span class="lang-en">Learning · P4 — Strategy Dev</span><span class="lang-cn">学习 · P4 — 策略开发</span></span>
+                  <span class="lab-phase-stat">0/4</span>
+                </div>
+                <div class="lab-bar-wrap"><div class="lab-bar" style="width:0%"></div></div>
+              </div>
+            </div>
+            <div class="lab-phase">
+              <div class="lab-phase-rail"><span class="lab-phase-dot"></span></div>
+              <div class="lab-phase-body">
+                <div class="lab-phase-head">
+                  <span class="lab-phase-title"><span class="lang-en">Learning · P5 — Live Trading</span><span class="lang-cn">学习 · P5 — 实盘</span></span>
+                  <span class="lab-phase-stat">0/2</span>
+                </div>
+                <div class="lab-bar-wrap"><div class="lab-bar" style="width:0%"></div></div>
+              </div>
+            </div>
+          </div>
+          <div class="lab-next">
+            <div class="lab-next-label"><span class="lang-en">Next up</span><span class="lang-cn">接下来</span></div>
+            <ul class="lab-next-list">
+              <li><span class="lang-en">Trace one full trade: signal → order → fill → DB update</span><span class="lang-cn">跟踪完整交易链路：信号 → 下单 → 成交 → 入库</span></li>
+              <li><span class="lang-en">Backtest MA cross vs RSI d2 on real data — Sharpe + drawdown</span><span class="lang-cn">在真实数据上回测 MA 交叉 vs RSI d2 — 夏普与回撤</span></li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Travel App -->
+        <div class="lab-card reveal">
+          <div class="lab-head">
+            <div class="lab-head-l">
+              <div class="lab-name"><span class="lang-en">旅迹 Travel App</span><span class="lang-cn">旅迹</span> <span class="lab-badge live">v1 Live</span></div>
+              <div class="lab-tagline"><span class="lang-en">Collaborative trip journaling with a world map — first end-to-end Claude vibe-coded app.</span><span class="lang-cn">携带世界地图的协作旅行日志——首个端到端 Claude 携写应用。</span></div>
+            </div>
+            <div class="lab-pct">36%</div>
+          </div>
+          <div class="lab-meta">
+            <span class="lab-stack">FastAPI · React 18 · Supabase</span>
+            <a class="lab-link" href="https://travel-app-pearl-iota.vercel.app" target="_blank" rel="noopener">↗ App</a>
+            <a class="lab-link" href="https://github.com/AwesomeLee0301/travel-app" target="_blank" rel="noopener">↗ GitHub</a>
+          </div>
+          <div class="lab-phases">
+            <div class="lab-phase">
+              <div class="lab-phase-rail"><span class="lab-phase-dot done"></span><span class="lab-phase-line"></span></div>
+              <div class="lab-phase-body">
+                <div class="lab-phase-head">
+                  <span class="lab-phase-title done"><span class="lang-en">v1 — Full Feature Build</span><span class="lang-cn">v1 — 完整功能构建</span></span>
+                  <span class="lab-phase-stat done">✓ May 2026</span>
+                </div>
+                <div class="lab-bar-wrap"><div class="lab-bar done" style="width:100%"></div></div>
+              </div>
+            </div>
+            <div class="lab-phase">
+              <div class="lab-phase-rail"><span class="lab-phase-dot"></span></div>
+              <div class="lab-phase-body">
+                <div class="lab-phase-head">
+                  <span class="lab-phase-title"><span class="lang-en">v2 — Deferred</span><span class="lang-cn">v2 — 待定</span></span>
+                  <span class="lab-phase-stat">0/14</span>
+                </div>
+                <div class="lab-bar-wrap"><div class="lab-bar" style="width:0%"></div></div>
+              </div>
+            </div>
+          </div>
+          <div class="lab-next">
+            <div class="lab-next-label"><span class="lang-en">Next up</span><span class="lang-cn">接下来</span></div>
+            <ul class="lab-next-list">
+              <li><span class="lang-en">Photo uploads — S3, auto-attach by EXIF timestamp</span><span class="lang-cn">照片上传 — S3，按 EXIF 时间戳自动关联</span></li>
+              <li><span class="lang-en">Real-time collab — WebSockets, live updates</span><span class="lang-cn">实时协作 — WebSocket，实时同步</span></li>
+              <li><span class="lang-en">AI itinerary suggestions — Claude API, day-by-day plan</span><span class="lang-cn">AI 行程建议 — Claude API，逐日计划</span></li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Personal Website -->
+        <div class="lab-card reveal">
+          <div class="lab-head">
+            <div class="lab-head-l">
+              <div class="lab-name"><span class="lang-en">Personal Website</span><span class="lang-cn">个人网站</span> <span class="lab-badge live">v1 Live</span></div>
+              <div class="lab-tagline"><span class="lang-en">This site — single-page portfolio shipped to GitHub Pages.</span><span class="lang-cn">本站——部署到 GitHub Pages 的单页作品集。</span></div>
+            </div>
+            <div class="lab-pct">81%</div>
+          </div>
+          <div class="lab-meta">
+            <span class="lab-stack">Vanilla HTML · CSS · JS</span>
+            <a class="lab-link" href="https://lishuai8888.github.io/Personal-Website/" target="_blank" rel="noopener">↗ Live</a>
+          </div>
+          <div class="lab-phases">
+            <div class="lab-phase">
+              <div class="lab-phase-rail"><span class="lab-phase-dot done"></span><span class="lab-phase-line"></span></div>
+              <div class="lab-phase-body">
+                <div class="lab-phase-head">
+                  <span class="lab-phase-title done"><span class="lang-en">v1 — Core Site</span><span class="lang-cn">v1 — 主体站点</span></span>
+                  <span class="lab-phase-stat done">✓ Mar 2026</span>
+                </div>
+                <div class="lab-bar-wrap"><div class="lab-bar done" style="width:100%"></div></div>
+              </div>
+            </div>
+            <div class="lab-phase">
+              <div class="lab-phase-rail"><span class="lab-phase-dot active"></span><span class="lab-phase-line"></span></div>
+              <div class="lab-phase-body">
+                <div class="lab-phase-head">
+                  <span class="lab-phase-title"><span class="lang-en">v2 — Content</span><span class="lang-cn">v2 — 内容</span></span>
+                  <span class="lab-phase-stat active">3/4 · 75%</span>
+                </div>
+                <div class="lab-bar-wrap"><div class="lab-bar" style="width:75%"></div></div>
+              </div>
+            </div>
+            <div class="lab-phase">
+              <div class="lab-phase-rail"><span class="lab-phase-dot done"></span><span class="lab-phase-line"></span></div>
+              <div class="lab-phase-body">
+                <div class="lab-phase-head">
+                  <span class="lab-phase-title done"><span class="lang-en">v2 — UX</span><span class="lang-cn">v2 — 交互体验</span></span>
+                  <span class="lab-phase-stat done">✓ May 2026</span>
+                </div>
+                <div class="lab-bar-wrap"><div class="lab-bar done" style="width:100%"></div></div>
+              </div>
+            </div>
+            <div class="lab-phase">
+              <div class="lab-phase-rail"><span class="lab-phase-dot active"></span></div>
+              <div class="lab-phase-body">
+                <div class="lab-phase-head">
+                  <span class="lab-phase-title"><span class="lang-en">v2 — Technical</span><span class="lang-cn">v2 — 技术</span></span>
+                  <span class="lab-phase-stat active">1/4 · 25%</span>
+                </div>
+                <div class="lab-bar-wrap"><div class="lab-bar" style="width:25%"></div></div>
+              </div>
+            </div>
+          </div>
+          <div class="lab-next">
+            <div class="lab-next-label"><span class="lang-en">Next up</span><span class="lang-cn">接下来</span></div>
+            <ul class="lab-next-list">
+              <li><span class="lang-en">Update CV PDF to latest version</span><span class="lang-cn">更新简历 PDF 至最新版</span></li>
+              <li><span class="lang-en">First blog post — LNG spread option walkthrough</span><span class="lang-cn">首篇博文 — LNG 价差期权走读</span></li>
+              <li><span class="lang-en">Lighthouse 100/100 performance + a11y</span><span class="lang-cn">Lighthouse 性能 + 无障碍 100/100</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- SKILLS -->
   <section id="skills">
     <div class="container">
       <div class="sec-head reveal">
-        <span class="sec-num">04 /</span>
+        <span class="sec-num">05 /</span>
         <h2 class="sec-title"><span class="lang-en">Skills</span><span class="lang-cn">技能</span></h2>
         <div class="sec-rule"></div>
       </div>
@@ -1024,7 +1463,7 @@
   <section id="experience">
     <div class="container">
       <div class="sec-head reveal">
-        <span class="sec-num">05 /</span>
+        <span class="sec-num">06 /</span>
         <h2 class="sec-title"><span class="lang-en">Experience</span><span class="lang-cn">经历</span></h2>
         <div class="sec-rule"></div>
       </div>
@@ -1095,7 +1534,7 @@
   <section id="education">
     <div class="container">
       <div class="sec-head reveal">
-        <span class="sec-num">06 /</span>
+        <span class="sec-num">07 /</span>
         <h2 class="sec-title"><span class="lang-en">Education</span><span class="lang-cn">教育</span></h2>
         <div class="sec-rule"></div>
       </div>
@@ -1149,7 +1588,7 @@
   <section id="blog">
     <div class="container">
       <div class="sec-head reveal">
-        <span class="sec-num">07 /</span>
+        <span class="sec-num">08 /</span>
         <h2 class="sec-title"><span class="lang-en">Writing</span><span class="lang-cn">文章</span></h2>
         <div class="sec-rule"></div>
       </div>
@@ -1190,7 +1629,7 @@
     <div class="container">
       <div class="contact-layout">
         <div>
-          <div class="sec-num" style="margin-bottom:16px;">08 / Contact</div>
+          <div class="sec-num" style="margin-bottom:16px;">09 / Contact</div>
           <h2 class="contact-big">
             <span class="lang-en">Let's<br><span class="amber">connect.</span></span>
             <span class="lang-cn">让我们<br><span class="amber">联系吧。</span></span>
