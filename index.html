@@ -1039,26 +1039,26 @@
           </div>
         </div>
         <div class="proj-card reveal">
-          <div class="proj-type">LNG Quant Tooling · Python</div>
-          <div class="proj-name"><span class="lang-en">LNG Portfolio &amp; Diversion Analytics</span><span class="lang-cn">LNG 组合优化与转运分析</span></div>
+          <div class="proj-type">LNG Market Analytics · Python</div>
+          <div class="proj-name"><span class="lang-en">LNG Fundamentals Dashboard</span><span class="lang-cn">LNG 基本面分析仪表盘</span></div>
           <div class="proj-desc">
             <span class="lang-en">
-              Two-layer LNG quant stack.
-              <strong>(1)</strong> Portfolio optimization dashboard tracking contract optionality, ITM/OTM positions and P&amp;L attribution — in production use by Centrica LNG front-office traders.
-              <strong>(2)</strong> Personal cargo-level diversion model inside Equity Hub: Kirk's Approximation on JKM/TTF spread options with shipping-cost strike, giving per-cargo DIVERT/HOLD signals. Built on the math from my MFE thesis.
+              Global LNG supply/demand balance built on a six-table Kpler ETL stack (outages, diversions, trades, flows, installations, fleet).
+              Supply aggregated from export terminals by country with active liquefaction outages netted out as offline capacity; demand annualized from cargo-level trades mapped to import regions.
+              Tracks active outages and capacity offline, top origin→destination trade routes (Sankey), recent Atlantic–Pacific diversions, and floating storage derived from weekly fleet metrics. Layered with a cargo-level diversion model — Kirk's Approximation on the JKM/TTF spread with shipping-cost strike — giving per-cargo DIVERT/HOLD signals.
             </span>
             <span class="lang-cn">
-              双层 LNG 量化工具。
-              <strong>（1）</strong>组合优化仪表盘——跟踪合约期权价值、价内/价外仓位及 P&amp;L 归因，被 Centrica LNG 前台交易员实际使用。
-              <strong>（2）</strong>个人项目：Equity Hub 内的逐货轮转运模型——基于 Kirk 近似法、以运输成本为行权价的 JKM/TTF 价差期权，输出 DIVERT/HOLD 信号。源自金融工程硕士论文。
+              基于六张 Kpler ETL 数据表（停产、转运、成交、流向、设施、船队）构建的全球 LNG 供需平衡。
+              供给按国别汇总出口终端产能，并扣除当前液化停产的离线产能；需求由逐货轮成交数据按进口区域映射并年化。
+              跟踪在运停产与离线产能、主要起运—目的地贸易路线（桑基图）、近期大西洋—太平洋转运及由周度船队指标推算的浮仓。叠加逐货轮转运模型——以运输成本为行权价、对 JKM/TTF 价差应用 Kirk 近似法，输出逐货轮 DIVERT/HOLD 信号。
             </span>
           </div>
           <div class="proj-tech">
             <span class="t-tag">Python</span>
             <span class="t-tag">FastAPI</span>
-            <span class="t-tag">Excel/VBA</span>
-            <span class="t-tag">Bloomberg</span>
-            <span class="t-tag">Kpler</span>
+            <span class="t-tag">React</span>
+            <span class="t-tag">Kpler ETL</span>
+            <span class="t-tag">Recharts</span>
             <span class="t-tag">Kirk's Approx</span>
             <span class="t-tag">JKM/TTF</span>
           </div>
@@ -1135,13 +1135,13 @@
 
       <div class="lab-pulse reveal">
         <span class="lab-pulse-label"><span class="lab-pulse-dot"></span><span class="lang-en">Recent</span><span class="lang-cn">最近</span></span>
-        <span class="lab-pulse-item"><span class="date">May 16</span><span class="lang-en">VaR/CVaR + vol surface + correlation heatmap shipped</span><span class="lang-cn">VaR/CVaR + 波动率曲面 + 相关性热图 已发布</span></span>
+        <span class="lab-pulse-item"><span class="date">Jun 10</span><span class="lang-en">COT positioning (CFTC) + 14 market-fragility indicators live in Equity Hub</span><span class="lang-cn">COT 持仓（CFTC）+ 14 项市场脆弱性指标 已上线 Equity Hub</span></span>
         <span class="lab-pulse-sep">•</span>
-        <span class="lab-pulse-item"><span class="date">May 16</span><span class="lang-en">Algo Trading M12 — Sortino / Calmar / Profit Factor</span><span class="lang-cn">算法交易 M12 — Sortino / Calmar / 盈亏比</span></span>
+        <span class="lab-pulse-item"><span class="date">Jun 08</span><span class="lang-en">LNG Fundamentals dashboard — Kpler supply/demand/outage/diversion</span><span class="lang-cn">LNG 基本面仪表盘 — Kpler 供需/停产/转运</span></span>
         <span class="lab-pulse-sep">•</span>
-        <span class="lab-pulse-item"><span class="date">May 10</span><span class="lang-en">IBKR Tier 2/3 parsers — NAV + Realized P&amp;L</span><span class="lang-cn">IBKR 第二/三级解析器 — NAV + 已实现 P&amp;L</span></span>
+        <span class="lab-pulse-item"><span class="date">Jun 08</span><span class="lang-en">Calendar-year TWR + Kpler $ outage-impact &amp; trade-route Sankey</span><span class="lang-cn">日历年 TWR + Kpler 停产美元影响与贸易路线桑基图</span></span>
         <span class="lab-pulse-sep">•</span>
-        <span class="lab-pulse-item"><span class="date">May 01</span><span class="lang-en">LNG diversion — Kirk's approximation live</span><span class="lang-cn">LNG 转向分析 — Kirk 近似法上线</span></span>
+        <span class="lab-pulse-item"><span class="date">Jun 08</span><span class="lang-en">Backtest dashboard refactor + multi-strategy comparison</span><span class="lang-cn">回测仪表盘重构 + 多策略对比</span></span>
       </div>
 
       <div class="lab-grid">
@@ -1189,21 +1189,31 @@
               </div>
             </div>
             <div class="lab-phase">
-              <div class="lab-phase-rail"><span class="lab-phase-dot active"></span><span class="lab-phase-line"></span></div>
+              <div class="lab-phase-rail"><span class="lab-phase-dot done"></span><span class="lab-phase-line"></span></div>
               <div class="lab-phase-body">
                 <div class="lab-phase-head">
-                  <span class="lab-phase-title"><span class="lang-en">Phase 3 — Pro Level</span><span class="lang-cn">第三阶段 — 专业级</span></span>
-                  <span class="lab-phase-stat active">13/14 · 93%</span>
+                  <span class="lab-phase-title done"><span class="lang-en">Phase 3 — Pro Level</span><span class="lang-cn">第三阶段 — 专业级</span></span>
+                  <span class="lab-phase-stat done">✓ Jun 2026</span>
                 </div>
-                <div class="lab-bar-wrap"><div class="lab-bar" style="width:93%"></div></div>
+                <div class="lab-bar-wrap"><div class="lab-bar done" style="width:100%"></div></div>
+              </div>
+            </div>
+            <div class="lab-phase">
+              <div class="lab-phase-rail"><span class="lab-phase-dot done"></span><span class="lab-phase-line"></span></div>
+              <div class="lab-phase-body">
+                <div class="lab-phase-head">
+                  <span class="lab-phase-title done"><span class="lang-en">LNG Diversion Analysis</span><span class="lang-cn">LNG 转向分析</span></span>
+                  <span class="lab-phase-stat done">✓ May 2026</span>
+                </div>
+                <div class="lab-bar-wrap"><div class="lab-bar done" style="width:100%"></div></div>
               </div>
             </div>
             <div class="lab-phase">
               <div class="lab-phase-rail"><span class="lab-phase-dot done"></span></div>
               <div class="lab-phase-body">
                 <div class="lab-phase-head">
-                  <span class="lab-phase-title done"><span class="lang-en">LNG Diversion Analysis</span><span class="lang-cn">LNG 转向分析</span></span>
-                  <span class="lab-phase-stat done">✓ May 2026</span>
+                  <span class="lab-phase-title done"><span class="lang-en">LNG Fundamentals + COT + Market Signals</span><span class="lang-cn">LNG 基本面 + COT + 市场信号</span></span>
+                  <span class="lab-phase-stat done">✓ Jun 2026</span>
                 </div>
                 <div class="lab-bar-wrap"><div class="lab-bar done" style="width:100%"></div></div>
               </div>
@@ -1238,6 +1248,16 @@
                 <div class="lab-phase-head">
                   <span class="lab-phase-title done"><span class="lang-en">System Build · M1–M12</span><span class="lang-cn">系统搭建 · M1–M12</span></span>
                   <span class="lab-phase-stat done">✓ May 2026</span>
+                </div>
+                <div class="lab-bar-wrap"><div class="lab-bar done" style="width:100%"></div></div>
+              </div>
+            </div>
+            <div class="lab-phase">
+              <div class="lab-phase-rail"><span class="lab-phase-dot done"></span><span class="lab-phase-line"></span></div>
+              <div class="lab-phase-body">
+                <div class="lab-phase-head">
+                  <span class="lab-phase-title done"><span class="lang-en">Signal Tooling — COT + Indicators + Multi-Strat BT</span><span class="lang-cn">信号工具 — COT + 指标 + 多策略回测</span></span>
+                  <span class="lab-phase-stat done">✓ Jun 2026</span>
                 </div>
                 <div class="lab-bar-wrap"><div class="lab-bar done" style="width:100%"></div></div>
               </div>
