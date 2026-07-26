@@ -993,11 +993,11 @@
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
           </div>
           <div class="now-card-label"><span class="lang-en">Shipping</span><span class="lang-cn">在发布</span></div>
-          <div class="now-card-title"><span class="lang-en">Equity Hub — Phase 3 wrap-up</span><span class="lang-cn">Equity Hub — 第三阶段收尾</span></div>
-          <div class="now-card-desc"><span class="lang-en">Personal trading-intel stack: FastAPI + React. VaR/CVaR, vol surface, correlation heatmap and TradingView charts all shipped this month — IBKR Gateway live positions is the final task.</span><span class="lang-cn">个人交易情报系统：FastAPI + React。本月已交付 VaR/CVaR、波动率曲面、相关性热图与 TradingView 图表——剩 IBKR Gateway 实时持仓一项。</span></div>
+          <div class="now-card-title"><span class="lang-en">LNG Shipping Economics — Excel → Python</span><span class="lang-cn">LNG 航运经济模型 — Excel → Python</span></div>
+          <div class="now-card-desc"><span class="lang-en">Porting a 56k-formula LNG netforward workbook into a tested Python package — cargo P&amp;L within 0.71% of the sheet, a forward-curve engine spliced from the desk price book, annual-delivery-programme planning, and a Streamlit front end.</span><span class="lang-cn">将 5.6 万条公式的 LNG netforward 工作簿迁移为带测试的 Python 包——逐货 P&amp;L 与原表误差 0.71%，前瞻曲线引擎拼接自交易台价格表，含年度交付计划编排与 Streamlit 前端。</span></div>
           <div class="now-meta">
-            <span class="lang-en">⚡ Phase 3 · 13 of 14 · ~93%</span>
-            <span class="lang-cn">⚡ 第三阶段 · 13 / 14 · ~93%</span>
+            <span class="lang-en">⚙ 325 tests · 10 of 11 outputs ≤1% vs workbook</span>
+            <span class="lang-cn">⚙ 325 项测试 · 11 项输出中 10 项与原表误差 ≤1%</span>
           </div>
         </div>
         <div class="now-card reveal">
@@ -1005,11 +1005,11 @@
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
           </div>
           <div class="now-card-label"><span class="lang-en">Learning</span><span class="lang-cn">在学习</span></div>
-          <div class="now-card-title"><span class="lang-en">Algo Trading System — 5-phase deep dive</span><span class="lang-cn">算法交易系统 — 五阶段深入</span></div>
-          <div class="now-card-desc"><span class="lang-en">RSI 2nd-derivative strategy now live on IBKR paper. Working through: codebase trace → backtests → statistics → strategy dev → live with risk controls.</span><span class="lang-cn">RSI 二阶导数策略已在 IBKR 模拟账户运行。学习路径：代码库梳理 → 回测 → 统计 → 策略开发 → 含风控的实盘。</span></div>
+          <div class="now-card-title"><span class="lang-en">Algo Trading — proving an edge, not assuming one</span><span class="lang-cn">算法交易 — 先证伪，再谈优势</span></div>
+          <div class="now-card-desc"><span class="lang-en">Building the evidence layer between backtest and capital: universe-wide screening, walk-forward validation, and a deflated-Sharpe audit that corrects for how many strategies were tried before believing any of them.</span><span class="lang-cn">在回测与投入资金之间搭建证据层：全域筛选、walk-forward 验证，以及针对「试了多少个策略」做多重检验校正的 Deflated Sharpe 审计。</span></div>
           <div class="now-meta">
-            <span class="lang-en">📈 System: 12/12 ✓ · Learning: 0/14</span>
-            <span class="lang-cn">📈 系统：12/12 ✓ · 学习：0/14</span>
+            <span class="lang-en">📈 750+ tests · 1,270 tickers · 8.1M daily bars</span>
+            <span class="lang-cn">📈 750+ 项测试 · 1,270 只标的 · 810 万根日线</span>
           </div>
         </div>
       </div>
@@ -1067,15 +1067,41 @@
           </div>
         </div>
         <div class="proj-card reveal">
+          <div class="proj-type">LNG Cargo Economics · Python</div>
+          <div class="proj-name"><span class="lang-en">LNG Shipping Economics Model</span><span class="lang-cn">LNG 航运经济模型</span></div>
+          <div class="proj-desc">
+            <span class="lang-en">
+              A 38-sheet, 56,000-formula LNG netforward workbook rebuilt as a modular Python package — each module mirroring a contiguous block of the Economics sheet so every number can be traced back to its source row.
+              Covers voyage construction (distance, speed, boil-off, fuel strategy), port and canal costs, charter economics, and FOB netback / DES netforward break-evens, validated cargo-by-cargo against the workbook (10 of 11 outputs within 1%).
+              On top of the single-cargo engine sit the multi-cargo layers: an annual-delivery-programme planner that sizes a fleet against the one-cargo-per-vessel constraint, a cell-validated replication of a real Sabine Pass ADP, long-term deal economics across a tenor, and a spread-option valuation of the diversion right with vol and correlation calibrated from imported settlement history.
+            </span>
+            <span class="lang-cn">
+              将 38 个工作表、5.6 万条公式的 LNG netforward 工作簿重建为模块化 Python 包——每个模块对应 Economics 表的一个连续区块，任何数字都可回溯到原始行号。
+              覆盖航程构建（距离、航速、蒸发气、燃料策略）、港口与运河成本、租船经济性，以及 FOB netback / DES netforward 盈亏平衡，并逐货与原表校验（11 项输出中 10 项误差 &lt;1%）。
+              在单货引擎之上是多货层：受「一船一货」约束的年度交付计划与船队规模求解、对真实 Sabine Pass ADP 的逐格复现、跨合约期的中长期交易经济性，以及以导入的历史结算价校准波动率与相关性的转运权价差期权估值。
+            </span>
+          </div>
+          <div class="proj-tech">
+            <span class="t-tag">Python</span>
+            <span class="t-tag">Pandas/Parquet</span>
+            <span class="t-tag">Streamlit</span>
+            <span class="t-tag">Margrabe/Kirk</span>
+            <span class="t-tag">Excel Parity</span>
+            <span class="t-tag">pytest</span>
+          </div>
+        </div>
+        <div class="proj-card reveal">
           <div class="proj-type">Algo System · Personal Project</div>
           <div class="proj-name"><span class="lang-en">IBKR Algo Trading System</span><span class="lang-cn">IBKR 算法交易系统</span></div>
-          <div class="proj-desc"><span class="lang-en">Event-driven Python algo trading system running on IBKR paper account via the official IB API. RSI 2nd-derivative entry signal with vol-filter, long-only universe with trend-gated shorts in weak-trend regimes, and warm-restart position sync so existing trades are re-evaluated against the current signal on every restart. Separate Streamlit backtest dashboard with 144-combo grid optimizer, walk-forward period analysis, and margin-call simulation.</span><span class="lang-cn">基于事件驱动的 Python 算法交易系统，通过 IB 官方 API 在 IBKR 模拟账户运行。RSI 二阶导数入场信号搭配波动率过滤，多头为主、弱趋势区间触发空头，启动时自动同步并按当前信号重新评估现有仓位。独立 Streamlit 回测仪表盘含 144 组合网格优化器、walk-forward 分析及保证金追缴模拟。</span></div>
+          <div class="proj-desc"><span class="lang-en">Event-driven Python trading system on IBKR paper via the official IB API, now running a multi-strategy book with per-strategy P&amp;L attribution, per-symbol and gross-leverage exposure caps with automatic trim-to-cap relief, and a Telegram control surface (status, P&amp;L, risk, flatten, scheduled reports). Behind it sits the research half: a 1,270-ticker daily price database, a universe-wide screening harness, walk-forward and out-of-sample stability testing, meta-labelling, factor attribution against Fama-French 5 + momentum, and a probabilistic / deflated-Sharpe audit that discounts results for the number of strategies tried — the gate a strategy has to clear before it earns capital.</span><span class="lang-cn">基于事件驱动的 Python 交易系统，通过 IB 官方 API 在 IBKR 模拟账户运行多策略组合：逐策略 P&amp;L 归因、单标的与总杠杆敞口上限及自动减仓纾解、Telegram 控制面板（状态、盈亏、风险、平仓、定时报告）。其后是研究侧：1,270 只标的的日线数据库、全域筛选框架、walk-forward 与样本外稳定性检验、元标注、对 Fama-French 五因子 + 动量的归因，以及按「尝试过多少策略」折减的 Probabilistic / Deflated Sharpe 审计——策略获得资金前必须通过的关口。</span></div>
           <div class="proj-tech">
             <span class="t-tag">Python</span>
             <span class="t-tag">ibapi</span>
             <span class="t-tag">Streamlit</span>
             <span class="t-tag">SQLite</span>
             <span class="t-tag">IBKR TWS</span>
+            <span class="t-tag">Walk-Forward</span>
+            <span class="t-tag">Deflated Sharpe</span>
           </div>
         </div>
         <div class="proj-card reveal">
@@ -1135,13 +1161,13 @@
 
       <div class="lab-pulse reveal">
         <span class="lab-pulse-label"><span class="lab-pulse-dot"></span><span class="lang-en">Recent</span><span class="lang-cn">最近</span></span>
-        <span class="lab-pulse-item"><span class="date">Jun 10</span><span class="lang-en">COT positioning (CFTC) + 14 market-fragility indicators live in Equity Hub</span><span class="lang-cn">COT 持仓（CFTC）+ 14 项市场脆弱性指标 已上线 Equity Hub</span></span>
+        <span class="lab-pulse-item"><span class="date">Jul 25</span><span class="lang-en">Deflated-Sharpe overfitting audit + lifetime track-record analytics on Telegram</span><span class="lang-cn">Deflated Sharpe 过拟合审计 + 全周期业绩分析（Telegram）</span></span>
         <span class="lab-pulse-sep">•</span>
-        <span class="lab-pulse-item"><span class="date">Jun 08</span><span class="lang-en">LNG Fundamentals dashboard — Kpler supply/demand/outage/diversion</span><span class="lang-cn">LNG 基本面仪表盘 — Kpler 供需/停产/转运</span></span>
+        <span class="lab-pulse-item"><span class="date">Jul 21</span><span class="lang-en">Fama-French 5 + momentum attribution — separating alpha from harvestable beta</span><span class="lang-cn">Fama-French 五因子 + 动量归因 — 区分 alpha 与可复制的 beta</span></span>
         <span class="lab-pulse-sep">•</span>
-        <span class="lab-pulse-item"><span class="date">Jun 08</span><span class="lang-en">Calendar-year TWR + Kpler $ outage-impact &amp; trade-route Sankey</span><span class="lang-cn">日历年 TWR + Kpler 停产美元影响与贸易路线桑基图</span></span>
+        <span class="lab-pulse-item"><span class="date">Jul 21</span><span class="lang-en">Crash base rates over 8.1M ticker-days published to Equity Hub</span><span class="lang-cn">810 万个「标的-交易日」的暴跌基率研究已上线 Equity Hub</span></span>
         <span class="lab-pulse-sep">•</span>
-        <span class="lab-pulse-item"><span class="date">Jun 08</span><span class="lang-en">Backtest dashboard refactor + multi-strategy comparison</span><span class="lang-cn">回测仪表盘重构 + 多策略对比</span></span>
+        <span class="lab-pulse-item"><span class="date">Jul 21</span><span class="lang-en">LNG price-curve engine rebuilt on the desk price book — gap-free to 2058</span><span class="lang-cn">LNG 价格曲线引擎基于交易台价格表重建 — 至 2058 年无断档</span></span>
       </div>
 
       <div class="lab-grid">
@@ -1222,8 +1248,8 @@
           <div class="lab-next">
             <div class="lab-next-label"><span class="lang-en">Next up</span><span class="lang-cn">接下来</span></div>
             <ul class="lab-next-list">
-              <li><span class="lang-en">IBKR Gateway live positions — eliminate CSV uploads</span><span class="lang-cn">IBKR Gateway 实时持仓 — 取消 CSV 上传</span></li>
-              <li><span class="lang-en">Multi-underlying portfolio P&amp;L view</span><span class="lang-cn">多标的物组合 P&amp;L 视图</span></li>
+              <li><span class="lang-en">LNG curve &amp; netback cards fed straight from the shipping model</span><span class="lang-cn">LNG 曲线与 netback 卡片直连航运模型</span></li>
+              <li><span class="lang-en">Factor attribution (FF5 + momentum) on the live book</span><span class="lang-cn">实盘组合的因子归因（FF5 + 动量）</span></li>
             </ul>
           </div>
         </div>
@@ -1233,9 +1259,9 @@
           <div class="lab-head">
             <div class="lab-head-l">
               <div class="lab-name"><span class="lang-en">Algo Trading System</span><span class="lang-cn">算法交易系统</span> <span class="lab-badge active">Active</span></div>
-              <div class="lab-tagline"><span class="lang-en">Event-driven RSI 2nd-derivative strategy — live on IBKR paper. Now learning the system end-to-end.</span><span class="lang-cn">事件驱动的 RSI 二阶导数策略——在 IBKR 模拟账户运行。正在系统性梳理。</span></div>
+              <div class="lab-tagline"><span class="lang-en">Multi-strategy book on IBKR paper, with a research stack built to tell a real edge from a lucky backtest.</span><span class="lang-cn">在 IBKR 模拟账户运行的多策略组合，配套研究栈用于区分真实优势与运气好的回测。</span></div>
             </div>
-            <div class="lab-pct">46%</div>
+            <div class="lab-pct">55%</div>
           </div>
           <div class="lab-meta">
             <span class="lab-stack">Python · ibapi · SQLite · Streamlit</span>
@@ -1258,6 +1284,16 @@
                 <div class="lab-phase-head">
                   <span class="lab-phase-title done"><span class="lang-en">Signal Tooling — COT + Indicators + Multi-Strat BT</span><span class="lang-cn">信号工具 — COT + 指标 + 多策略回测</span></span>
                   <span class="lab-phase-stat done">✓ Jun 2026</span>
+                </div>
+                <div class="lab-bar-wrap"><div class="lab-bar done" style="width:100%"></div></div>
+              </div>
+            </div>
+            <div class="lab-phase">
+              <div class="lab-phase-rail"><span class="lab-phase-dot done"></span><span class="lab-phase-line"></span></div>
+              <div class="lab-phase-body">
+                <div class="lab-phase-head">
+                  <span class="lab-phase-title done"><span class="lang-en">Research Stack — Screening · Walk-Forward · Overfitting Audit</span><span class="lang-cn">研究栈 — 全域筛选 · Walk-Forward · 过拟合审计</span></span>
+                  <span class="lab-phase-stat done">✓ Jul 2026</span>
                 </div>
                 <div class="lab-bar-wrap"><div class="lab-bar done" style="width:100%"></div></div>
               </div>
@@ -1316,8 +1352,9 @@
           <div class="lab-next">
             <div class="lab-next-label"><span class="lang-en">Next up</span><span class="lang-cn">接下来</span></div>
             <ul class="lab-next-list">
-              <li><span class="lang-en">Trace one full trade: signal → order → fill → DB update</span><span class="lang-cn">跟踪完整交易链路：信号 → 下单 → 成交 → 入库</span></li>
-              <li><span class="lang-en">Backtest MA cross vs RSI d2 on real data — Sharpe + drawdown</span><span class="lang-cn">在真实数据上回测 MA 交叉 vs RSI d2 — 夏普与回撤</span></li>
+              <li><span class="lang-en">Cost-sensitivity curves — find the slippage level where each edge dies</span><span class="lang-cn">成本敏感性曲线 — 找到各策略优势消失的滑点水平</span></li>
+              <li><span class="lang-en">Survivorship-bias stress test on the momentum book's alpha</span><span class="lang-cn">对动量组合 alpha 的幸存者偏差压力测试</span></li>
+              <li><span class="lang-en">Probability of backtest overfitting (CSCV) alongside deflated Sharpe</span><span class="lang-cn">在 Deflated Sharpe 之外加入回测过拟合概率（CSCV）</span></li>
             </ul>
           </div>
         </div>
@@ -1692,18 +1729,6 @@
             <div>
               <div class="c-label">LINKEDIN</div>
               <div class="c-val">li-shuai-trading</div>
-            </div>
-            <span class="c-arr">→</span>
-          </a>
-          <a href="tel:+6584508412" class="c-item">
-            <div class="c-icon">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.18 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.6a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
-              </svg>
-            </div>
-            <div>
-              <div class="c-label">MOBILE</div>
-              <div class="c-val">+65 8450 8412</div>
             </div>
             <span class="c-arr">→</span>
           </a>
