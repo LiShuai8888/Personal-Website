@@ -1146,6 +1146,18 @@
             <span class="t-tag">TDD</span>
           </div>
         </div>
+        <div class="proj-card reveal">
+          <div class="proj-type">Research Pipeline · Personal Project</div>
+          <div class="proj-name"><span class="lang-en">Analyst Methodology Extraction</span><span class="lang-cn">分析师方法论提取流水线</span></div>
+          <div class="proj-desc"><span class="lang-en">A pipeline that turns finance video channels into structured, comparable research notes instead of hours of listening: playlist walk with members-only filtering, local GPU transcription with Whisper large-v3-turbo, per-episode extraction into a fixed five-section format, auto-generated per-channel ledgers and a cross-channel dashboard, then export into a browsable research tab. Seven channels and 105 episodes so far, split across two machines — GPU transcribes, analysis runs elsewhere, git is the transfer mechanism. The point is downstream: rules stated on camera become testable tooling, such as a breadth-and-volatility risk monitor built from one analyst's own stated thresholds.</span><span class="lang-cn">把财经视频频道转化为结构化、可横向对比的研究笔记，而非耗时收听：播放列表遍历并过滤会员内容、本地 GPU 使用 Whisper large-v3-turbo 转录、逐期提取为固定五段格式、自动生成各频道台账与跨频道看板，再导出为可浏览的研究页面。目前已覆盖 7 个频道、105 期，并拆分到两台机器运行——GPU 负责转录、分析在另一台执行、以 git 作为传输机制。价值在下游：镜头前讲出的规则被转化为可检验的工具，例如依据某位分析师自述阈值构建的广度与波动率风险监控。</span></div>
+          <div class="proj-tech">
+            <span class="t-tag">Python</span>
+            <span class="t-tag">Whisper</span>
+            <span class="t-tag">CUDA</span>
+            <span class="t-tag">yt-dlp</span>
+            <span class="t-tag">Pipeline</span>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -1161,11 +1173,13 @@
 
       <div class="lab-pulse reveal">
         <span class="lab-pulse-label"><span class="lab-pulse-dot"></span><span class="lang-en">Recent</span><span class="lang-cn">最近</span></span>
+        <span class="lab-pulse-item"><span class="date">Aug 2</span><span class="lang-en">Research hub at 7 finance channels · 105 episodes of transcribed methodology notes</span><span class="lang-cn">研究中心已收录 7 个财经频道 · 105 期方法论转录笔记</span></span>
+        <span class="lab-pulse-sep">•</span>
+        <span class="lab-pulse-item"><span class="date">Jul 26</span><span class="lang-en">The stack now refreshes itself — two unattended jobs rebuild the books and market DB each morning</span><span class="lang-cn">整套系统实现自动刷新 — 两个无人值守任务每早重建组合数据与行情库</span></span>
+        <span class="lab-pulse-sep">•</span>
         <span class="lab-pulse-item"><span class="date">Jul 25</span><span class="lang-en">Deflated-Sharpe overfitting audit + lifetime track-record analytics on Telegram</span><span class="lang-cn">Deflated Sharpe 过拟合审计 + 全周期业绩分析（Telegram）</span></span>
         <span class="lab-pulse-sep">•</span>
         <span class="lab-pulse-item"><span class="date">Jul 21</span><span class="lang-en">Fama-French 5 + momentum attribution — separating alpha from harvestable beta</span><span class="lang-cn">Fama-French 五因子 + 动量归因 — 区分 alpha 与可复制的 beta</span></span>
-        <span class="lab-pulse-sep">•</span>
-        <span class="lab-pulse-item"><span class="date">Jul 21</span><span class="lang-en">Crash base rates over 8.1M ticker-days published to Equity Hub</span><span class="lang-cn">810 万个「标的-交易日」的暴跌基率研究已上线 Equity Hub</span></span>
         <span class="lab-pulse-sep">•</span>
         <span class="lab-pulse-item"><span class="date">Jul 21</span><span class="lang-en">LNG price-curve engine rebuilt on the desk price book — gap-free to 2058</span><span class="lang-cn">LNG 价格曲线引擎基于交易台价格表重建 — 至 2058 年无断档</span></span>
       </div>
@@ -1228,6 +1242,16 @@
               <div class="lab-phase-rail"><span class="lab-phase-dot done"></span><span class="lab-phase-line"></span></div>
               <div class="lab-phase-body">
                 <div class="lab-phase-head">
+                  <span class="lab-phase-title done"><span class="lang-en">Unattended Daily Refresh</span><span class="lang-cn">每日无人值守刷新</span></span>
+                  <span class="lab-phase-stat done">✓ Jul 2026</span>
+                </div>
+                <div class="lab-bar-wrap"><div class="lab-bar done" style="width:100%"></div></div>
+              </div>
+            </div>
+            <div class="lab-phase">
+              <div class="lab-phase-rail"><span class="lab-phase-dot done"></span><span class="lab-phase-line"></span></div>
+              <div class="lab-phase-body">
+                <div class="lab-phase-head">
                   <span class="lab-phase-title done"><span class="lang-en">LNG Diversion Analysis</span><span class="lang-cn">LNG 转向分析</span></span>
                   <span class="lab-phase-stat done">✓ May 2026</span>
                 </div>
@@ -1266,6 +1290,7 @@
           <div class="lab-meta">
             <span class="lab-stack">Python · ibapi · SQLite · Streamlit</span>
             <span class="lab-stack">IBKR TWS 7497</span>
+            <span class="lab-stack"><span class="lang-en">Telegram control surface · scheduled daily ops</span><span class="lang-cn">Telegram 控制台 · 每日定时运维</span></span>
           </div>
           <div class="lab-phases">
             <div class="lab-phase">
