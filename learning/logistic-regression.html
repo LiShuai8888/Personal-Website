@@ -1,0 +1,345 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Logistic regression: from a linear score to an honest probability — Li Shuai</title>
+<meta name="description" content="How the sigmoid turns an unbounded linear score into a bounded probability, why that keeps the ranking a plain linear fit gives you, and why unscaled features make the solver warn — worked through by hand on the s6e8 screen-time set.">
+<meta name="author" content="Li Shuai">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230b0e14'/%3E%3Ctext x='16' y='22' font-family='monospace' font-size='15' font-weight='700' fill='%23e8a33d' text-anchor='middle'%3ELS%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0b0e14; --bg2:#111520; --bg3:#161b27;
+  --fg:#eeeae2; --fg2:#9a9488; --fg3:#5a5650;
+  --amber:oklch(76% 0.17 65); --amber-dim:oklch(60% 0.12 65);
+  --teal:oklch(68% 0.14 195);
+  --line:#1e2330; --line2:#2a3040;
+  --font-display:'Syne',sans-serif; --font-serif:'Instrument Serif',serif; --font-mono:'JetBrains Mono',monospace;
+  --nav-h:68px; --gutter:56px;
+}
+.light{
+  --bg:#f7f4ef; --bg2:#f0ebe2; --bg3:#e8e2d6;
+  --fg:#1a1714; --fg2:#4a4540; --fg3:#8a8278;
+  --amber:oklch(58% 0.15 50); --amber-dim:oklch(70% 0.13 50);
+  --teal:oklch(50% 0.12 195);
+  --line:#ddd8ce; --line2:#c9c2b3;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--font-mono);
+  font-weight:300;font-size:15px;line-height:1.7;-webkit-text-size-adjust:100%}
+.container{width:min(100% - 2.5rem,72rem);margin-inline:auto}
+.cn .lang-en,html:not(.cn) .lang-cn{display:none}
+
+nav{position:sticky;top:0;z-index:20;height:var(--nav-h);display:flex;align-items:center;
+  background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line)}
+nav .container{display:flex;align-items:center;gap:1.5rem;justify-content:space-between}
+.nav-logo{display:inline-flex;align-items:center;gap:.6rem;color:var(--fg);text-decoration:none;
+  font-family:var(--font-display);font-weight:700;letter-spacing:-.02em}
+.nav-logo-dot{width:8px;height:8px;border-radius:50%;background:var(--amber)}
+.nav-right{display:flex;align-items:center;gap:1.1rem}
+.nav-right a,.toggle{color:var(--fg2);text-decoration:none;font-size:12px;letter-spacing:.08em;
+  text-transform:uppercase;background:none;border:0;cursor:pointer;font-family:var(--font-mono);padding:0}
+.nav-right a:hover,.toggle:hover{color:var(--amber)}
+
+.sec-head{display:flex;align-items:baseline;gap:1rem;margin:0 0 1.5rem}
+.sec-num{font-size:12px;color:var(--amber);letter-spacing:.1em}
+.sec-title{font-family:var(--font-display);font-size:clamp(1.9rem,1.4rem+2vw,3.1rem);
+  font-weight:800;letter-spacing:-.03em;margin:0;line-height:1.05}
+.sec-rule{flex:1;height:1px;background:var(--line2)}
+
+header.page{padding:calc(var(--gutter)*.9) 0 1.5rem}
+.kicker{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--fg3);margin:0 0 .6rem}
+.blurb{color:var(--fg2);max-width:62ch;margin:1rem 0 0}
+.meta-line{color:var(--fg3);font-size:12.5px;margin:.9rem 0 0;letter-spacing:.04em}
+
+.note-grid{display:grid;gap:1px;background:var(--line);border:1px solid var(--line);
+  border-radius:6px;overflow:hidden;margin:0 0 var(--gutter)}
+.note-card{display:block;background:var(--bg2);padding:1.6rem 1.5rem;text-decoration:none;color:inherit;
+  transition:background .18s}
+.note-card:hover{background:var(--bg3)}
+.note-card h3{font-family:var(--font-display);font-weight:700;font-size:1.3rem;letter-spacing:-.02em;
+  margin:.7rem 0 .5rem;line-height:1.2;color:var(--fg)}
+.note-card:hover h3{color:var(--amber)}
+.note-card p{margin:0;color:var(--fg2);font-size:13.5px}
+.card-foot{margin-top:1rem;color:var(--fg3);font-size:12px;letter-spacing:.05em}
+
+.chip{display:inline-block;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+  padding:.2rem .55rem;border-radius:3px;border:1px solid currentColor}
+.chip-covered{color:var(--teal)}
+.chip-open,.chip-in-progress{color:var(--amber)}
+time{color:var(--fg3);font-size:12.5px;letter-spacing:.05em}
+
+article{padding:1rem 0 var(--gutter)}
+.note-title{font-family:var(--font-display);font-weight:800;letter-spacing:-.035em;
+  font-size:clamp(2rem,1.4rem+2.6vw,3.4rem);line-height:1.05;margin:.8rem 0 0;max-width:22ch}
+.kick-row{display:flex;flex-wrap:wrap;align-items:center;gap:.8rem}
+.prose{max-width:70ch;margin-top:2.5rem}
+.prose>*+*{margin-top:1.15em}
+.prose h2{font-family:var(--font-display);font-weight:700;letter-spacing:-.02em;
+  font-size:clamp(1.35rem,1.1rem+1vw,1.9rem);margin-top:2.6em;padding-top:.7em;
+  border-top:1px solid var(--line);color:var(--fg)}
+.prose h3{font-family:var(--font-display);font-weight:600;font-size:1.15rem;margin-top:2em;letter-spacing:-.01em}
+.prose h4{font-size:.95rem;color:var(--fg2);margin-top:1.6em}
+.prose a{color:var(--amber);text-underline-offset:3px}
+.prose strong{color:var(--fg);font-weight:500}
+.prose code{background:var(--bg3);padding:.12em .38em;border-radius:3px;font-size:.86em;color:var(--amber-dim)}
+.prose pre{background:var(--bg2);border:1px solid var(--line);border-radius:6px;padding:1.1rem;
+  overflow-x:auto;font-size:.82em}
+.prose pre code{background:none;padding:0;color:inherit}
+.prose blockquote{margin-inline:0;padding:.3rem 0 .3rem 1.2rem;border-left:2px solid var(--amber);
+  color:var(--fg2)}
+.prose ul,.prose ol{padding-left:1.3rem}
+.prose li+li{margin-top:.45em}
+.prose li::marker{color:var(--amber-dim)}
+.prose hr{border:0;border-top:1px solid var(--line);margin:2.6em 0}
+.prose table{border-collapse:collapse;width:100%;font-size:13px}
+.prose th,.prose td{text-align:left;padding:.55rem .7rem;border-bottom:1px solid var(--line)}
+.prose th{color:var(--fg3);font-size:11px;letter-spacing:.09em;text-transform:uppercase;font-weight:400}
+.prose td:not(:first-child){font-variant-numeric:tabular-nums}
+.table-wrap{overflow-x:auto}
+.prose figure.fig{margin:2.4rem 0;padding:1.2rem;background:var(--bg2);border:1px solid var(--line);
+  border-radius:6px;overflow-x:auto}
+.prose figure.fig svg{max-width:100%;height:auto;display:block;margin-inline:auto}
+.prose figcaption{margin-top:.9rem;color:var(--fg3);font-size:12px;line-height:1.6;
+  padding-left:.9rem;border-left:1px solid var(--line2)}
+
+footer{border-top:1px solid var(--line);padding:2rem 0 3rem;color:var(--fg3);font-size:12px}
+footer a{color:var(--fg2)}
+a:focus-visible,button:focus-visible{outline:2px solid var(--amber);outline-offset:3px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+<body>
+<nav>
+  <div class="container">
+    <a class="nav-logo" href="../index.html">
+      <span class="nav-logo-dot"></span>
+      <span class="lang-en">Li Shuai</span><span class="lang-cn">李帅</span>
+    </a>
+    <div class="nav-right">
+      <a href="../index.html"><span class="lang-en">back to site</span><span class="lang-cn">返回主站</span></a>
+      <a href="index.html"><span class="lang-en">notes</span><span class="lang-cn">笔记</span></a>
+      <button class="toggle" id="lang-toggle" type="button">EN / 中</button>
+      <button class="toggle" id="theme-toggle" type="button" aria-label="Toggle theme">◐</button>
+    </div>
+  </div>
+</nav>
+
+
+<article class="container">
+  <p class="kicker"><a href="index.html" style="color:inherit;text-decoration:none">
+    <span class="lang-en">← learning</span><span class="lang-cn">← 学习笔记</span></a></p>
+
+  <div class="kick-row" style="margin-top:1.4rem">
+    <time datetime="2026-08-10">2026-08-10</time>
+    <span class="chip chip-in-progress">in-progress</span>
+    <span style="color:var(--fg3);font-size:12px">statistics · machine-learning · logistic-regression · scaling · kaggle</span>
+  </div>
+
+  <h1 class="note-title">Logistic regression: from a linear score to an honest probability</h1>
+
+  <div class="prose">
+    <p>A revision note in the same spirit as the <a href="roc-and-classification-metrics.html">ROC one</a>:
+what I actually understand about logistic regression after building it by hand on the
+screen-time addiction set (<code>playground-series-s6e8</code>), not what I have merely read.
+Every number below was generated from that data.</p>
+    <p>The one-line version: <strong>logistic regression is linear regression on the log-odds, squashed
+into a probability by the sigmoid.</strong> It keeps the ranking a plain linear fit would give you
+and adds the one thing that fit could not — an output bounded to [0, 1] that you can read as
+a probability.</p>
+
+    <h2>Why not just use linear regression?</h2>
+    <p>On a 0/1 target a linear fit produces a usable <em>ranking</em> — on this data it scored
+AUC 0.91 — but its output is <strong>unbounded</strong>. Fitting a straight line to
+<code>addicted_label</code> gave predictions from <strong>−0.163 to 1.693</strong>. A "probability" of
+1.693 is meaningless, and there is nothing in the model to stop it. Logistic regression plugs
+exactly that hole.</p>
+
+    <h2>The sigmoid: any real number, squashed into (0, 1)</h2>
+    <p>The fix is one function. Take the linear score and pass it through the <strong>sigmoid</strong>
+(the logistic function, which names the model):</p>
+    <blockquote><p>sigma(z) = 1 / (1 + e^(−z))</p></blockquote>
+    <table>
+    <thead><tr><th>z</th><th>sigma(z)</th></tr></thead>
+    <tbody>
+    <tr><td>−4</td><td>0.018</td></tr>
+    <tr><td>−2</td><td>0.119</td></tr>
+    <tr><td>0</td><td>0.500</td></tr>
+    <tr><td>2</td><td>0.881</td></tr>
+    <tr><td>4</td><td>0.982</td></tr>
+    </tbody>
+    </table>
+    <p>It is an S-curve: <code>z = 0</code> maps to 0.5, large positive <code>z</code> approaches 1,
+large negative <code>z</code> approaches 0, and it never quite reaches either end. So whatever the
+linear part produces — 47 or −300 — the sigmoid hands back a valid probability. That is the
+whole repair.</p>
+
+    <h2>Two stages: a linear score, then a squash</h2>
+    <p>For each person the model does exactly two things. First a linear stage, identical in form
+to linear regression:</p>
+    <blockquote><p>z = w·x + b</p></blockquote>
+    <p>then a squash, <code>p = sigma(z)</code>. That raw <code>z</code> has a name — the
+<strong>log-odds</strong> (or logit), because <code>z = ln( p / (1 − p) )</code>. "Odds" is
+<code>p/(1−p)</code>: a probability of 0.8 is odds of 4, i.e. 4-to-1. The linear part predicts the
+log-odds; the sigmoid inverts that back into a probability.</p>
+    <p>This is not a metaphor. <code>decision_function</code> returns <code>z</code>,
+<code>predict_proba</code> returns the sigmoid of it, and they match to floating point:</p>
+    <pre><code>z = clf.decision_function(x_test)     # raw linear score  w·x + b   (the log-odds)
+p = clf.predict_proba(x_test)[:, 1]   # probability of class 1
+# p == 1 / (1 + np.exp(-z))           -> True, for every row</code></pre>
+    <table>
+    <thead><tr><th>z (log-odds)</th><th>sigma(z)</th><th>predict_proba[:, 1]</th></tr></thead>
+    <tbody>
+    <tr><td>0.159</td><td>0.5397</td><td>0.5397</td></tr>
+    <tr><td>1.522</td><td>0.8209</td><td>0.8209</td></tr>
+    <tr><td>−3.902</td><td>0.0198</td><td>0.0198</td></tr>
+    <tr><td>1.749</td><td>0.8519</td><td>0.8519</td></tr>
+    <tr><td>−0.471</td><td>0.3844</td><td>0.3844</td></tr>
+    </tbody>
+    </table>
+    <p>One payoff of the log-odds view, useful for anyone from a stats background: each coefficient
+<code>wⱼ</code> reads as "one more unit of feature <code>j</code> adds <code>wⱼ</code> to the
+log-odds," i.e. multiplies the odds by <code>e^(wⱼ)</code> — an odds ratio.</p>
+
+    <h2>Same ranking, real probabilities</h2>
+    <table>
+    <thead><tr><th>model</th><th>output range</th><th>AUC</th></tr></thead>
+    <tbody>
+    <tr><td>linear regression</td><td>−0.163 to 1.693 (escapes [0, 1])</td><td>0.9108</td></tr>
+    <tr><td>logistic regression</td><td>0.004 to 1.000 (a probability)</td><td>0.9115</td></tr>
+    </tbody>
+    </table>
+    <p>Two things at once. The output is now <strong>bounded</strong> — a genuine probability you can
+read as "82% likely" — where the linear fit escaped to 1.693. And the AUC is essentially
+<strong>unchanged</strong>, because the sigmoid is <strong>monotonic</strong>: higher <code>z</code>
+always gives higher <code>p</code>, so it never reorders anyone, and AUC only cares about order (the
+whole point of the <a href="roc-and-classification-metrics.html">ROC note</a>). Logistic regression =
+the linear fit's ranking, plus probabilities you can actually use.</p>
+
+    <h2>How it learns, and why it warned</h2>
+    <p>Linear regression solves for its weights with one formula. Logistic regression cannot — there
+is no closed form. It <strong>searches</strong> for the weights by iterative optimisation: the
+<code>lbfgs</code> solver starts somewhere and steps downhill on the loss (log loss / cross-entropy)
+toward the minimum, and <code>max_iter</code> caps how many steps it may take. The default is 100.</p>
+    <p>That search is easy on a round loss surface and slow on a stretched one — and mine was
+stretched, because the features live on wildly different scales:</p>
+    <table>
+    <thead><tr><th>feature</th><th>mean</th><th>std</th></tr></thead>
+    <tbody>
+    <tr><td>notifications_per_day</td><td>146.31</td><td>62.63</td></tr>
+    <tr><td>app_opens_per_day</td><td>102.82</td><td>45.18</td></tr>
+    <tr><td>sleep_hours</td><td>6.80</td><td>1.19</td></tr>
+    <tr><td>gaming_hours</td><td>1.44</td><td>0.85</td></tr>
+    </tbody>
+    </table>
+    <p><code>notifications_per_day</code> swings by ~63, <code>gaming_hours</code> by ~0.85 — a 70×
+gap. That deforms the loss surface into a long, narrow ravine; the solver zig-zags down it slowly
+and runs out of its 100 steps before reaching the bottom, returning half-optimised weights. That is
+the <code>ConvergenceWarning</code>. Same model, same cap, unscaled vs scaled:</p>
+    <table>
+    <thead><tr><th>features</th><th>ConvergenceWarning?</th><th>iterations used</th><th>AUC</th></tr></thead>
+    <tbody>
+    <tr><td>unscaled (max_iter=100)</td><td>yes</td><td>100 (hit cap)</td><td>0.8951</td></tr>
+    <tr><td>scaled (max_iter=100)</td><td>no</td><td>12</td><td>0.9115</td></tr>
+    </tbody>
+    </table>
+    <p>The warning is <strong>not cosmetic</strong>: the unscaled model was genuinely worse
+(AUC 0.8951 vs 0.9115) because it quit before finishing. Silencing it with <code>max_iter=1000</code>
+works, but it is a band-aid — it just buys more steps down the same bad ravine.</p>
+
+    <h2>The fix: scale, then wire it in a pipeline</h2>
+    <p>The real fix reshapes the problem. <code>StandardScaler</code> turns each feature into a
+z-score — subtract its mean, divide by its std, so every feature has mean 0 and std 1. The ravine
+becomes a round bowl and the solver converges in 12 steps instead of 100+.</p>
+    <p>Same discipline as median imputation: learn the means and stds on <strong>training data
+only</strong>, then apply them to the test set — never over the whole table (leakage). The clean way
+to guarantee that is a pipeline, which also re-applies the transform automatically at predict time:</p>
+    <pre><code>from sklearn.preprocessing import StandardScaler
+from sklearn.pipeline import make_pipeline
+
+clf = make_pipeline(StandardScaler(), LogisticRegression())
+clf.fit(x_train, y_train)                     # scales, then fits
+y_proba = clf.predict_proba(x_test)[:, 1]     # auto-scales x_test with TRAIN stats</code></pre>
+    <p>One rule to carry: scaling matters for <strong>gradient- and distance-based models</strong> —
+logistic regression, SVM, KNN, neural nets. It does nothing for <strong>tree-based models</strong>
+(decision trees, random forests, gradient boosting), which split on thresholds and ignore
+magnitudes. That is exactly why only the logistic cell warned and the tree cells did not.</p>
+    <p>The trading translation is exact: throwing raw price levels (thousands) and returns (0.01)
+into the same gradient fit without normalising lets the big-scale variable hijack every step, and
+the optimiser crawls. Standardising to z-scores is the same move as using vol-normalised features
+in a factor model — put everything in comparable units so no single feature dominates by scale
+alone.</p>
+
+    <h2>The output layout: predict_proba vs predict</h2>
+    <p><code>predict_proba(x_test)</code> returns one row per person and one <strong>column per
+class</strong>, in <code>clf.classes_</code> order:</p>
+    <pre><code>clf.classes_        -> [0 1]
+predict_proba shape -> (138274, 2)   # [P(class 0), P(class 1)] per row
+first rows:
+ [[0.4603 0.5397]
+  [0.1791 0.8209]
+  [0.9802 0.0198]]
+each row sums to 1</code></pre>
+    <p>So column 0 is <code>P(not addicted)</code>, column 1 is <code>P(addicted)</code>, and the two
+always sum to 1 — column 0 is just <code>1 −</code> column 1. For a probability of addiction you take
+<code>predict_proba(x_test)[:, 1]</code>. <code>predict(x_test)</code>, by contrast, throws all of
+that away and returns a hard 0/1 at the 0.5 cut — the mistake that flattens a ROC curve to a single
+kink and understates AUC (see the <a href="roc-and-classification-metrics.html">ROC note</a>).
+<strong>Score AUC on <code>predict_proba[:, 1]</code>, never on <code>predict</code>.</strong></p>
+
+    <h2>Status</h2>
+    <p><strong>Closed — I can state these without looking them up:</strong></p>
+    <ul>
+    <li>logistic regression = linear score <code>z = w·x + b</code>, then <code>p = sigma(z)</code>; <code>predict_proba[:, 1]</code> is literally <code>sigmoid(decision_function)</code></li>
+    <li><code>z</code> is the log-odds, <code>ln(p/(1−p))</code>; a coefficient is an odds ratio in log space</li>
+    <li>the sigmoid is monotonic, so logistic keeps the linear fit's ranking (same AUC) and adds bounded probabilities</li>
+    <li>no closed form → iterative solver → unscaled features stretch the loss surface → <code>ConvergenceWarning</code>, and the under-fit costs real AUC (0.8951 vs 0.9115)</li>
+    <li><code>StandardScaler</code> is the fix (12 vs 100+ iters); trees never need it; wire it in a pipeline to avoid leakage</li>
+    <li><code>predict_proba</code> is <code>[P(0), P(1)]</code>; take column 1; never score AUC on <code>predict()</code></li>
+    </ul>
+    <p><strong>Open — these are next:</strong></p>
+    <ul>
+    <li>[ ] the loss it actually minimises — log loss / cross-entropy — written out and understood, not just named</li>
+    <li>[ ] what the <code>C</code> hyperparameter (inverse regularisation strength) does to the coefficients</li>
+    <li>[ ] whether these probabilities are <em>calibrated</em> or merely well-ranked — a reliability diagram would tell, and it matters the moment a score is used for position sizing rather than ranking (same open thread as the ROC note)</li>
+    </ul>
+
+  </div>
+</article>
+
+
+<footer>
+  <div class="container">
+    <p>
+      <span class="lang-en">Li Shuai · notes from real work, dated and revised. Figures are generated, not drawn.</span>
+      <span class="lang-cn">李帅 · 来自实际工作的笔记，注明日期并持续修订。图表由脚本生成，非手工绘制。</span>
+    </p>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  if (localStorage.getItem('theme') === 'light') root.classList.add('light');
+  if (localStorage.getItem('lang') === 'cn') root.classList.add('cn');
+
+  document.getElementById('theme-toggle').addEventListener('click', function () {
+    var mode = root.classList.contains('light') ? 'dark' : 'light';
+    root.classList.toggle('light');
+    localStorage.setItem('theme', mode);
+  });
+  document.getElementById('lang-toggle').addEventListener('click', function () {
+    var lang = root.classList.contains('cn') ? 'en' : 'cn';
+    root.classList.toggle('cn');
+    localStorage.setItem('lang', lang);
+  });
+
+  document.querySelectorAll('.prose table').forEach(function (t) {
+    var w = document.createElement('div');
+    w.className = 'table-wrap';
+    t.parentNode.insertBefore(w, t);
+    w.appendChild(t);
+  });
+})();
+</script>
+</body>
