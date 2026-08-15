@@ -1173,6 +1173,8 @@
 
       <div class="lab-pulse reveal">
         <span class="lab-pulse-label"><span class="lab-pulse-dot"></span><span class="lang-en">Recent</span><span class="lang-cn">最近</span></span>
+        <span class="lab-pulse-item"><span class="date">Aug 15</span><span class="lang-en">Premium-selling ruleset made executable — IV−RV per-name gate, two-book tenor split, deleveraging ladder</span><span class="lang-cn">期权卖方规则集落地为可执行代码 — 单标的 IV−RV 校验、长短久期双账簿、去杠杆优先级排序</span></span>
+        <span class="lab-pulse-sep">•</span>
         <span class="lab-pulse-item"><span class="date">Aug 2</span><span class="lang-en">Research hub at 7 finance channels · 105 episodes of transcribed methodology notes</span><span class="lang-cn">研究中心已收录 7 个财经频道 · 105 期方法论转录笔记</span></span>
         <span class="lab-pulse-sep">•</span>
         <span class="lab-pulse-item"><span class="date">Jul 26</span><span class="lang-en">The stack now refreshes itself — two unattended jobs rebuild the books and market DB each morning</span><span class="lang-cn">整套系统实现自动刷新 — 两个无人值守任务每早重建组合数据与行情库</span></span>
@@ -1259,7 +1261,7 @@
               </div>
             </div>
             <div class="lab-phase">
-              <div class="lab-phase-rail"><span class="lab-phase-dot done"></span></div>
+              <div class="lab-phase-rail"><span class="lab-phase-dot done"></span><span class="lab-phase-line"></span></div>
               <div class="lab-phase-body">
                 <div class="lab-phase-head">
                   <span class="lab-phase-title done"><span class="lang-en">LNG Fundamentals + COT + Market Signals</span><span class="lang-cn">LNG 基本面 + COT + 市场信号</span></span>
@@ -1268,10 +1270,21 @@
                 <div class="lab-bar-wrap"><div class="lab-bar done" style="width:100%"></div></div>
               </div>
             </div>
+            <div class="lab-phase">
+              <div class="lab-phase-rail"><span class="lab-phase-dot done"></span></div>
+              <div class="lab-phase-body">
+                <div class="lab-phase-head">
+                  <span class="lab-phase-title done"><span class="lang-en">Options Premium Rules Engine</span><span class="lang-cn">期权卖方规则引擎</span></span>
+                  <span class="lab-phase-stat done">✓ Aug 2026</span>
+                </div>
+                <div class="lab-bar-wrap"><div class="lab-bar done" style="width:100%"></div></div>
+              </div>
+            </div>
           </div>
           <div class="lab-next">
             <div class="lab-next-label"><span class="lang-en">Next up</span><span class="lang-cn">接下来</span></div>
             <ul class="lab-next-list">
+              <li><span class="lang-en">Surface the premium-selling gates in the hub itself — today they only speak from the terminal</span><span class="lang-cn">把期权卖方校验搬进 hub 界面——目前它们只在终端里说话</span></li>
               <li><span class="lang-en">LNG curve &amp; netback cards fed straight from the shipping model</span><span class="lang-cn">LNG 曲线与 netback 卡片直连航运模型</span></li>
               <li><span class="lang-en">Factor attribution (FF5 + momentum) on the live book</span><span class="lang-cn">实盘组合的因子归因（FF5 + 动量）</span></li>
             </ul>
@@ -1677,12 +1690,21 @@
         <a class="blog-card" href="learning/index.html">
           <div class="blog-date"><span class="lang-en">UPDATED 2026-08-10</span><span class="lang-cn">更新于 2026-08-10</span></div>
           <div class="blog-title"><span class="lang-en">Learning notes</span><span class="lang-cn">学习笔记</span></div>
-          <div class="blog-excerpt"><span class="lang-en">Revision notes from real work — what broke, why, and what I actually know now as opposed to what I have merely read. Each note states plainly which parts are closed and which are still open. Currently: ROC and AUC as a ranking metric, and meta-labeling — including a look-ahead I shipped in my own algo-trading code.</span><span class="lang-cn">来自实际工作的复习笔记：哪里出了问题、原因是什么，以及我现在真正掌握了什么，而不是仅仅读过什么。每篇笔记都写明哪些已经弄懂、哪些仍然存疑。当前主题：作为排序指标的 ROC 与 AUC，以及元标注——包括我在自己的算法交易代码中写出的一处前视偏差。</span></div>
+          <div class="blog-excerpt"><span class="lang-en">Revision notes from real work — what broke, why, and what I actually know now as opposed to what I have merely read. Each note states plainly which parts are closed and which are still open. Currently three: ROC and AUC as a ranking metric, logistic regression from a linear score to an honest probability, and meta-labeling — the last including a look-ahead I shipped in my own algo-trading code.</span><span class="lang-cn">来自实际工作的复习笔记：哪里出了问题、原因是什么，以及我现在真正掌握了什么，而不是仅仅读过什么。每篇笔记都写明哪些已经弄懂、哪些仍然存疑。目前共三篇：作为排序指标的 ROC 与 AUC；从线性得分到诚实概率的逻辑回归；以及元标注——最后一篇包含我在自己的算法交易代码中写出的一处前视偏差。</span></div>
           <div class="blog-meta">
             <span><span class="lang-en">Statistics / ML</span><span class="lang-cn">统计 / 机器学习</span></span>
             <span class="blog-cta">→</span>
           </div>
         </a>
+        <div class="blog-card coming-soon">
+          <div class="blog-date"><span class="lang-en">IN PROGRESS · AUG 2026</span><span class="lang-cn">进行中 · 2026 年 8 月</span></div>
+          <div class="blog-title"><span class="lang-en">Rules That Fire Against Your Instincts</span><span class="lang-cn">与直觉对着干的规则</span></div>
+          <div class="blog-excerpt"><span class="lang-en">Turning a discretionary options premium-selling habit into an executable ruleset. Why implied-minus-realised volatility is the screen and headline option yield is not — on one sample, nine names out of ten that looked attractive on yield were selling insurance below expected claims. Why theta per dollar of notional falls roughly 8× as tenor stretches from one week to seventeen months, which makes tenor a risk decision rather than a convenience. And why every gate reports BLOCKED rather than PASS when an input is missing: a safety check that fails open is worse than none, because it manufactures confidence.</span><span class="lang-cn">把凭感觉的期权卖方策略变成可执行的规则集。为什么筛选标准应是「隐含波动率减已实现波动率」而非表面的期权年化收益率——在一次样本筛查中，十个看起来收益率诱人的标的里有九个实际上是在以低于预期赔付的价格卖保险。为什么久期从一周拉长到十七个月时，每美元名义本金所赚的 theta 会下降约 8 倍，这使久期成为风险决策而非便利选择。以及为什么任何一项校验在输入缺失时返回 BLOCKED 而不是 PASS：会「静默放行」的安全检查比没有检查更糟，因为它制造出虚假的信心。</span></div>
+          <div class="blog-meta">
+            <span><span class="lang-en">Options / Risk</span><span class="lang-cn">期权 / 风险</span></span>
+            <span class="blog-cta">·</span>
+          </div>
+        </div>
         <div class="blog-card coming-soon">
           <div class="blog-date"><span class="lang-en">COMING SOON</span><span class="lang-cn">即将发布</span></div>
           <div class="blog-title"><span class="lang-en">Pricing the LNG Atlantic-Pacific Spread Option</span><span class="lang-cn">为 LNG 大西洋—太平洋价差期权定价</span></div>

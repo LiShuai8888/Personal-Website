@@ -4217,6 +4217,74 @@ case the identical mistake produces a plausible number and no complaint at all.<
 <p>That is the pattern worth carrying: <em>the dangerous version of a bug is the one that
 returns a number instead of raising.</em> It is the same lesson as the string-vs-int
 comparison in Mission 8, where <code>'18' == 18</code> was silently <code>False</code>.</p>
+<h2>Balanced accuracy, on its own terms</h2>
+<p>The section above met balanced accuracy sideways — as the number a hard-label
+&quot;AUC&quot; secretly collapses to. It is worth pinning down directly, because it is the
+metric I fell back on when <code>roc_curve</code> refused the multiclass s6e6 target, and it
+is the honest one to quote whenever the classes are lopsided.</p>
+<p>Start from what plain accuracy does wrong. <code>accuracy = (TP + TN) / N</code> counts every
+row the same, so on a skewed target the majority class simply owns the score.
+<strong>Balanced accuracy</strong> fixes that by averaging the recall on each class separately:</p>
+<blockquote>
+<p>balanced accuracy = (TPR + TNR) / 2 = (sensitivity + specificity) / 2</p>
+</blockquote>
+<p>— the fraction of real positives caught and the fraction of real negatives correctly
+cleared, weighted equally regardless of how many of each there are.</p>
+<p>The trap it exists to catch, generated on the screen-time addiction set
+(<code>playground-series-s6e8</code>, a 71/29 split), same test set throughout:</p>
+<table>
+<thead>
+<tr>
+  <th>model</th>
+  <th>plain accuracy</th>
+  <th>balanced accuracy</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>logistic regression</td>
+  <td>0.836</td>
+  <td>0.784</td>
+</tr>
+<tr>
+  <td>predict &quot;addicted&quot; for everyone</td>
+  <td>0.709</td>
+  <td>0.500</td>
+</tr>
+<tr>
+  <td>predict &quot;not&quot; for everyone</td>
+  <td>0.291</td>
+  <td>0.500</td>
+</tr>
+</tbody>
+</table>
+<p>The two constant rows are the whole argument. &quot;Predict addicted for everyone&quot; has
+learned nothing, yet plain accuracy pays it <strong>0.709</strong> — purely because 71% of people
+are class 1. Balanced accuracy sees straight through it: TPR 1.000, TNR 0.000, average
+<strong>0.500</strong>. Any constant classifier lands on exactly 0.5 no matter how skewed the split;
+that is the design. 0.5 is no skill, 1.0 is perfect, and no cheap majority vote moves
+it.</p>
+<p>Reading the real model the same way: plain accuracy <strong>0.836</strong> is flattered by the
+abundant, easy class-1 cases; balanced accuracy <strong>0.784</strong> is the honest figure. And the
+gap between the two per-class recalls behind it — TPR <strong>0.909</strong> against TNR <strong>0.659</strong> —
+says exactly where the model is weak: it catches addicts well and clears non-addicts
+poorly. Plain accuracy hid that; balanced accuracy surfaced it.</p>
+<p>Two things connect this back up the page. First, that <strong>0.784</strong> is the same number the
+hard-label &quot;AUC&quot; produced two sections ago — not a coincidence, because it <em>is</em>
+(sensitivity + specificity) / 2. Second, it is a <strong>single-threshold verdict</strong>: it grades
+only the one 0.5 cut, whereas AUC sweeps every threshold. On this same model AUC on
+<code>predict_proba</code> was <strong>0.9115</strong> while balanced accuracy was 0.784 — the 0.13 between them
+is precisely the ranking skill that collapsing to one cut throws away (a wider gap than
+the 0.039 in the earlier example, because this data separates more cleanly).</p>
+<p><code>balanced_accuracy_score(y, pred, adjusted=True)</code> re-zeroes the floor:
+<code>(0.784 − 0.5) / (1 − 0.5) = 0.568</code>, mapping chance to 0 and perfect to 1. Same
+information, different origin — useful when I want &quot;how far above a coin&quot; rather than
+the raw rate.</p>
+<p>The trading translation is exact. Quoting plain accuracy on a 71/29 target is the
+classifier version of judging a strategy by &quot;percentage of bars called correctly&quot; when
+71% of bars are no-trade — I clear 71% by never trading. Balanced accuracy forces the
+rare, expensive class to count as much as the common one, which is the only version of
+the question worth asking.</p>
 <h2>Which metric answers which question</h2>
 <p><figure class="fig"><svg id="diagram" width="592" xmlns="http://www.w3.org/2000/svg" class="flowchart" viewBox="-35 0 591.37109375 558" role="img" aria-roledescription="flowchart-v2" height="558"><style>
     svg text, svg tspan, svg div, svg span, svg p,
@@ -5459,6 +5527,7 @@ calculation.</p>
 <li>AUC is P(random positive outranks random negative); 0.5 is no skill</li>
 <li>AUC is threshold-free and invariant to monotone transforms</li>
 <li>AUC and downstream P&amp;L answer different questions (learned the hard way, 2026-08-09)</li>
+<li>balanced accuracy = (TPR+TNR)/2; any constant classifier scores 0.5 regardless of class imbalance, and it is a single-threshold verdict AUC is not (worked through on s6e8, 2026-08-10)</li>
 </ul>
 <p><strong>Open — these are next:</strong></p>
 <ul>
