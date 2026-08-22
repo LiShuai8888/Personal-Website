@@ -582,9 +582,12 @@ Verified once, reused everywhere, never re-pasted.</p>
 <li>[ ] Decide a defensible default half-life instead of eyeballing it per name</li>
 <li>[ ] Check how sensitive the POC is to bin count (currently 100) — it should be stable, and if it is not, the level is noise</li>
 </ul>
-<p><strong>Related:</strong> the sensitivity lesson here is the same one as in the cross-validation
-note — a single number with no error bar around it is not yet evidence. There, the
-spread came from folds; here it comes from sweeping the lookback window.</p>
+<p><strong>Related:</strong> the sensitivity lesson here is the same one as in the <a href="cross-validation-and-oof.html">cross-validation
+note</a> — a single number with no error bar around it is not yet evidence. There, the
+spread came from folds; here it comes from sweeping the lookback window. The two pandas
+rules this note leans on without explaining — bracketing a filter, and storing bars in
+UTC — are unpacked in the <a href="pandas-precedence-and-timestamps.html">precedence-and-timestamps
+note</a>.</p>
   </div>
 </article>
 

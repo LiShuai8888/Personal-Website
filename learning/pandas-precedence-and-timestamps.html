@@ -1,7 +1,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>pathlib vs os.path: same directory, different type — Li Shuai</title>
-<meta name="description" content="This is a revision note, not a session brief. One line of notebook plumbing — sys.path.insert(0, str(pathlib.Path.cwd().parent)) — turned out to contain most of what I did not know about how Python finds modules and how it models paths.">
+<title>Two pandas lines I misread: precedence, and what a timestamp stores — Li Shuai</title>
+<meta name="description" content="A revision note. Reading back my own volume-profile code I could not say why one line needed no brackets while the line next to it did, or where the -04:00 on a timestamp came from. Both answers turned out to be rules, not conventions.">
 <meta name="author" content="Li Shuai">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230b0e14'/%3E%3Ctext x='16' y='22' font-family='monospace' font-size='15' font-weight='700' fill='%23e8a33d' text-anchor='middle'%3ELS%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -384,132 +384,157 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--amber);outline-offs
     <time datetime="2026-08-22">2026-08-22</time>
     <span class="chip chip-covered">covered</span>
     <span class="chip chip-cat">python & tooling</span>
-    <span style="color:var(--fg3);font-size:12px">python · pathlib · imports · jupyter · tooling</span>
+    <span style="color:var(--fg3);font-size:12px">python · pandas · operators · timezones · datetime</span>
   </div>
 
-  <h1 class="note-title">pathlib vs os.path: same directory, different type</h1>
+  <h1 class="note-title">Two pandas lines I misread: precedence, and what a timestamp stores</h1>
 
   <div class="prose">
-<p>This is a revision note, not a session brief. It came out of one line of notebook
-plumbing that I had copied around for months without really reading:</p>
-<div class="highlight"><pre><span></span><span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span><span class="p">))</span>
+<p>A revision note, from re-reading code I had already written. Two lines from the
+volume-profile notebook that I could not fully justify:</p>
+<div class="highlight"><pre><span></span><span class="n">window</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">index</span> <span class="o">&gt;=</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">pd</span><span class="o">.</span><span class="n">DateOffset</span><span class="p">(</span><span class="n">months</span><span class="o">=</span><span class="mi">12</span><span class="p">)]</span>
 </pre></div>
 
-<p>The short version: <strong><code>pathlib.Path.cwd()</code> and <code>os.getcwd()</code> return the same
-directory. The difference is the type — and the type is the entire point.</strong> Unpacking
-that one line also forced me to learn how Python actually finds a module, which I had
-been guessing at.</p>
-<h2>Why the line exists at all</h2>
-<p>My notebook lives in <code>quant-lab/notebooks/</code>, but the module it imports sits one
-level up:</p>
-<div class="highlight"><pre><span></span>quant-lab/
-├── marketdata.py          &lt;- the module I want to import
-└── notebooks/
-    └── price_levels.ipynb &lt;- the notebook runs HERE
+<p>and, printed underneath it, a timestamp I had been half-reading for weeks:</p>
+<div class="highlight"><pre><span></span>2026-08-21 15:50:00-04:00
 </pre></div>
 
-<p>When Python executes <code>import marketdata</code> it does not search the disk. It looks only
-in the directories listed in <code>sys.path</code>. Jupyter starts a notebook with its own folder
-as the working directory, so <code>notebooks/</code> is on that list and <code>quant-lab/</code> is not.
-I proved it to myself rather than assuming:</p>
-<div class="highlight"><pre><span></span>WITHOUT the sys.path line -&gt;  ModuleNotFoundError(&quot;No module named &#39;marketdata&#39;&quot;)
-WITH the sys.path line    -&gt;  imported OK from .../quant-lab/marketdata.py
+<p>Two questions. Does that first line need brackets around the subtraction? And is that
+timestamp format something I configured, or something pandas chose? The answers are
+unrelated to each other, but both were rules I had been treating as vibes.</p>
+<h2>The subtraction needs no brackets</h2>
+<p>Arithmetic binds tighter than comparison, so the offset is subtracted first and the
+comparison sees a finished timestamp:</p>
+<div class="highlight"><pre><span></span>df.index &gt;= df.index[-1] - pd.DateOffset(months=12)
+#            └──────── evaluated first ─────────┘
 </pre></div>
 
-<p>So the line is not boilerplate. It is the thing that makes the import possible.</p>
-<h2>Why <code>insert(0, ...)</code> and not <code>append(...)</code></h2>
-<p><code>sys.path</code> is searched <em>in order</em>, first match wins. Position <code>0</code> means my
-directory is consulted before anything else, so if some installed package were also
-called <code>marketdata</code>, mine would take priority. <code>append</code> would put it last and the
-installed package would silently shadow my file — the kind of bug where the code runs
-and the results are simply wrong.</p>
-<h2>The actual difference: value vs type</h2>
-<p>Both calls name the same directory. Only the type differs:</p>
-<div class="highlight"><pre><span></span>Path.cwd()  -&gt; PosixPath(&#39;/Users/.../quant-lab/notebooks&#39;)   # an object
-os.getcwd() -&gt; &#39;/Users/.../quant-lab/notebooks&#39;              # a plain string
+<p>I checked rather than trusted it — the bracketed and unbracketed forms produce
+identical masks. So brackets there are a style choice, nothing more.</p>
+<h2>The line next to it <em>does</em> need them</h2>
+<p>This is the part I had wrong. When you combine two conditions, <code>&amp;</code> and
+<code>|</code> bind <strong>tighter</strong> than the comparisons they are meant to join — the
+opposite of what the English reading suggests:</p>
+<div class="highlight"><pre><span></span><span class="c1"># BROKEN — parses as:  df.index &gt;= (lo &amp; df.index) &lt;= hi</span>
+<span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">index</span> <span class="o">&gt;=</span> <span class="n">lo</span> <span class="o">&amp;</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span> <span class="o">&lt;=</span> <span class="n">hi</span><span class="p">]</span>
 
-same directory? True
-same type?      PosixPath vs str
+<span class="c1"># CORRECT — the brackets are load-bearing</span>
+<span class="n">df</span><span class="p">[(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span> <span class="o">&gt;=</span> <span class="n">lo</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span> <span class="o">&lt;=</span> <span class="n">hi</span><span class="p">)]</span>
 </pre></div>
 
-<p><code>os.getcwd()</code> is the older, lower-level call — it asks the operating system "where am
-I?" and hands back text. <code>pathlib.Path.cwd()</code> calls <code>os.getcwd()</code> internally and wraps
-the result. So pathlib is not a competitor to <code>os</code>; it is a layer on top of it.</p>
-<p>A string does not know it is a path — it is just characters. A <code>Path</code> knows, so it
-carries the operations:</p>
-<div class="table-wrap"><table>
-<thead><tr><th>Task</th><th>pathlib</th><th>os.path</th></tr></thead>
-<tbody>
-<tr><td>Go up one level</td><td><code>p.parent</code></td><td><code>os.path.dirname(s)</code></td></tr>
-<tr><td>Build a subpath</td><td><code>p / "data" / "1h"</code></td><td><code>os.path.join(s, "data", "1h")</code></td></tr>
-<tr><td>Does it exist?</td><td><code>f.exists()</code></td><td><code>os.path.exists(f)</code></td></tr>
-<tr><td>File extension</td><td><code>f.suffix</code></td><td><code>os.path.splitext(f)[1]</code></td></tr>
-<tr><td>Filename, no extension</td><td><code>f.stem</code></td><td><code>os.path.splitext(os.path.basename(f))[0]</code></td></tr>
-</tbody></table></div>
-<p>The last row is the argument in miniature. With <code>os.path</code> every operation wraps
-another function around the outside, so a chain of two or three reads inside-out. With
-pathlib it stays left-to-right, in the order you think about it:</p>
-<div class="highlight"><pre><span></span>p.parent / &quot;data&quot; / &quot;yahoo&quot; / &quot;1h&quot;                        # pathlib
-os.path.join(os.path.dirname(s), &quot;data&quot;, &quot;yahoo&quot;, &quot;1h&quot;)   # os.path
+<p>The broken form does not return the wrong rows. It fails outright, which is the one
+mercy here:</p>
+<div class="highlight"><pre><span></span>TypeError: unsupported operand type(s) for &amp;: &#39;Timestamp&#39; and &#39;DatetimeArray&#39;
 </pre></div>
 
-<h2>The <code>/</code> operator is not just sugar</h2>
-<p>Overloading division to join paths looked like a gimmick until I remembered I sync
-this repo between a Mac and a Windows machine. The <code>/</code> operator inserts whatever
-separator the host platform uses — <code>/</code> here, <code>\</code> there — so the same source works on
-both. Hardcoding <code>"a/" + "b"</code> would quietly break on Windows. <code>os.path.join</code> handles
-this too; it is just far noisier about it.</p>
-<h2>So why the <code>str()</code> wrapper?</h2>
-<p>Because <code>sys.path</code> is a list of <em>strings</em>. It predates pathlib by roughly two
-decades and was never updated to accept <code>Path</code> objects. So the pattern is: do the path
-work in pathlib where it reads well, then convert back at the boundary where an older
-API insists.</p>
-<p>That boundary is narrower than I assumed. <code>open()</code>, <code>pandas.read_parquet</code>, and
-<code>matplotlib.savefig</code> all accept <code>Path</code> objects directly, because they go through
-<code>os.PathLike</code>. <code>sys.path</code> is one of the genuine holdouts.</p>
-<h2>What else the object gives you</h2>
-<p>Once you have a <code>Path</code>, the metadata is attached rather than requiring another
-import:</p>
-<div class="highlight"><pre><span></span>f = pathlib.Path.cwd() / &quot;price_levels.ipynb&quot;
-
-f.name    -&gt; &#39;price_levels.ipynb&#39;
-f.suffix  -&gt; &#39;.ipynb&#39;
-f.stem    -&gt; &#39;price_levels&#39;
-f.exists() -&gt; True
-f.stat().st_size -&gt; 216,511
+<p>The full ordering, from tightest to loosest. The line that matters is where the
+comparisons sit — <em>below</em> the bitwise operators, not above them:</p>
+<div class="highlight"><pre><span></span>**                      exponent
+-x  +x  ~x              unary
+*  /  //  %
++  -                    &lt;- the DateOffset subtraction resolves here
+&lt;&lt;  &gt;&gt;
+&amp;                       &lt;- pandas&#39; &quot;and&quot;
+^
+|                       &lt;- pandas&#39; &quot;or&quot;
+==  !=  &lt;  &lt;=  &gt;  &gt;=    &lt;- comparisons only get evaluated here
+not  /  and  /  or
 </pre></div>
 
-<p>This is why my downloader builds its whole cache path in one readable expression —
-<code>DATA / source / interval / f"{ticker}.parquet"</code> — rather than a nest of
-<code>os.path.join</code> calls. <code>.glob()</code> then walks the same structure to inventory what is
-cached, without ever assembling a path by hand.</p>
-<h2>The rule I settled on</h2>
-<p><strong>pathlib inside my own code; <code>str()</code> only at the boundary where an older API
-insists.</strong></p>
-<p>But I still need to be able to <em>read</em> <code>os.path</code>, because a decade of Stack Overflow
-answers and most older notebooks are written in it. Recognising
-<code>os.path.join(os.path.dirname(__file__), ...)</code> on sight is not optional; writing new
-code that way is.</p>
+<h2>Why pandas uses <code>&amp;</code> at all</h2>
+<p>The obvious question is why the idiom is not simply <code>and</code>. It is because Python
+does not let any library redefine <code>and</code> or <code>or</code> — they short-circuit, which
+means they ask each operand for a single true/false answer. A Series of 1,795 rows has no
+single answer, so it refuses:</p>
+<div class="highlight"><pre><span></span>ValueError: The truth value of a Series is ambiguous.
+            Use a.empty, a.bool(), a.item(), a.any() or a.all().
+</pre></div>
+
+<p><code>&amp;</code> and <code>|</code> <em>can</em> be overloaded, so pandas borrowed them to mean
+element-wise and/or. The awkward precedence is inherited baggage: those operators were
+designed for flipping bits on integers, where binding tightly is correct, and pandas took
+the operator without being able to take a new precedence for it.</p>
+<p>So the rule I now apply without thinking about it: <strong>bracket every condition inside
+a filter.</strong> Not because each one needs it, but because I am not going to correctly
+recall which ones do while I am mid-thought about something else.</p>
+<h2>The <code>-04:00</code> is not a format I chose</h2>
+<p>Second question, and my first instinct was wrong in an interesting way: I had read
+<code>15:50:00-04:00</code> as a <em>range</em>, as though the bar ran from 15:50 to some
+04:00. It does not. That suffix is the UTC offset — New York is four hours behind UTC in
+summer.</p>
+<div class="highlight"><pre><span></span>2026-08-21 15:50:00-04:00
+           └──┬──┘└──┬──┘
+              │      └── UTC offset: New York in summer (EDT)
+              └───────── the bar&#39;s timestamp
+</pre></div>
+
+<p>Nothing in my downloader sets a display format. The suffix appears for exactly one
+reason: <strong>the timestamp is timezone-aware</strong>, and pandas prints aware timestamps in
+ISO 8601, which requires an offset. Take the zone away and it disappears. Same bar, three
+ways:</p>
+<div class="highlight"><pre><span></span>tz=&quot;exchange&quot;    2026-08-21 15:55:00-04:00    &lt;- what my notebook shows
+no tz argument   2026-08-21 19:55:00+00:00    &lt;- as stored
+tz stripped      2026-08-21 15:55:00          &lt;- no zone, no suffix
+</pre></div>
+
+<h2>What is actually on disk</h2>
+<p>Worth being precise, because this is where my mental model had been sloppy. The
+offset is not stored anywhere. The Parquet column is:</p>
+<div class="highlight"><pre><span></span>ts: timestamp[ns, tz=UTC]
+</pre></div>
+
+<p>— an <code>int64</code> count of nanoseconds since 1970, plus a timezone <em>label</em>.
+That single integer is the whole truth. Every rendering is derived from it at print time by
+asking the system timezone database what the offset was on that date:</p>
+<div class="highlight"><pre><span></span>one instant, epoch_ns = 1787342100000000000
+
+  New York   2026-08-21 15:55:00-04:00
+  UTC        2026-08-21 19:55:00+00:00
+  Singapore  2026-08-22 03:55:00+08:00
+</pre></div>
+
+<p>Three different dates, three different clock times, three different offsets — one
+number. And the offset genuinely tracks the calendar rather than the label: the same
+wall-clock 15:55 in New York prints <code>-05:00</code> in January and <code>-04:00</code> in
+August.</p>
+<p>That is the property the whole caching design leans on. If I stored local wall-clock
+time, the hour that repeats each autumn would be ambiguous and the hour that vanishes each
+spring would be impossible. Storing the integer sidesteps both, and makes bars from
+different exchanges directly comparable without any conversion at all.</p>
+<p><strong>Store UTC, convert only at the display boundary.</strong> My loader takes
+<code>tz="exchange"</code> and derives the zone from the ticker suffix, so a US listing reads in
+New York time and <code>D05.SI</code> reads in Singapore time — while the cache underneath both
+stays in UTC.</p>
+<h2>Two display helpers, one of them a trap</h2>
+<div class="highlight"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%H:%M&quot;</span><span class="p">)</span>     <span class="c1"># &#39;15:55&#39;  -&gt; strings</span>
+<span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">tz_localize</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>     <span class="c1"># drop the zone entirely</span>
+</pre></div>
+
+<p><code>strftime</code> returns strings, so it belongs at the very end of a pipeline — chart
+labels, a printed table. Any date arithmetic after it fails, and sorting silently becomes
+alphabetical. <code>tz_localize(None)</code> keeps the datetime type but throws away the
+information that made it unambiguous, which is fine for a single-exchange plot and wrong for
+anything that will later be joined against another market.</p>
 <h2>Status</h2>
 <p><strong>Closed — I can state these without looking them up:</strong></p>
 <ul>
-<li><code>import X</code> searches only the directories in <code>sys.path</code>, in order, first match wins</li>
-<li>A notebook's working directory is its own folder, so a module one level up needs the parent added to <code>sys.path</code></li>
-<li><code>insert(0, ...)</code> gives my directory priority; <code>append</code> would let an installed package of the same name shadow it</li>
-<li><code>Path.cwd()</code> and <code>os.getcwd()</code> name the same directory; one returns an object that knows it is a path, the other returns characters</li>
-<li><code>Path.cwd()</code> is implemented on top of <code>os.getcwd()</code> — pathlib is a layer over <code>os</code>, not a rival</li>
-<li>The <code>/</code> operator emits the host platform's separator, which is what keeps Mac↔Windows sync working</li>
-<li><code>str()</code> is needed only where an API predates <code>os.PathLike</code> — <code>sys.path</code> is one; <code>open()</code> and <code>read_parquet</code> are not</li>
+<li>Arithmetic (<code>+ -</code>) binds tighter than comparison, so <code>a &gt;= b - offset</code> needs no brackets</li>
+<li><code>&amp;</code> and <code>|</code> bind tighter than comparison, so <code>(a &gt;= lo) &amp; (a &lt;= hi)</code> <em>does</em> — the brackets are required, not decorative</li>
+<li>pandas uses <code>&amp;</code>/<code>|</code> because Python forbids overloading <code>and</code>/<code>or</code>; a Series has no single truth value</li>
+<li>The <code>-04:00</code> suffix is the UTC offset, printed because the timestamp is tz-aware — not a format setting, and not the end of a range</li>
+<li>Parquet stores <code>int64</code> nanoseconds plus a zone label; every offset shown is derived from that integer at print time</li>
+<li>A bar's timestamp labels the <em>start</em> of its window; the end is implied by the interval</li>
 </ul>
 <p><strong>Open — these are next:</strong></p>
 <ul>
-<li>[ ] Learn the packaging-correct alternative to the <code>sys.path</code> hack — an editable install (<code>uv pip install -e .</code>) so <code>import marketdata</code> works from anywhere without the line at all</li>
-<li>[ ] Understand what <code>__init__.py</code> actually changes now that namespace packages exist, since <code>examples/</code> imports fine without one</li>
-<li>[ ] Check whether <code>Path.resolve()</code> should be in that line — <code>cwd()</code> is already absolute, but symlinks would make it matter</li>
+<li>[ ] Work out what <code>tz_convert</code> costs on a large frame, and whether converting once at load is cheaper than converting per plot</li>
+<li>[ ] Handle the DST-repeated hour properly on the day it happens, rather than trusting that UTC storage means I never have to look</li>
+<li>[ ] Decide whether my loader should <em>refuse</em> an unrecognised ticker suffix instead of quietly defaulting to New York — <code>ABI.BR</code> would currently display six hours wrong with no warning</li>
 </ul>
-<p><strong>Related:</strong> the <code>.py</code>-versus-<code>.ipynb</code> split that made this line necessary in the
-first place is worked through in the <a href="volume-at-price.html">volume-at-price note</a>. This is the plumbing that
-holds that split together.</p>
+<p><strong>Related:</strong> the filter line at the top comes from the <a href="volume-at-price.html">volume-at-price note</a>, and
+the UTC-storage convention it depends on is the same one described there. The habit of
+proving a language rule with a two-line script rather than trusting recall is the same one
+that produced the <a href="pathlib-vs-os.html">pathlib note</a>.</p>
   </div>
 </article>
 
