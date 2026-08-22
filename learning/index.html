@@ -316,6 +316,23 @@ header.page{padding:calc(var(--gutter)*.9) 0 1.5rem}
   padding:.2rem .55rem;border-radius:3px;border:1px solid currentColor}
 .chip-covered{color:var(--teal)}
 .chip-open,.chip-in-progress{color:var(--amber)}
+.chip-cat{color:var(--fg2);border-color:var(--line2)}
+.filters{display:flex;flex-wrap:wrap;align-items:center;gap:.6rem;margin:0 0 1.4rem}
+.filter-btn{font-family:inherit;font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+  padding:.35rem .7rem;border-radius:3px;border:1px solid var(--line2);background:none;
+  color:var(--fg2);cursor:pointer;transition:color .18s,border-color .18s,background .18s}
+.filter-btn:hover{color:var(--fg);border-color:var(--fg3)}
+.filter-btn[aria-pressed="true"]{color:var(--bg);background:var(--amber);border-color:var(--amber)}
+.search-wrap{margin-left:auto;display:flex;align-items:center;gap:.7rem}
+.search-input{font-family:inherit;font-size:13px;padding:.4rem .7rem;border-radius:3px;
+  border:1px solid var(--line2);background:var(--bg2);color:var(--fg);min-width:18ch}
+.search-input::placeholder{color:var(--fg3)}
+.result-count{color:var(--fg3);font-size:12px;letter-spacing:.05em;white-space:nowrap}
+.no-results{padding:2rem 1.5rem;background:var(--bg2);border:1px solid var(--line);
+  border-radius:6px;color:var(--fg2);font-size:13.5px;margin:0 0 var(--gutter)}
+@media (max-width:640px){.search-wrap{margin-left:0;width:100%}
+  .search-input{flex:1}}
+
 time{color:var(--fg3);font-size:12.5px;letter-spacing:.05em}
 
 article{padding:1rem 0 var(--gutter)}
@@ -392,19 +409,45 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--amber);outline-offs
       因此文字与图表不会各说各话。</span>
     </p>
     <p class="meta-line">
-      <span class="lang-en">5 notes · 2026-08-10 → 2026-08-22 · written in English</span>
-      <span class="lang-cn">5 篇笔记 · 2026-08-10 → 2026-08-22 · 正文为英文</span>
+      <span class="lang-en">6 notes · 2026-08-10 → 2026-08-22 · written in English</span>
+      <span class="lang-cn">6 篇笔记 · 2026-08-10 → 2026-08-22 · 正文为英文</span>
     </p>
   </div>
 </header>
 
 <main class="container">
+  <div class="filters">
+    <button class="filter-btn" type="button" data-cat="all" aria-pressed="true"><span class="lang-en">all</span><span class="lang-cn">全部</span></button>
+    <button class="filter-btn" type="button" data-cat="ml" aria-pressed="false"><span class="lang-en">machine learning</span><span class="lang-cn">机器学习</span></button>
+    <button class="filter-btn" type="button" data-cat="quant" aria-pressed="false"><span class="lang-en">quant &amp; markets</span><span class="lang-cn">量化与市场</span></button>
+    <button class="filter-btn" type="button" data-cat="python" aria-pressed="false"><span class="lang-en">python &amp; tooling</span><span class="lang-cn">Python 与工具</span></button>
+    <span class="search-wrap">
+      <input class="search-input" id="note-search" type="search" autocomplete="off"
+             placeholder="search notes…" aria-label="Search notes">
+      <span class="result-count" id="result-count"></span>
+    </span>
+  </div>
+
   <div class="note-grid">
 
-    <a class="note-card" href="volume-at-price.html">
+    <a class="note-card" data-cat="python" href="pathlib-vs-os.html">
+      <div class="kick-row">
+        <time datetime="2026-08-22">2026-08-22</time>
+        <span class="chip chip-covered">covered</span>
+        <span class="chip chip-cat">python & tooling</span>
+      </div>
+      <h3>pathlib vs os.path: same directory, different type</h3>
+      <p>This is a revision note, not a session brief. One line of notebook plumbing — sys.path.insert(0, str(pathlib.Path.cwd().parent)) — turned out to contain most of what I did not know about how Python finds modules and how it models paths.</p>
+      <p class="card-foot">
+        python · pathlib · imports · jupyter · tooling
+      </p>
+    </a>
+
+    <a class="note-card" data-cat="quant" href="volume-at-price.html">
       <div class="kick-row">
         <time datetime="2026-08-22">2026-08-22</time>
         <span class="chip chip-in-progress">in-progress</span>
+        <span class="chip chip-cat">quant & markets</span>
       </div>
       <h3>Volume at price: which levels a stock will actually defend</h3>
       <p>This is a revision note, not a session brief. It records what I learned building a volume-profile tool in quant-lab — how to turn OHLCV bars into the price levels that carry real inventory, and the three tempting shortcuts that get it wrong.</p>
@@ -413,10 +456,11 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--amber);outline-offs
       </p>
     </a>
 
-    <a class="note-card" href="cross-validation-and-oof.html">
+    <a class="note-card" data-cat="ml" href="cross-validation-and-oof.html">
       <div class="kick-row">
         <time datetime="2026-08-16">2026-08-16</time>
         <span class="chip chip-in-progress">in-progress</span>
+        <span class="chip chip-cat">machine learning</span>
       </div>
       <h3>Cross-validation and out-of-fold predictions</h3>
       <p>This is a revision note, not a session brief. It pulls together what I actually learned building a reusable validation harness on a Kaggle problem, and why every serious model I score from now on goes through it.</p>
@@ -425,10 +469,11 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--amber);outline-offs
       </p>
     </a>
 
-    <a class="note-card" href="meta-labeling-and-the-triple-barrier.html">
+    <a class="note-card" data-cat="quant" href="meta-labeling-and-the-triple-barrier.html">
       <div class="kick-row">
         <time datetime="2026-08-10">2026-08-10</time>
         <span class="chip chip-in-progress">in-progress</span>
+        <span class="chip chip-cat">quant & markets</span>
       </div>
       <h3>Meta-labeling, the triple barrier, and a look-ahead I shipped</h3>
       <p>The meta-labeling code I committed to the algo-trading repo, the honest result it produced — one weak generic signal, not fourteen edges — and the two things I got wrong: how I described the label, and a look-ahead in the labeling…</p>
@@ -437,10 +482,11 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--amber);outline-offs
       </p>
     </a>
 
-    <a class="note-card" href="logistic-regression.html">
+    <a class="note-card" data-cat="ml" href="logistic-regression.html">
       <div class="kick-row">
         <time datetime="2026-08-10">2026-08-10</time>
         <span class="chip chip-in-progress">in-progress</span>
+        <span class="chip chip-cat">machine learning</span>
       </div>
       <h3>Logistic regression: from a linear score to an honest probability</h3>
       <p>How the sigmoid turns an unbounded linear score into a bounded probability, why that keeps the ranking a plain linear fit gives you, and why unscaled features make the solver warn — worked through by hand on the s6e8 screen-time set.</p>
@@ -449,10 +495,11 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--amber);outline-offs
       </p>
     </a>
 
-    <a class="note-card" href="roc-and-classification-metrics.html">
+    <a class="note-card" data-cat="ml" href="roc-and-classification-metrics.html">
       <div class="kick-row">
         <time datetime="2026-08-10">2026-08-10</time>
         <span class="chip chip-in-progress">in-progress</span>
+        <span class="chip chip-cat">machine learning</span>
       </div>
       <h3>ROC, AUC, and what a classification score actually tells you</h3>
       <p>This is a revision note, not a session brief. It pulls together everything on ROC and AUC that has come up in real work since June, marks honestly what is closed and what is still open, and ends with the one exercise that would close the…</p>
@@ -462,6 +509,9 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--amber);outline-offs
     </a>
     
   </div>
+  <p class="no-results" id="no-results" style="display:none">
+    <span class="lang-en">No notes match that search.</span><span class="lang-cn">没有匹配的笔记。</span>
+  </p>
 </main>
 
 
@@ -518,6 +568,43 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--amber);outline-offs
     t.parentNode.insertBefore(w, t);
     w.appendChild(t);
   });
+})();
+</script>
+
+<script>
+(function () {
+  var grid = document.querySelector('.note-grid');
+  if (!grid) return;
+  var cards  = [].slice.call(grid.querySelectorAll('.note-card'));
+  var btns   = [].slice.call(document.querySelectorAll('.filter-btn'));
+  var search = document.getElementById('note-search');
+  var count  = document.getElementById('result-count');
+  var empty  = document.getElementById('no-results');
+  var cat = 'all';
+
+  function apply() {
+    var q = (search.value || '').trim().toLowerCase();
+    var n = 0;
+    cards.forEach(function (c) {
+      // textContent covers title, summary, tags, date and category in one go.
+      var hit = (cat === 'all' || c.getAttribute('data-cat') === cat) &&
+                (!q || c.textContent.toLowerCase().indexOf(q) !== -1);
+      c.style.display = hit ? '' : 'none';
+      if (hit) n++;
+    });
+    empty.style.display = n ? 'none' : '';
+    count.textContent = (n === cards.length) ? n + ' notes' : n + ' of ' + cards.length;
+  }
+
+  btns.forEach(function (b) {
+    b.addEventListener('click', function () {
+      cat = b.getAttribute('data-cat');
+      btns.forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); });
+      apply();
+    });
+  });
+  search.addEventListener('input', apply);
+  apply();
 })();
 </script>
 </body>
