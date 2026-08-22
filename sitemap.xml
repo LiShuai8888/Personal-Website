@@ -8,7 +8,7 @@
   </url>
   <url>
     <loc>https://lishuai8888.github.io/Personal-Website/learning/</loc>
-    <lastmod>2026-08-10</lastmod>
+    <lastmod>2026-08-22</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -27,6 +27,12 @@
   <url>
     <loc>https://lishuai8888.github.io/Personal-Website/learning/meta-labeling-and-the-triple-barrier.html</loc>
     <lastmod>2026-08-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://lishuai8888.github.io/Personal-Website/learning/volume-at-price.html</loc>
+    <lastmod>2026-08-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
