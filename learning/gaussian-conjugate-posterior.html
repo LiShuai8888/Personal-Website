@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Conjugate priors: the Beta–Bernoulli posterior predictive — Li Shuai</title>
-<meta name="description" content="A revision note built from working through one slide in the ML-foundations deck (Bayesian Statistics → Conjugate Priors). The slide derives, in four lines, the probability that the next coin flip is heads given the flips already seen, and…">
+<title>Gaussian conjugate priors: the posterior for an unknown mean — Li Shuai</title>
+<meta name="description" content="A revision note built from working through one slide in the ML-foundations deck (Bayesian Statistics → Gaussian distribution, variance known). The slide states the prior, states the posterior, and bridges them with "then we can show that" — which…">
 <meta name="author" content="Li Shuai">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230b0e14'/%3E%3Ctext x='16' y='22' font-family='monospace' font-size='15' font-weight='700' fill='%23e8a33d' text-anchor='middle'%3ELS%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -379,164 +379,309 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--amber);outline-offs
     <span class="lang-en">← learning</span><span class="lang-cn">← 学习笔记</span></a></p>
 
   <div class="kick-row" style="margin-top:1.4rem">
-    <time datetime="2026-08-31">2026-08-31</time>
+    <time datetime="2026-09-01">2026-09-01</time>
     <span class="chip chip-in-progress">in-progress</span>
-    <span style="color:var(--fg3);font-size:12px">statistics · bayesian · conjugate-priors · beta-distribution · shrinkage</span>
+    <span style="color:var(--fg3);font-size:12px">statistics · bayesian · conjugate-priors · gaussian · shrinkage</span>
   </div>
 
-  <h1 class="note-title">Conjugate priors: the Beta–Bernoulli posterior predictive</h1>
+  <h1 class="note-title">Gaussian conjugate priors: the posterior for an unknown mean</h1>
 
   <div class="prose">
-    <p>A revision note built from working through one slide in the ML-foundations deck
-(Bayesian Statistics → Conjugate Priors). The slide derives, in four lines, the
-probability that the <em>next</em> coin flip is heads given the flips already seen, and ends
-&quot;Exercise: compute the expectation in the last step.&quot; This note is me actually doing
-that exercise and pinning down why each line follows — not just nodding at it.</p>
-<p>The one-line version: <strong>for a coin with unknown bias, the probability the next flip is
-heads equals the posterior mean of the bias — and with a Beta prior that mean is just
-\((m + \alpha) / (N + \alpha + \beta)\), a shrinkage estimate that blends the observed
-rate with a prior.</strong></p>
-<h2>The symbols (the slide assumes them)</h2>
+<p>A revision note built from working through one slide in the ML-foundations deck
+(Bayesian Statistics → Gaussian distribution, variance known). The slide states the prior,
+states the posterior, and bridges them with <strong>"then we can show that"</strong> — which is exactly
+the part I could not reproduce from memory. So this note does the work. It also closes the
+open item I left on the <a href="conjugate-priors-beta-bernoulli.html">Beta–Bernoulli note</a>:
+<em>derive the posterior itself instead of quoting conjugacy.</em> Same programme, continuous
+case.</p>
+<p>The one-line version: <strong>for a Gaussian with known variance, precisions add —
+\(1/\sigma_N^2 = 1/\sigma_0^2 + N/\sigma^2\) — and the posterior mean is the
+precision-weighted blend of prior mean and sample mean. Which means the prior is worth
+exactly \(\kappa = \sigma^2/\sigma_0^2\) imaginary observations, and nothing else about it
+matters.</strong></p>
+<h2>The setup (what the slide assumes)</h2>
 <ul>
-<li>\(\mu\) — the coin's true, unknown probability of heads. This is the thing we are
-uncertain about. It lives on \([0, 1]\) because it <em>is</em> a probability.</li>
-<li>\(\mathcal{D}\) — the data: \(N\) flips, of which \(m\) came up heads.</li>
-<li><strong>Prior</strong> — before seeing data we assume \(\mu \sim \mathrm{Beta}(\alpha, \beta)\). The
-Beta is a distribution <em>over</em> \(\mu\) — a probability distribution over a probability.
-\(\alpha\) and \(\beta\) are its two shape knobs.</li>
-<li>\(x\) — the outcome of the <em>next</em> flip. \(x = 1\) means heads.</li>
+<li>\(\mu\) — the true, unknown mean. The thing we are uncertain about. Unlike the coin's
+  \(\mu\) in the Beta note, this one lives on all of \(\mathbb{R}\), which is why the prior
+  is Gaussian rather than Beta.</li>
+<li>\(\sigma^2\) — the variance of a <strong>single observation</strong>. Assumed <strong>known</strong>. This is the
+  strong, slightly artificial assumption that makes the slide one line long.</li>
+<li>\(\mathcal{D} = \{x_1, \dots, x_N\}\) — the data, iid \(\mathcal{N}(x \mid \mu, \sigma^2)\).</li>
+<li><strong>Prior:</strong> \(p(\mu) = \mathcal{N}(\mu \mid \mu_0, \sigma_0^2)\), written out in full
+  because the whole derivation is just this times the likelihood:</li>
 </ul>
-<p>The one fact that makes the whole slide collapse to arithmetic is <strong>conjugacy</strong>:</p>
-<blockquote>
-<p>A Beta prior + Bernoulli/Binomial data → a Beta <strong>posterior</strong>.
-$$p(\mu \mid \mathcal{D}) = \mathrm{Beta}\big(\mu \mid m + \alpha,\; (N - m) + \beta\big)$$</p>
-</blockquote>
-<p>You add your head-count onto \(\alpha\) and your tail-count onto \(\beta\). &quot;Conjugate&quot;
-literally means prior and posterior are the same family, so updating on data is addition
-instead of a hard integral. That is the entire reason the exercise is doable by hand.</p>
-<h2>The four lines</h2>
-<p>The target on the left, \(p(x = 1 \mid \mathcal{D})\), is <strong>not</strong> \(\mu\). We don't know
-\(\mu\). It's our honest prediction for the next flip that folds in <em>all</em> our leftover
-uncertainty about \(\mu\). It's called the <strong>posterior predictive</strong>.</p>
-<p><strong>Line 1 — marginalize \(\mu\) back out.</strong></p>
-<p>$$p(x=1 \mid \mathcal{D}) = \int_0^1 p(x=1 \mid \mu)\, p(\mu \mid \mathcal{D})\, d\mu$$</p>
-<p>Two rules stacked. The product rule introduces \(\mu\) and integrates it away:
-\(\int p(x=1, \mu \mid \mathcal{D})\, d\mu = \int p(x=1 \mid \mu, \mathcal{D})\, p(\mu \mid \mathcal{D})\, d\mu\).
-Then <strong>conditional independence</strong>: once you know the true bias \(\mu\), the past flips
-tell you nothing extra about the next flip, so
-\(p(x=1 \mid \mu, \mathcal{D}) = p(x=1 \mid \mu)\). Read the line as: <em>average the
-prediction over every possible \(\mu\), weighting each \(\mu\) by how plausible the data
-made it</em> (that weight is the posterior). The \(\int_0^1\) runs \(0 \to 1\) because
-\(\mu\) is a probability and can't live anywhere else.</p>
-<p><strong>Line 2 — plug in the Bernoulli likelihood.</strong></p>
-<p>$$= \int_0^1 \mu\, p(\mu \mid \mathcal{D})\, d\mu$$</p>
-<p>Because \(p(x=1 \mid \mu) = \mu\) by definition of a coin: the chance of heads <em>given</em>
-bias \(\mu\) is exactly \(\mu\). Nothing else moved.</p>
-<p><strong>Line 3 — recognize the integral as an expectation.</strong></p>
-<p>$$= \mathbb{E}_{p(\mu \mid \mathcal{D})}[\mu]$$</p>
-<p>Pure definition: \(\int \mu\, p(\mu \mid \mathcal{D})\, d\mu\) <strong>is</strong> the mean of \(\mu\)
-under the posterior. The subscript just says &quot;expectation under the <em>posterior</em>, not the
-prior.&quot; This is the slogan worth memorizing:</p>
-<blockquote>
-<p><strong>posterior predictive probability of heads = posterior mean of \(\mu\).</strong></p>
-</blockquote>
-<p><strong>Line 4 — substitute the Beta mean.</strong></p>
-<p>$$= \frac{m + \alpha}{N + \alpha + \beta}$$</p>
-<p>Mean of \(\mathrm{Beta}(a, b)\) is \(a / (a + b)\). The posterior is
-\(\mathrm{Beta}(m+\alpha,\, N-m+\beta)\), so
-\(\mathbb{E}[\mu] = \frac{m+\alpha}{(m+\alpha) + (N-m+\beta)} = \frac{m+\alpha}{N + \alpha + \beta}\).
-The \(-m\) and \(+m\) cancel in the denominator — that's why it lands so cleanly.</p>
-<h2>The exercise, done from the integral</h2>
-<p>The point of the exercise is to see <em>why</em> \(\text{mean of Beta} = a/(a+b)\) instead of
-taking it on faith. With \(a = m+\alpha\), \(b = N-m+\beta\):</p>
-<p>$$\mathbb{E}[\mu] = \int_0^1 \mu \cdot \frac{\mu^{a-1}(1-\mu)^{b-1}}{B(a,b)}\, d\mu
-= \frac{1}{B(a,b)} \int_0^1 \mu^{a}(1-\mu)^{b-1}\, d\mu = \frac{B(a+1,\, b)}{B(a,\, b)}$$</p>
-<p>The middle integral is, by definition, \(B(a+1, b)\). Expand with
-\(B(a,b) = \frac{\Gamma(a)\Gamma(b)}{\Gamma(a+b)}\) and use the one identity
-\(\Gamma(z+1) = z\,\Gamma(z)\):</p>
-<p>$$\frac{B(a+1, b)}{B(a, b)}
-= \frac{\Gamma(a+1)}{\Gamma(a)} \cdot \frac{\Gamma(a+b)}{\Gamma(a+b+1)}
-= a \cdot \frac{1}{a+b}
-= \frac{a}{a+b}
-= \frac{m+\alpha}{N+\alpha+\beta} \qquad \blacksquare$$</p>
-<p>So the two facts doing the real work are the <strong>Beta function</strong> \(B(a,b)\) (the normalizer
-that makes a Beta integrate to 1) and the <strong>Gamma recursion</strong> \(\Gamma(z+1) = z\,\Gamma(z)\)
-(the continuous version of a factorial). Everything else is bookkeeping.</p>
-<blockquote>
-<p><strong>Why \(\Gamma(z+1) = z\,\Gamma(z)\)</strong> — one integration by parts on the definition, so
-the note stands on its own.</p>
-<p>Definition (for \(\mathrm{Re}(z) > 0\)): \(\Gamma(z) = \int_0^\infty t^{z-1} e^{-t}\, dt\),
-so \(\Gamma(z+1) = \int_0^\infty t^{z} e^{-t}\, dt\). Integrate by parts with \(u = t^{z}\)
-and \(dv = e^{-t}\, dt\) — hence \(du = z\,t^{z-1}\, dt\), \(v = -e^{-t}\):</p>
-<p>$$\Gamma(z+1) = \Big[-t^{z} e^{-t}\Big]_0^\infty + z\int_0^\infty t^{z-1} e^{-t}\, dt$$</p>
-<p>The boundary term is 0 at both ends — at \(\infty\), \(e^{-t}\) decays faster than any
-power \(t^z\) grows; at 0, \(t^z \to 0\) because \(\mathrm{Re}(z) > 0\) — and the leftover
-integral is <em>exactly</em> \(\Gamma(z)\), giving \(\Gamma(z+1) = z\,\Gamma(z)\). Differentiating
-the polynomial \(t^z\) is what <strong>manufactures</strong> the factor \(z\). Anchored at
-\(\Gamma(1) = \int_0^\infty e^{-t}\, dt = 1\), the recursion gives \(\Gamma(n+1) = n!\) —
-the continuous factorial. The two ratios above are just this identity read off:
-\(\Gamma(a+1)/\Gamma(a) = a\) and \(\Gamma(a+b)/\Gamma(a+b+1) = 1/(a+b)\).</p>
-</blockquote>
-<h2>Why the answer is worth memorizing: shrinkage</h2>
-<p>Rewrite the result as a weighted blend:</p>
-<p>$$\frac{m+\alpha}{N+\alpha+\beta}
-= \underbrace{\frac{N}{N+\alpha+\beta}}_{\text{data weight}} \cdot \underbrace{\frac{m}{N}}_{\text{MLE}}
-+ \underbrace{\frac{\alpha+\beta}{N+\alpha+\beta}}_{\text{prior weight}} \cdot \underbrace{\frac{\alpha}{\alpha+\beta}}_{\text{prior mean}}$$</p>
-<p>It's a convex combination of</p>
+<p>$$p(\mu) = \frac{1}{\sqrt{2\pi\sigma_0^2}}\exp\!\left(-\frac{(\mu-\mu_0)^2}{2\sigma_0^2}\right)$$</p>
 <ul>
-<li>\(m/N\) — the raw observed frequency (the maximum-likelihood estimate, MLE), and</li>
-<li>\(\alpha/(\alpha+\beta)\) — the prior mean,</li>
+<li>\(\mu_{\mathrm{MLE}} = \frac{1}{N}\sum_n x_n\) — the sample mean.</li>
 </ul>
-<p>with weights set by \(N\) (how much data) against \(\alpha+\beta\) (how strong the prior).
-This is <strong>shrinkage</strong>: \(\alpha\) and \(\beta\) act as <em>pseudocounts</em> — \(\alpha\)
-imaginary heads and \(\beta\) imaginary tails you pretend you saw before flipping. As
-\(N \to \infty\) the data drowns the prior and you converge to the MLE. As \(N \to 0\) you
-fall back to the prior mean.</p>
-<p>Special case \(\alpha = \beta = 1\) (a uniform prior) gives \((m+1)/(N+2)\) — <strong>Laplace's
-rule of succession</strong>, the classic reason you never report a rate as a bare \(0/0\) or
-\(5/5\).</p>
+<p>Worth pausing on: \(\mathcal{N}(x \mid \mu, \sigma^2)\) and \(\mathcal{N}(\mu \mid \mu_0, \sigma_0^2)\)
+are the <em>same function</em>, used for two different jobs. In the likelihood, \(x\) is the
+variable and \(\mu\) is a parameter. In the prior, \(\mu\) — a <em>parameter of the model</em> — is
+itself the variable, and \(\mu_0, \sigma_0^2\) are hyperparameters. Writing a distribution
+over a parameter is the move that makes this Bayesian at all; a frequentist never writes
+\(p(\mu)\) because \(\mu\) is a fixed unknown, not a random variable.</p>
+<h2>Step 1 — posterior ∝ likelihood × prior</h2>
+<p>$$p(\mu \mid \mathcal{D}) \;\propto\; \left[\prod_{n=1}^{N}\mathcal{N}(x_n \mid \mu, \sigma^2)\right]\mathcal{N}(\mu \mid \mu_0, \sigma_0^2)$$</p>
+<p>Written out completely, before any tidying:</p>
+<p>$$p(\mathcal{D}\mid\mu)\,p(\mu) = (2\pi\sigma^2)^{-N/2}(2\pi\sigma_0^2)^{-1/2}\exp\!\left(-\frac{1}{2\sigma^2}\sum_n (x_n-\mu)^2 - \frac{1}{2\sigma_0^2}(\mu-\mu_0)^2\right)$$</p>
+<p>The \(\propto\) throws away every factor without a \(\mu\) in it — including that whole
+prefactor. We are allowed to, because we already know the answer is a Gaussian; once its
+mean and variance are identified, its normaliser is determined.</p>
+<h2>Step 2 — take logs, keep only the μ terms</h2>
+<p>$$\ln p(\mu\mid\mathcal{D}) = -\frac{1}{2\sigma^2}\sum_n (x_n-\mu)^2 \;-\; \frac{1}{2\sigma_0^2}(\mu-\mu_0)^2 \;+\; \text{const}$$</p>
+<p><strong>The result is already proved at this line, and this is the insight I had been missing.</strong>
+Both terms are quadratic in \(\mu\); a sum of quadratics is a quadratic; so the
+log-posterior is a quadratic and the posterior is \(\exp(\text{quadratic})\) — a Gaussian.
+Everything after this is bookkeeping to find <em>which</em> Gaussian. Conjugacy here is not a
+lucky algebraic coincidence, it is the closure of quadratics under addition.</p>
+<h2>Step 3 — collect powers of μ</h2>
+<p>$$\sum_n (x_n-\mu)^2 = N\mu^2 - 2\mu\sum_n x_n + \sum_n x_n^2, \qquad (\mu-\mu_0)^2 = \mu^2 - 2\mu\mu_0 + \mu_0^2$$</p>
+<p>Using \(\sum_n x_n = N\mu_{\mathrm{MLE}}\) and gathering:</p>
+<p>$$-\frac{1}{2}\underbrace{\left[\frac{N}{\sigma^2} + \frac{1}{\sigma_0^2}\right]}_{\mu^2\ \text{coefficient}}\mu^2 \;+\; \underbrace{\left[\frac{N\mu_{\mathrm{MLE}}}{\sigma^2} + \frac{\mu_0}{\sigma_0^2}\right]}_{\mu^1\ \text{coefficient}}\mu \;+\; \text{const}$$</p>
+<h2>Step 4 — match coefficients against the target</h2>
+<p>A Gaussian \(\mathcal{N}(\mu \mid \mu_N, \sigma_N^2)\) has log</p>
+<p>$$-\frac{1}{2\sigma_N^2}(\mu-\mu_N)^2 = -\frac{1}{2\sigma_N^2}\mu^2 + \frac{\mu_N}{\sigma_N^2}\mu \underbrace{- \frac{\mu_N^2}{2\sigma_N^2}}_{\text{no }\mu\ \Rightarrow\ \text{const}}$$</p>
+<p>Two quadratics are equal iff their coefficients match, so read the answer straight off:</p>
+<p>$$\frac{1}{\sigma_N^2} = \frac{1}{\sigma_0^2} + \frac{N}{\sigma^2}, \qquad \frac{\mu_N}{\sigma_N^2} = \frac{\mu_0}{\sigma_0^2} + \frac{N\mu_{\mathrm{MLE}}}{\sigma^2}$$</p>
+<p>$$\Rightarrow\quad \mu_N = \sigma_N^2\left(\frac{\mu_0}{\sigma_0^2} + \frac{N\mu_{\mathrm{MLE}}}{\sigma^2}\right)$$</p>
+<p>That is the derivation. Completing the square is the same computation in different
+clothing. Note that the natural output is in <strong>precisions</strong> (reciprocal variances), which
+is why the slide's version of \(\mu_N\) looks uglier than the thing it is.</p>
+<h2>Step 5 — bend it into the slide's form</h2>
+<p>Invert the precision equation, \(\sigma_N^2 = \dfrac{\sigma_0^2\sigma^2}{\sigma^2 + N\sigma_0^2}\), substitute, and divide numerator and denominator of each term by \(N\):</p>
+<p>$$\mu_N = \frac{\sigma^2/N}{\sigma_0^2 + \sigma^2/N}\,\mu_0 \;+\; \frac{\sigma_0^2}{\sigma_0^2 + \sigma^2/N}\,\mu_{\mathrm{MLE}}$$</p>
+<p>which is the slide verbatim. The two weights sum to 1, so \(\mu_N\) is a genuine convex
+combination: it always lands <strong>between</strong> \(\mu_0\) and \(\mu_{\mathrm{MLE}}\), never outside.</p>
+<p>The reason \(\sigma^2/N\) shows up next to \(\sigma_0^2\) is worth saying out loud, because it
+is the whole intuition. \(\mathrm{Var}\!\left(\frac{x_1+\cdots+x_N}{N}\right) = \sigma^2/N\) — that is
+the variance of the <em>sample mean</em>. So the formula is blending two independent estimates of
+the same quantity, the prior mean (uncertainty \(\sigma_0^2\)) and the sample mean
+(uncertainty \(\sigma^2/N\)), weighting each <strong>inversely to its variance</strong>. The noisier
+estimate gets down-weighted. That is all it is.</p>
+<h2>Reading 1 — information adds</h2>
+<p>$$\frac{1}{\sigma_N^2} = \frac{1}{\sigma_0^2} + \frac{N}{\sigma^2}$$</p>
+<p>The cleanest statement of the whole result. The prior carries \(1/\sigma_0^2\) units of
+information, each observation carries \(1/\sigma^2\), and \(N\) of them carry \(N/\sigma^2\).
+Two consequences:</p>
+<ul>
+<li>\(\sigma_N^2\) shrinks with \(N\) <strong>regardless of what the data says.</strong> In this model you
+  cannot become less certain about \(\mu\) by seeing more of it. (That stops being true the
+  moment \(\sigma^2\) is also unknown — see the open items.)</li>
+<li><strong>Sequential updating is free.</strong> Process one point at a time, using each posterior as the
+  next prior, and you land on the identical answer, because addition is associative. I
+  checked this numerically rather than trusting it; see below.</li>
+</ul>
+<h2>Reading 2 — the prior is κ pseudo-observations</h2>
+<p>Set \(\kappa = \sigma^2/\sigma_0^2\). The entire slide collapses to:</p>
+<p>$$\mu_N = \frac{\kappa\,\mu_0 + N\,\mu_{\mathrm{MLE}}}{\kappa + N}, \qquad \sigma_N^2 = \frac{\sigma^2}{N + \kappa}$$</p>
+<p>\(\kappa\) is the prior's <strong>effective sample size</strong>: the prior is worth exactly \(\kappa\)
+imaginary observations parked at \(\mu_0\). A prior with \(\sigma_0^2 = \sigma^2/10\) is you
+claiming to have already seen ten data points. That is the honest way to ask whether a
+prior is defensible — not "does this feel about right" but "am I willing to say this is
+worth ten prints."</p>
+<p>This is the same object as \(\alpha + \beta\) in the Beta–Bernoulli note, where \(\alpha\)
+and \(\beta\) were pseudo<em>counts</em>. Discrete rate, continuous level, one idea.</p>
+<h2>Gap I hit #1 — why is there no summation sign in p(μ)?</h2>
+<p>Mid-session I asked whether \(p(\mu)\) has no \(\sum\) because \(\mu\) and \(\sigma^2\) are
+known. That is the wrong reason, and getting it right is genuinely clarifying.</p>
+<p>A summation appears in a log-density only when you have a <strong>product of independent
+factors</strong>, one per observation: \(\ln\prod_{n=1}^N(\cdot) = \sum_{n=1}^N \ln(\cdot)\). The
+prior is <strong>one</strong> factor about <strong>one</strong> scalar. There is no index to run over — no
+\(\mu_1,\dots,\mu_N\) — so there is nothing to sum.</p>
+<p>Test the "known" theory against the likelihood: \(\sigma^2\) <em>is</em> known there, and
+\(\sum_n (x_n-\mu)^2\) still has a sum. So knowing a parameter plainly does not remove a
+summation. What "known" actually buys is different: it makes terms like
+\(-\frac{1}{2}\ln(2\pi\sigma_0^2)\) <em>constants</em> that can be dropped. That deletes <strong>terms</strong>,
+not the summation sign.</p>
+<blockquote>
+<p><strong>Sum ⇔ counting. Constant ⇔ knowing.</strong> Two separate mechanisms, easy to conflate.</p>
+</blockquote>
+<p>Confirmation from the other direction: make \(\mu\) a \(D\)-dimensional vector with prior
+\(\mathcal{N}(\boldsymbol\mu\mid\boldsymbol\mu_0,\Sigma_0)\) and a sum <em>does</em> appear, inside
+the quadratic form \((\boldsymbol\mu-\boldsymbol\mu_0)^{\!\top}\Sigma_0^{-1}(\boldsymbol\mu-\boldsymbol\mu_0) = \sum_i\sum_j(\cdot)\).
+The parameter is exactly as unknown as before. The sum arrived because \(\boldsymbol\mu\)
+became \(D\) components — it counts dimensions now instead of data points, but it is still
+counting.</p>
+<p><strong>Where did the likelihood's sum go, then?</strong> The posterior has no summation sign either,
+yet it absorbed all \(N\) observations. It is still there, compressed into two numbers:
+\(N\) and \(\sum_n x_n\). Those are the <strong>sufficient statistics</strong>. Once you have them you can
+delete the raw data and still compute the exact posterior — a thousand observations
+collapse to a count and a total. That is the real reason updating stays cheap forever, and
+it is the same fact as \(\kappa\) and \(N\) being the only things in Reading 2.</p>
+<h2>Gap I hit #2 — why does μ_N² become "const"?</h2>
+<p>In Step 4, expanding \(-\frac{1}{2\sigma_N^2}(\mu-\mu_N)^2\) produces a third piece,
+\(-\mu_N^2/(2\sigma_N^2)\), which gets swept into <code>const</code>. But \(\mu_N\) is <em>the thing we are
+trying to find</em> — how can it be constant?</p>
+<p>Because two different senses of "constant" are in play, and only one matters here:</p>
+<ul>
+<li><strong>Unknown vs known</strong> — \(\mu_N\) is a fixed number whose value we have not worked out yet.</li>
+<li><strong>Constant vs variable</strong> — \(\mu_N\) does not vary with \(\mu\).</li>
+</ul>
+<p>Collecting powers of a polynomial only cares about the second. Fixed-but-unknown is
+constant enough. (Same distinction as gap #1, which is why they belong in one note.)</p>
+<p>And we are entitled to <em>discard</em> it, not merely park it. Count unknowns: \(\sigma_N^2\) and
+\(\mu_N\), two of them, and the \(\mu^2\) and \(\mu^1\) coefficients give two equations. The
+\(\mu^0\) equation is surplus — and worse than surplus, it carries <strong>no usable
+information</strong>, because back at Step 1 the \(\propto\) deliberately destroyed the
+\(\mu\)-independent factor. In log space that is an unknown additive \(\mu^0\) term. We
+corrupted that coefficient on purpose; matching it afterwards would be matching against
+something we threw away.</p>
+<p>Which exposes the one real hazard in this notation:</p>
+<blockquote>
+<p><strong><code>const</code> on the left is not the same number as <code>const</code> on the right.</strong> People write
+"+ const" on both sides of Step 4 and read it as an equality. It is not. Only the
+\(\mu\)-dependent coefficients are being equated.</p>
+</blockquote>
+<p>Nothing is lost, because normalisation pins the true constant down afterwards: once you
+know a density is Gaussian with mean \(\mu_N\) and variance \(\sigma_N^2\), its constant is
+forced to be whatever makes it integrate to 1.</p>
+<p><strong>If you ever do want that constant,</strong> the gap between the two <code>const</code>s is exactly
+\(\ln p(\mathcal{D})\), the marginal likelihood. Equating the \(\mu^0\) terms honestly gives</p>
+<p>$$\ln p(\mathcal{D}) = \tfrac{1}{2}\ln(2\pi\sigma_N^2) - \tfrac{1}{2}\ln(2\pi\sigma_0^2) - \tfrac{N}{2}\ln(2\pi\sigma^2) + \frac{\mu_N^2}{2\sigma_N^2} - \frac{\mu_0^2}{2\sigma_0^2} - \frac{\sum_n x_n^2}{2\sigma^2}$$</p>
+<p>the model evidence, used for model comparison and for tuning hyperparameters. So the
+\(\mu^0\) term is not worthless — it answers a different question from "what is the
+posterior over \(\mu\)", and you only pay for it when you ask.</p>
+<h2>Sanity checks</h2>
+<p>The four corners, which are faster to check than the algebra is to re-derive:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>case</th>
+<th>posterior mean</th>
+<th>posterior variance</th>
+<th>reading</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>\(N = 0\)</td>
+<td>\(\mu_0\)</td>
+<td>\(\sigma_0^2\)</td>
+<td>no data, posterior = prior</td>
+</tr>
+<tr>
+<td>\(N \to \infty\)</td>
+<td>\(\mu_{\mathrm{MLE}}\)</td>
+<td>\(\to 0\)</td>
+<td>data swamps any proper prior</td>
+</tr>
+<tr>
+<td>\(\sigma_0^2 \to \infty\)</td>
+<td>\(\mu_{\mathrm{MLE}}\)</td>
+<td>\(\sigma^2/N\)</td>
+<td>flat prior reproduces the frequentist answer exactly</td>
+</tr>
+<tr>
+<td>\(\sigma_0^2 \to 0\)</td>
+<td>\(\mu_0\)</td>
+<td>\(0\)</td>
+<td>dogmatic prior; no amount of evidence moves it</td>
+</tr>
+</tbody>
+</table></div>
+<p>Row 3 is the useful one: the classical estimate <em>is</em> the Bayesian one under an
+uninformative prior, and \(\sigma^2/N\) reappears as the posterior variance. Row 4 is the
+warning label on strong priors.</p>
+<h2>Numeric check</h2>
+<p>Deriving it is not the same as trusting it, so I checked the closed form against a
+posterior built by brute-force grid integration — no conjugacy used anywhere:</p>
+<div class="highlight"><pre><span></span><code><span class="n">mu0</span><span class="p">,</span> <span class="n">sd0</span><span class="p">,</span> <span class="n">sd</span> <span class="o">=</span> <span class="mf">0.10</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.20</span>          <span class="c1"># prior mean/sd, known obs sd</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.31</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.12</span><span class="p">,</span> <span class="mf">0.44</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.28</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.03</span><span class="p">,</span>
+              <span class="mf">0.51</span><span class="p">,</span> <span class="mf">0.19</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.08</span><span class="p">,</span> <span class="mf">0.36</span><span class="p">,</span> <span class="mf">0.22</span><span class="p">,</span> <span class="mf">0.14</span><span class="p">])</span>
+<span class="n">N</span><span class="p">,</span> <span class="n">mle</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">x</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+
+<span class="n">sdN2</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">sd0</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">N</span><span class="o">/</span><span class="n">sd</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>                       <span class="c1"># precisions add</span>
+<span class="n">muN</span>  <span class="o">=</span> <span class="n">sdN2</span> <span class="o">*</span> <span class="p">(</span><span class="n">mu0</span><span class="o">/</span><span class="n">sd0</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">N</span><span class="o">*</span><span class="n">mle</span><span class="o">/</span><span class="n">sd</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="n">g</span>    <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4_000_001</span><span class="p">)</span>                  <span class="c1"># brute force, no conjugacy</span>
+<span class="n">logp</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.5</span><span class="o">*</span><span class="p">((</span><span class="n">g</span><span class="o">-</span><span class="n">mu0</span><span class="p">)</span><span class="o">/</span><span class="n">sd0</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="o">*</span><span class="p">((</span><span class="n">x</span><span class="p">[:,</span><span class="kc">None</span><span class="p">]</span><span class="o">-</span><span class="n">g</span><span class="p">[</span><span class="kc">None</span><span class="p">,:])</span><span class="o">/</span><span class="n">sd</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">p</span>    <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">logp</span> <span class="o">-</span> <span class="n">logp</span><span class="o">.</span><span class="n">max</span><span class="p">());</span> <span class="n">p</span> <span class="o">/=</span> <span class="n">p</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="n">mu_num</span><span class="p">,</span> <span class="n">var_num</span> <span class="o">=</span> <span class="p">(</span><span class="n">g</span><span class="o">*</span><span class="n">p</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(),</span> <span class="p">((</span><span class="n">g</span><span class="o">-</span><span class="p">(</span><span class="n">g</span><span class="o">*</span><span class="n">p</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">p</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>N=12  mle=0.1892  kappa=16.0  w_prior=0.5714
+closed form   muN=0.138214  sdN2=0.00142857
+slide form    muN=0.138214
+kappa form    muN=0.138214  sdN2=0.00142857
+grid numeric  muN=0.138214  sdN2=0.00142857
+sequential    muN=0.138214  sdN2=0.00142857
+max abs err vs grid: mu 5.55e-17   var 4.34e-19
+</code></pre></div>
+
+<p>All four routes agree to floating-point noise: the precision form, the slide's weighted
+form, the \(\kappa\) form, and one-observation-at-a-time sequential updating all land on
+0.138214, and the grid posterior confirms it to \(6\times10^{-17}\).</p>
+<p>The number to sit with is <strong><code>w_prior = 0.5714</code></strong>. Here \(\kappa = 0.04/0.0025 = 16\), so the
+prior outweighs 12 real observations: the estimate ends at 0.1382, closer to the prior 0.10
+than to the sample mean 0.1892. Twelve data points and the data still loses. If that feels
+wrong, the prior was too tight — \(\sigma_0 = 0.05\) was a claim to sixteen prior
+observations, and I should have priced it that way before choosing it.</p>
 <h2>Trading hook</h2>
-<p>This is exactly how to estimate a <strong>win rate / hit rate from a small number of trades</strong>.
-Naive \(\text{wins}/\text{trades}\) on 12 fills is wildly noisy — \(8/12 = 67\%\) is not
-signal. A Beta prior centred on a skeptical base rate shrinks that toward something
-defensible, and \(\alpha+\beta\) is the dial for how much you trust the prior versus the
-fills. Same math underlies Beta-Bernoulli <strong>Thompson sampling</strong> if I ever bandit-allocate
-capital across strategies: keep a \(\mathrm{Beta}(\text{wins}+\alpha, \text{losses}+\beta)\)
-per strategy, sample from each, bet on the argmax.</p>
+<p>This is the shrinkage estimator, and it is the right tool any time a mean has to come off a
+short, noisy sample: a spread's fair value from a handful of prints, a strategy's edge from
+one quarter, a basis level from thin liquidity. \(\kappa\) is the dial for how hard to pull
+toward the anchor, and Step 5 guarantees you can never pull past it.</p>
+<p>Division of labour with the sibling note: <strong>Beta–Bernoulli for a rate</strong> (win rate, hit
+rate — bounded on [0,1], updated with pseudocounts), <strong>Gaussian for a level</strong> (a spread, a
+return, a basis — unbounded, updated with pseudo-observations).</p>
+<p>It also turned out to be a formula I had already written down without recognising it. The
+Kaggle plan's Week 3 has target-encoding smoothing as
+<code>(n·category_mean + m·global_mean) / (n + m)</code>. That <em>is</em> \(\mu_N\) with \(\kappa = m\) — a
+Gaussian conjugate posterior mean with the global rate as prior. Verified as the same
+arithmetic:</p>
+<div class="highlight"><pre><span></span><code>target-enc: n=3 cat_mean=0.6667 global=0.4130 m=20 -&gt; 0.4461
+conjugate with kappa=m:                              0.4461
+</code></pre></div>
+
+<p>So "tune the smoothing constant <code>m</code>" and "decide how many observations my prior is worth"
+are one question, and the bias-variance framing and the pseudo-observation framing are the
+same trade-off seen from two sides.</p>
 <h2>Status</h2>
 <p><strong>Closed — I can state these without looking them up:</strong></p>
 <ul>
-<li>The left side is the <em>posterior predictive</em>, not \(\mu\) — the next-flip probability
-with our uncertainty about \(\mu\) folded in</li>
-<li>Line 1 = marginalize \(\mu\) out (product rule + conditional independence); Line 2 =
-\(p(x=1\mid\mu)=\mu\); Line 3 = that integral is by definition the posterior mean;
-Line 4 = Beta mean \(a/(a+b)\)</li>
-<li>Conjugacy = Beta prior + Bernoulli data → Beta posterior, updated by <em>adding counts</em>
-onto \(\alpha, \beta\)</li>
-<li>The result \((m+\alpha)/(N+\alpha+\beta)\) is a shrinkage blend of the MLE \(m/N\) and
-the prior mean \(\alpha/(\alpha+\beta)\), weighted by \(N\) vs \(\alpha+\beta\);
-\(\alpha=\beta=1\) gives Laplace's rule</li>
+<li>The posterior is Gaussian because a sum of quadratics is a quadratic; that is the whole
+  proof, and it lands at Step 2 before any algebra</li>
+<li>Match the \(\mu^2\) and \(\mu^1\) coefficients; \(\mu^0\) is surplus and was corrupted by
+  the \(\propto\) on purpose</li>
+<li>Precisions add: \(1/\sigma_N^2 = 1/\sigma_0^2 + N/\sigma^2\), so certainty only ever
+  accumulates and sequential updating is exact</li>
+<li>\(\mu_N\) is the precision-weighted convex blend of \(\mu_0\) and \(\mu_{\mathrm{MLE}}\),
+  with \(\sigma_0^2\) against \(\sigma^2/N\) — the variances of the two estimates being blended</li>
+<li>\(\kappa = \sigma^2/\sigma_0^2\) is the prior's effective sample size; the whole slide is
+  \(\mu_N = (\kappa\mu_0 + N\mu_{\mathrm{MLE}})/(\kappa+N)\)</li>
+<li>Sum ⇔ counting, constant ⇔ knowing; and \(N, \sum_n x_n\) are the sufficient statistics</li>
 </ul>
 <p><strong>Open — next:</strong></p>
 <ul>
-<li>[ ] Run a numeric example in code: \(\mathrm{Beta}(2,2)\) prior, 8 heads in 12 flips →
-    confirm the predictive is \(10/16 = 0.625\), and plot how it slides from prior mean
-    toward \(8/12\) as \(N\) grows</li>
-<li>[ ] Derive the Beta <em>posterior</em> itself (prior × likelihood \(\propto\) Beta) rather than
-    quoting conjugacy — close the one step this note takes on trust</li>
-<li>[ ] Code a toy Beta-Bernoulli Thompson sampler over two strategies and watch it
-    concentrate on the better one</li>
+<li>[ ] <strong>Drop the "\(\sigma^2\) known" assumption.</strong> In markets it never is. The conjugate
+      pair becomes Normal-Inverse-Gamma and the posterior over \(\mu\) becomes a <strong>Student-t</strong>
+      — fatter tails, and the "certainty only accumulates" property dies. This is the single
+      most important gap in the note</li>
+<li>[ ] <strong>Derive the posterior predictive</strong> \(p(x\mid\mathcal{D}) = \mathcal{N}(x \mid \mu_N,\ \sigma^2 + \sigma_N^2)\)
+      — irreducible noise plus residual uncertainty about the mean. This is the exact Gaussian
+      analogue of what the Beta–Bernoulli note computes, so the two notes should meet here</li>
+<li>[ ] <strong>Multivariate case:</strong> precision <em>matrices</em> add, \(\Sigma_N^{-1} = \Sigma_0^{-1} + N\Sigma^{-1}\).
+      Confirm, and see what breaks when \(\Sigma\) is ill-conditioned</li>
+<li>[ ] <strong>Tune \(\kappa\) on real data</strong> rather than asserting it: cross-validate <code>m</code> for
+      target encoding on a Kaggle categorical and check smoothing actually beats the raw
+      category mean</li>
+<li>[ ] <strong>Use the evidence.</strong> I wrote \(\ln p(\mathcal{D})\) down and have never used it —
+      empirical-Bayes tuning of \(\sigma_0^2\) by maximising it is the obvious first
+      application</li>
 </ul>
-<p><strong>Notation gap logged honestly:</strong> the \(\int_0^1\) limits tripped me up mid-session — the
-sub/superscript on the integral sign are just the bounds (integrate \(\mu\) from 0 to 1),
-and they're 0 and 1 here <em>because</em> \(\mu\) is a probability. Writing it down so it's a
-non-issue next time.</p>
-<p><strong>Related:</strong> the continuous counterpart is the
-<a href="gaussian-conjugate-posterior.html">Gaussian conjugate note</a> — the same shrinkage
-blend for an unknown <em>level</em> instead of an unknown <em>rate</em>, where
-\(\kappa = \sigma^2/\sigma_0^2\) plays the role \(\alpha+\beta\) plays here. It also settles
-the second open item above for its own case: the posterior is derived there from
-prior \(\times\) likelihood by collecting powers of \(\mu\), not quoted.</p>
+<p><strong>Distinction I keep having to re-make:</strong> \(\sigma^2\) is the spread of the <em>observations</em> —
+a fact about the world, fixed, known here. \(\sigma_N^2\) is the spread of my <em>belief about
+\(\mu\)</em> — a fact about my state of knowledge, and it collapses toward zero as data arrives.
+Conflating them is the standard error with this material, and the posterior predictive above
+is where the difference becomes unavoidable, because there the two simply add.</p>
+<p><strong>Related:</strong> the discrete counterpart is the
+<a href="conjugate-priors-beta-bernoulli.html">Beta–Bernoulli note</a> — the same shrinkage blend for
+an unknown <em>rate</em> rather than an unknown <em>level</em>, with \(\alpha+\beta\) playing the role
+\(\kappa\) plays here. Its subject, the posterior predictive, is exactly the piece this note
+still owes. And any claim that smoothing a thin category mean actually <em>helps</em> has to be
+measured through the out-of-fold harness in the
+<a href="cross-validation-and-oof.html">cross-validation note</a> — a smoothed feature fitted on all
+the data leaks, and the leak flatters it.</p>
 
   </div>
 </article>
