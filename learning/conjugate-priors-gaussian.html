@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Conjugate priors: the Gaussian cases, and where fat tails actually come from — Li Shuai</title>
+<meta name="description" content="The sequel to the Beta–Bernoulli note, from the same ML-foundations deck (FE5225, Bayesian Statistics → Gaussian Distribution, slides 27–42). Where that note had a single unknown bounded between 0 and 1, this one has two unknowns living on…">
+<meta name="author" content="Li Shuai">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230b0e14'/%3E%3Ctext x='16' y='22' font-family='monospace' font-size='15' font-weight='700' fill='%23e8a33d' text-anchor='middle'%3ELS%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<style>pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.highlight .hll { background-color: #ffffcc }
+.highlight { background: #f8f8f8; }
+.highlight .c { color: #3D7B7B; font-style: italic } /* Comment */
+.highlight .err { border: 1px solid #F00 } /* Error */
+.highlight .k { color: #008000; font-weight: bold } /* Keyword */
+.highlight .o { color: #666 } /* Operator */
+.highlight .ch { color: #3D7B7B; font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: #3D7B7B; font-style: italic } /* Comment.Multiline */
+.highlight .cp { color: #9C6500 } /* Comment.Preproc */
+.highlight .cpf { color: #3D7B7B; font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: #3D7B7B; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
+.highlight .gd { color: #A00000 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+.highlight .gr { color: #E40000 } /* Generic.Error */
+.highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #008400 } /* Generic.Inserted */
+.highlight .go { color: #717171 } /* Generic.Output */
+.highlight .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.highlight .gt { color: #04D } /* Generic.Traceback */
+.highlight .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.highlight .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.highlight .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.highlight .kp { color: #008000 } /* Keyword.Pseudo */
+.highlight .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.highlight .kt { color: #B00040 } /* Keyword.Type */
+.highlight .m { color: #666 } /* Literal.Number */
+.highlight .s { color: #BA2121 } /* Literal.String */
+.highlight .na { color: #687822 } /* Name.Attribute */
+.highlight .nb { color: #008000 } /* Name.Builtin */
+.highlight .nc { color: #00F; font-weight: bold } /* Name.Class */
+.highlight .no { color: #800 } /* Name.Constant */
+.highlight .nd { color: #A2F } /* Name.Decorator */
+.highlight .ni { color: #717171; font-weight: bold } /* Name.Entity */
+.highlight .ne { color: #CB3F38; font-weight: bold } /* Name.Exception */
+.highlight .nf { color: #00F } /* Name.Function */
+.highlight .nl { color: #767600 } /* Name.Label */
+.highlight .nn { color: #00F; font-weight: bold } /* Name.Namespace */
+.highlight .nt { color: #008000; font-weight: bold } /* Name.Tag */
+.highlight .nv { color: #19177C } /* Name.Variable */
+.highlight .ow { color: #A2F; font-weight: bold } /* Operator.Word */
+.highlight .w { color: #BBB } /* Text.Whitespace */
+.highlight .mb { color: #666 } /* Literal.Number.Bin */
+.highlight .mf { color: #666 } /* Literal.Number.Float */
+.highlight .mh { color: #666 } /* Literal.Number.Hex */
+.highlight .mi { color: #666 } /* Literal.Number.Integer */
+.highlight .mo { color: #666 } /* Literal.Number.Oct */
+.highlight .sa { color: #BA2121 } /* Literal.String.Affix */
+.highlight .sb { color: #BA2121 } /* Literal.String.Backtick */
+.highlight .sc { color: #BA2121 } /* Literal.String.Char */
+.highlight .dl { color: #BA2121 } /* Literal.String.Delimiter */
+.highlight .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.highlight .s2 { color: #BA2121 } /* Literal.String.Double */
+.highlight .se { color: #AA5D1F; font-weight: bold } /* Literal.String.Escape */
+.highlight .sh { color: #BA2121 } /* Literal.String.Heredoc */
+.highlight .si { color: #A45A77; font-weight: bold } /* Literal.String.Interpol */
+.highlight .sx { color: #008000 } /* Literal.String.Other */
+.highlight .sr { color: #A45A77 } /* Literal.String.Regex */
+.highlight .s1 { color: #BA2121 } /* Literal.String.Single */
+.highlight .ss { color: #19177C } /* Literal.String.Symbol */
+.highlight .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.highlight .fm { color: #00F } /* Name.Function.Magic */
+.highlight .vc { color: #19177C } /* Name.Variable.Class */
+.highlight .vg { color: #19177C } /* Name.Variable.Global */
+.highlight .vi { color: #19177C } /* Name.Variable.Instance */
+.highlight .vm { color: #19177C } /* Name.Variable.Magic */
+.highlight .il { color: #666 } /* Literal.Number.Integer.Long */
+@media (prefers-color-scheme: dark) {
+pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+:root:not([data-theme="light"]) .highlight .hll { background-color: #49483e }
+:root:not([data-theme="light"]) .highlight { background: #272822; color: #F8F8F2 }
+:root:not([data-theme="light"]) .highlight .c { color: #959077 } /* Comment */
+:root:not([data-theme="light"]) .highlight .err { color: #ED007E; background-color: #1E0010 } /* Error */
+:root:not([data-theme="light"]) .highlight .esc { color: #F8F8F2 } /* Escape */
+:root:not([data-theme="light"]) .highlight .g { color: #F8F8F2 } /* Generic */
+:root:not([data-theme="light"]) .highlight .k { color: #66D9EF } /* Keyword */
+:root:not([data-theme="light"]) .highlight .l { color: #AE81FF } /* Literal */
+:root:not([data-theme="light"]) .highlight .n { color: #F8F8F2 } /* Name */
+:root:not([data-theme="light"]) .highlight .o { color: #FF4689 } /* Operator */
+:root:not([data-theme="light"]) .highlight .x { color: #F8F8F2 } /* Other */
+:root:not([data-theme="light"]) .highlight .p { color: #F8F8F2 } /* Punctuation */
+:root:not([data-theme="light"]) .highlight .ch { color: #959077 } /* Comment.Hashbang */
+:root:not([data-theme="light"]) .highlight .cm { color: #959077 } /* Comment.Multiline */
+:root:not([data-theme="light"]) .highlight .cp { color: #959077 } /* Comment.Preproc */
+:root:not([data-theme="light"]) .highlight .cpf { color: #959077 } /* Comment.PreprocFile */
+:root:not([data-theme="light"]) .highlight .c1 { color: #959077 } /* Comment.Single */
+:root:not([data-theme="light"]) .highlight .cs { color: #959077 } /* Comment.Special */
+:root:not([data-theme="light"]) .highlight .gd { color: #FF4689 } /* Generic.Deleted */
+:root:not([data-theme="light"]) .highlight .ge { color: #F8F8F2; font-style: italic } /* Generic.Emph */
+:root:not([data-theme="light"]) .highlight .ges { color: #F8F8F2; font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+:root:not([data-theme="light"]) .highlight .gr { color: #F8F8F2 } /* Generic.Error */
+:root:not([data-theme="light"]) .highlight .gh { color: #F8F8F2 } /* Generic.Heading */
+:root:not([data-theme="light"]) .highlight .gi { color: #A6E22E } /* Generic.Inserted */
+:root:not([data-theme="light"]) .highlight .go { color: #66D9EF } /* Generic.Output */
+:root:not([data-theme="light"]) .highlight .gp { color: #FF4689; font-weight: bold } /* Generic.Prompt */
+:root:not([data-theme="light"]) .highlight .gs { color: #F8F8F2; font-weight: bold } /* Generic.Strong */
+:root:not([data-theme="light"]) .highlight .gu { color: #959077 } /* Generic.Subheading */
+:root:not([data-theme="light"]) .highlight .gt { color: #F8F8F2 } /* Generic.Traceback */
+:root:not([data-theme="light"]) .highlight .kc { color: #66D9EF } /* Keyword.Constant */
+:root:not([data-theme="light"]) .highlight .kd { color: #66D9EF } /* Keyword.Declaration */
+:root:not([data-theme="light"]) .highlight .kn { color: #FF4689 } /* Keyword.Namespace */
+:root:not([data-theme="light"]) .highlight .kp { color: #66D9EF } /* Keyword.Pseudo */
+:root:not([data-theme="light"]) .highlight .kr { color: #66D9EF } /* Keyword.Reserved */
+:root:not([data-theme="light"]) .highlight .kt { color: #66D9EF } /* Keyword.Type */
+:root:not([data-theme="light"]) .highlight .ld { color: #E6DB74 } /* Literal.Date */
+:root:not([data-theme="light"]) .highlight .m { color: #AE81FF } /* Literal.Number */
+:root:not([data-theme="light"]) .highlight .s { color: #E6DB74 } /* Literal.String */
+:root:not([data-theme="light"]) .highlight .na { color: #A6E22E } /* Name.Attribute */
+:root:not([data-theme="light"]) .highlight .nb { color: #F8F8F2 } /* Name.Builtin */
+:root:not([data-theme="light"]) .highlight .nc { color: #A6E22E } /* Name.Class */
+:root:not([data-theme="light"]) .highlight .no { color: #66D9EF } /* Name.Constant */
+:root:not([data-theme="light"]) .highlight .nd { color: #A6E22E } /* Name.Decorator */
+:root:not([data-theme="light"]) .highlight .ni { color: #F8F8F2 } /* Name.Entity */
+:root:not([data-theme="light"]) .highlight .ne { color: #A6E22E } /* Name.Exception */
+:root:not([data-theme="light"]) .highlight .nf { color: #A6E22E } /* Name.Function */
+:root:not([data-theme="light"]) .highlight .nl { color: #F8F8F2 } /* Name.Label */
+:root:not([data-theme="light"]) .highlight .nn { color: #F8F8F2 } /* Name.Namespace */
+:root:not([data-theme="light"]) .highlight .nx { color: #A6E22E } /* Name.Other */
+:root:not([data-theme="light"]) .highlight .py { color: #F8F8F2 } /* Name.Property */
+:root:not([data-theme="light"]) .highlight .nt { color: #FF4689 } /* Name.Tag */
+:root:not([data-theme="light"]) .highlight .nv { color: #F8F8F2 } /* Name.Variable */
+:root:not([data-theme="light"]) .highlight .ow { color: #FF4689 } /* Operator.Word */
+:root:not([data-theme="light"]) .highlight .pm { color: #F8F8F2 } /* Punctuation.Marker */
+:root:not([data-theme="light"]) .highlight .w { color: #F8F8F2 } /* Text.Whitespace */
+:root:not([data-theme="light"]) .highlight .mb { color: #AE81FF } /* Literal.Number.Bin */
+:root:not([data-theme="light"]) .highlight .mf { color: #AE81FF } /* Literal.Number.Float */
+:root:not([data-theme="light"]) .highlight .mh { color: #AE81FF } /* Literal.Number.Hex */
+:root:not([data-theme="light"]) .highlight .mi { color: #AE81FF } /* Literal.Number.Integer */
+:root:not([data-theme="light"]) .highlight .mo { color: #AE81FF } /* Literal.Number.Oct */
+:root:not([data-theme="light"]) .highlight .sa { color: #E6DB74 } /* Literal.String.Affix */
+:root:not([data-theme="light"]) .highlight .sb { color: #E6DB74 } /* Literal.String.Backtick */
+:root:not([data-theme="light"]) .highlight .sc { color: #E6DB74 } /* Literal.String.Char */
+:root:not([data-theme="light"]) .highlight .dl { color: #E6DB74 } /* Literal.String.Delimiter */
+:root:not([data-theme="light"]) .highlight .sd { color: #E6DB74 } /* Literal.String.Doc */
+:root:not([data-theme="light"]) .highlight .s2 { color: #E6DB74 } /* Literal.String.Double */
+:root:not([data-theme="light"]) .highlight .se { color: #AE81FF } /* Literal.String.Escape */
+:root:not([data-theme="light"]) .highlight .sh { color: #E6DB74 } /* Literal.String.Heredoc */
+:root:not([data-theme="light"]) .highlight .si { color: #E6DB74 } /* Literal.String.Interpol */
+:root:not([data-theme="light"]) .highlight .sx { color: #E6DB74 } /* Literal.String.Other */
+:root:not([data-theme="light"]) .highlight .sr { color: #E6DB74 } /* Literal.String.Regex */
+:root:not([data-theme="light"]) .highlight .s1 { color: #E6DB74 } /* Literal.String.Single */
+:root:not([data-theme="light"]) .highlight .ss { color: #E6DB74 } /* Literal.String.Symbol */
+:root:not([data-theme="light"]) .highlight .bp { color: #F8F8F2 } /* Name.Builtin.Pseudo */
+:root:not([data-theme="light"]) .highlight .fm { color: #A6E22E } /* Name.Function.Magic */
+:root:not([data-theme="light"]) .highlight .vc { color: #F8F8F2 } /* Name.Variable.Class */
+:root:not([data-theme="light"]) .highlight .vg { color: #F8F8F2 } /* Name.Variable.Global */
+:root:not([data-theme="light"]) .highlight .vi { color: #F8F8F2 } /* Name.Variable.Instance */
+:root:not([data-theme="light"]) .highlight .vm { color: #F8F8F2 } /* Name.Variable.Magic */
+:root:not([data-theme="light"]) .highlight .il { color: #AE81FF } /* Literal.Number.Integer.Long */
+}
+pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+:root[data-theme="dark"] .highlight .hll { background-color: #49483e }
+:root[data-theme="dark"] .highlight { background: #272822; color: #F8F8F2 }
+:root[data-theme="dark"] .highlight .c { color: #959077 } /* Comment */
+:root[data-theme="dark"] .highlight .err { color: #ED007E; background-color: #1E0010 } /* Error */
+:root[data-theme="dark"] .highlight .esc { color: #F8F8F2 } /* Escape */
+:root[data-theme="dark"] .highlight .g { color: #F8F8F2 } /* Generic */
+:root[data-theme="dark"] .highlight .k { color: #66D9EF } /* Keyword */
+:root[data-theme="dark"] .highlight .l { color: #AE81FF } /* Literal */
+:root[data-theme="dark"] .highlight .n { color: #F8F8F2 } /* Name */
+:root[data-theme="dark"] .highlight .o { color: #FF4689 } /* Operator */
+:root[data-theme="dark"] .highlight .x { color: #F8F8F2 } /* Other */
+:root[data-theme="dark"] .highlight .p { color: #F8F8F2 } /* Punctuation */
+:root[data-theme="dark"] .highlight .ch { color: #959077 } /* Comment.Hashbang */
+:root[data-theme="dark"] .highlight .cm { color: #959077 } /* Comment.Multiline */
+:root[data-theme="dark"] .highlight .cp { color: #959077 } /* Comment.Preproc */
+:root[data-theme="dark"] .highlight .cpf { color: #959077 } /* Comment.PreprocFile */
+:root[data-theme="dark"] .highlight .c1 { color: #959077 } /* Comment.Single */
+:root[data-theme="dark"] .highlight .cs { color: #959077 } /* Comment.Special */
+:root[data-theme="dark"] .highlight .gd { color: #FF4689 } /* Generic.Deleted */
+:root[data-theme="dark"] .highlight .ge { color: #F8F8F2; font-style: italic } /* Generic.Emph */
+:root[data-theme="dark"] .highlight .ges { color: #F8F8F2; font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+:root[data-theme="dark"] .highlight .gr { color: #F8F8F2 } /* Generic.Error */
+:root[data-theme="dark"] .highlight .gh { color: #F8F8F2 } /* Generic.Heading */
+:root[data-theme="dark"] .highlight .gi { color: #A6E22E } /* Generic.Inserted */
+:root[data-theme="dark"] .highlight .go { color: #66D9EF } /* Generic.Output */
+:root[data-theme="dark"] .highlight .gp { color: #FF4689; font-weight: bold } /* Generic.Prompt */
+:root[data-theme="dark"] .highlight .gs { color: #F8F8F2; font-weight: bold } /* Generic.Strong */
+:root[data-theme="dark"] .highlight .gu { color: #959077 } /* Generic.Subheading */
+:root[data-theme="dark"] .highlight .gt { color: #F8F8F2 } /* Generic.Traceback */
+:root[data-theme="dark"] .highlight .kc { color: #66D9EF } /* Keyword.Constant */
+:root[data-theme="dark"] .highlight .kd { color: #66D9EF } /* Keyword.Declaration */
+:root[data-theme="dark"] .highlight .kn { color: #FF4689 } /* Keyword.Namespace */
+:root[data-theme="dark"] .highlight .kp { color: #66D9EF } /* Keyword.Pseudo */
+:root[data-theme="dark"] .highlight .kr { color: #66D9EF } /* Keyword.Reserved */
+:root[data-theme="dark"] .highlight .kt { color: #66D9EF } /* Keyword.Type */
+:root[data-theme="dark"] .highlight .ld { color: #E6DB74 } /* Literal.Date */
+:root[data-theme="dark"] .highlight .m { color: #AE81FF } /* Literal.Number */
+:root[data-theme="dark"] .highlight .s { color: #E6DB74 } /* Literal.String */
+:root[data-theme="dark"] .highlight .na { color: #A6E22E } /* Name.Attribute */
+:root[data-theme="dark"] .highlight .nb { color: #F8F8F2 } /* Name.Builtin */
+:root[data-theme="dark"] .highlight .nc { color: #A6E22E } /* Name.Class */
+:root[data-theme="dark"] .highlight .no { color: #66D9EF } /* Name.Constant */
+:root[data-theme="dark"] .highlight .nd { color: #A6E22E } /* Name.Decorator */
+:root[data-theme="dark"] .highlight .ni { color: #F8F8F2 } /* Name.Entity */
+:root[data-theme="dark"] .highlight .ne { color: #A6E22E } /* Name.Exception */
+:root[data-theme="dark"] .highlight .nf { color: #A6E22E } /* Name.Function */
+:root[data-theme="dark"] .highlight .nl { color: #F8F8F2 } /* Name.Label */
+:root[data-theme="dark"] .highlight .nn { color: #F8F8F2 } /* Name.Namespace */
+:root[data-theme="dark"] .highlight .nx { color: #A6E22E } /* Name.Other */
+:root[data-theme="dark"] .highlight .py { color: #F8F8F2 } /* Name.Property */
+:root[data-theme="dark"] .highlight .nt { color: #FF4689 } /* Name.Tag */
+:root[data-theme="dark"] .highlight .nv { color: #F8F8F2 } /* Name.Variable */
+:root[data-theme="dark"] .highlight .ow { color: #FF4689 } /* Operator.Word */
+:root[data-theme="dark"] .highlight .pm { color: #F8F8F2 } /* Punctuation.Marker */
+:root[data-theme="dark"] .highlight .w { color: #F8F8F2 } /* Text.Whitespace */
+:root[data-theme="dark"] .highlight .mb { color: #AE81FF } /* Literal.Number.Bin */
+:root[data-theme="dark"] .highlight .mf { color: #AE81FF } /* Literal.Number.Float */
+:root[data-theme="dark"] .highlight .mh { color: #AE81FF } /* Literal.Number.Hex */
+:root[data-theme="dark"] .highlight .mi { color: #AE81FF } /* Literal.Number.Integer */
+:root[data-theme="dark"] .highlight .mo { color: #AE81FF } /* Literal.Number.Oct */
+:root[data-theme="dark"] .highlight .sa { color: #E6DB74 } /* Literal.String.Affix */
+:root[data-theme="dark"] .highlight .sb { color: #E6DB74 } /* Literal.String.Backtick */
+:root[data-theme="dark"] .highlight .sc { color: #E6DB74 } /* Literal.String.Char */
+:root[data-theme="dark"] .highlight .dl { color: #E6DB74 } /* Literal.String.Delimiter */
+:root[data-theme="dark"] .highlight .sd { color: #E6DB74 } /* Literal.String.Doc */
+:root[data-theme="dark"] .highlight .s2 { color: #E6DB74 } /* Literal.String.Double */
+:root[data-theme="dark"] .highlight .se { color: #AE81FF } /* Literal.String.Escape */
+:root[data-theme="dark"] .highlight .sh { color: #E6DB74 } /* Literal.String.Heredoc */
+:root[data-theme="dark"] .highlight .si { color: #E6DB74 } /* Literal.String.Interpol */
+:root[data-theme="dark"] .highlight .sx { color: #E6DB74 } /* Literal.String.Other */
+:root[data-theme="dark"] .highlight .sr { color: #E6DB74 } /* Literal.String.Regex */
+:root[data-theme="dark"] .highlight .s1 { color: #E6DB74 } /* Literal.String.Single */
+:root[data-theme="dark"] .highlight .ss { color: #E6DB74 } /* Literal.String.Symbol */
+:root[data-theme="dark"] .highlight .bp { color: #F8F8F2 } /* Name.Builtin.Pseudo */
+:root[data-theme="dark"] .highlight .fm { color: #A6E22E } /* Name.Function.Magic */
+:root[data-theme="dark"] .highlight .vc { color: #F8F8F2 } /* Name.Variable.Class */
+:root[data-theme="dark"] .highlight .vg { color: #F8F8F2 } /* Name.Variable.Global */
+:root[data-theme="dark"] .highlight .vi { color: #F8F8F2 } /* Name.Variable.Instance */
+:root[data-theme="dark"] .highlight .vm { color: #F8F8F2 } /* Name.Variable.Magic */
+:root[data-theme="dark"] .highlight .il { color: #AE81FF } /* Literal.Number.Integer.Long */
+</style>
+<style>
+:root{
+  --bg:#0b0e14; --bg2:#111520; --bg3:#161b27;
+  --fg:#eeeae2; --fg2:#9a9488; --fg3:#5a5650;
+  --amber:oklch(76% 0.17 65); --amber-dim:oklch(60% 0.12 65);
+  --teal:oklch(68% 0.14 195);
+  --line:#1e2330; --line2:#2a3040;
+  --font-display:'Syne',sans-serif; --font-serif:'Instrument Serif',serif; --font-mono:'JetBrains Mono',monospace;
+  --nav-h:68px; --gutter:56px;
+}
+.light{
+  --bg:#f7f4ef; --bg2:#f0ebe2; --bg3:#e8e2d6;
+  --fg:#1a1714; --fg2:#4a4540; --fg3:#8a8278;
+  --amber:oklch(58% 0.15 50); --amber-dim:oklch(70% 0.13 50);
+  --teal:oklch(50% 0.12 195);
+  --line:#ddd8ce; --line2:#c9c2b3;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--font-mono);
+  font-weight:300;font-size:15px;line-height:1.7;-webkit-text-size-adjust:100%}
+.container{width:min(100% - 2.5rem,72rem);margin-inline:auto}
+.cn .lang-en,html:not(.cn) .lang-cn{display:none}
+
+nav{position:sticky;top:0;z-index:20;height:var(--nav-h);display:flex;align-items:center;
+  background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line)}
+nav .container{display:flex;align-items:center;gap:1.5rem;justify-content:space-between}
+.nav-logo{display:inline-flex;align-items:center;gap:.6rem;color:var(--fg);text-decoration:none;
+  font-family:var(--font-display);font-weight:700;letter-spacing:-.02em}
+.nav-logo-dot{width:8px;height:8px;border-radius:50%;background:var(--amber)}
+.nav-right{display:flex;align-items:center;gap:1.1rem}
+.nav-right a,.toggle{color:var(--fg2);text-decoration:none;font-size:12px;letter-spacing:.08em;
+  text-transform:uppercase;background:none;border:0;cursor:pointer;font-family:var(--font-mono);padding:0}
+.nav-right a:hover,.toggle:hover{color:var(--amber)}
+
+.sec-head{display:flex;align-items:baseline;gap:1rem;margin:0 0 1.5rem}
+.sec-num{font-size:12px;color:var(--amber);letter-spacing:.1em}
+.sec-title{font-family:var(--font-display);font-size:clamp(1.9rem,1.4rem+2vw,3.1rem);
+  font-weight:800;letter-spacing:-.03em;margin:0;line-height:1.05}
+.sec-rule{flex:1;height:1px;background:var(--line2)}
+
+header.page{padding:calc(var(--gutter)*.9) 0 1.5rem}
+.kicker{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--fg3);margin:0 0 .6rem}
+.blurb{color:var(--fg2);max-width:62ch;margin:1rem 0 0}
+.meta-line{color:var(--fg3);font-size:12.5px;margin:.9rem 0 0;letter-spacing:.04em}
+
+.note-grid{display:grid;gap:1px;background:var(--line);border:1px solid var(--line);
+  border-radius:6px;overflow:hidden;margin:0 0 var(--gutter)}
+.note-card{display:block;background:var(--bg2);padding:1.6rem 1.5rem;text-decoration:none;color:inherit;
+  transition:background .18s}
+.note-card:hover{background:var(--bg3)}
+.note-card h3{font-family:var(--font-display);font-weight:700;font-size:1.3rem;letter-spacing:-.02em;
+  margin:.7rem 0 .5rem;line-height:1.2;color:var(--fg)}
+.note-card:hover h3{color:var(--amber)}
+.note-card p{margin:0;color:var(--fg2);font-size:13.5px}
+.card-foot{margin-top:1rem;color:var(--fg3);font-size:12px;letter-spacing:.05em}
+
+.chip{display:inline-block;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+  padding:.2rem .55rem;border-radius:3px;border:1px solid currentColor}
+.chip-covered{color:var(--teal)}
+.chip-open,.chip-in-progress{color:var(--amber)}
+time{color:var(--fg3);font-size:12.5px;letter-spacing:.05em}
+
+article{padding:1rem 0 var(--gutter)}
+.note-title{font-family:var(--font-display);font-weight:800;letter-spacing:-.035em;
+  font-size:clamp(2rem,1.4rem+2.6vw,3.4rem);line-height:1.05;margin:.8rem 0 0;max-width:22ch}
+.kick-row{display:flex;flex-wrap:wrap;align-items:center;gap:.8rem}
+.prose{max-width:70ch;margin-top:2.5rem}
+.prose>*+*{margin-top:1.15em}
+.prose h2{font-family:var(--font-display);font-weight:700;letter-spacing:-.02em;
+  font-size:clamp(1.35rem,1.1rem+1vw,1.9rem);margin-top:2.6em;padding-top:.7em;
+  border-top:1px solid var(--line);color:var(--fg)}
+.prose h3{font-family:var(--font-display);font-weight:600;font-size:1.15rem;margin-top:2em;letter-spacing:-.01em}
+.prose h4{font-size:.95rem;color:var(--fg2);margin-top:1.6em}
+.prose a{color:var(--amber);text-underline-offset:3px}
+.prose strong{color:var(--fg);font-weight:500}
+.prose code{background:var(--bg3);padding:.12em .38em;border-radius:3px;font-size:.86em;color:var(--amber-dim)}
+.prose pre{background:var(--bg2);border:1px solid var(--line);border-radius:6px;padding:1.1rem;
+  overflow-x:auto;font-size:.82em}
+.prose pre code{background:none;padding:0;color:inherit}
+.prose blockquote{margin-inline:0;padding:.3rem 0 .3rem 1.2rem;border-left:2px solid var(--amber);
+  color:var(--fg2)}
+.prose ul,.prose ol{padding-left:1.3rem}
+.prose li+li{margin-top:.45em}
+.prose li::marker{color:var(--amber-dim)}
+.prose hr{border:0;border-top:1px solid var(--line);margin:2.6em 0}
+.prose table{border-collapse:collapse;width:100%;font-size:13px}
+.prose th,.prose td{text-align:left;padding:.55rem .7rem;border-bottom:1px solid var(--line)}
+.prose th{color:var(--fg3);font-size:11px;letter-spacing:.09em;text-transform:uppercase;font-weight:400}
+.prose td:not(:first-child){font-variant-numeric:tabular-nums}
+.table-wrap{overflow-x:auto}
+.prose figure.fig{margin:2.4rem 0;padding:1.2rem;background:var(--bg2);border:1px solid var(--line);
+  border-radius:6px;overflow-x:auto}
+.prose figure.fig svg{max-width:100%;height:auto;display:block;margin-inline:auto}
+.prose figcaption{margin-top:.9rem;color:var(--fg3);font-size:12px;line-height:1.6;
+  padding-left:.9rem;border-left:1px solid var(--line2)}
+pre.mermaid{background:var(--bg2);border:1px solid var(--line);border-radius:6px;padding:1.1rem;overflow-x:auto}
+
+footer{border-top:1px solid var(--line);padding:2rem 0 3rem;color:var(--fg3);font-size:12px}
+footer a{color:var(--fg2)}
+a:focus-visible,button:focus-visible{outline:2px solid var(--amber);outline-offset:3px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+<body>
+<nav>
+  <div class="container">
+    <a class="nav-logo" href="../index.html">
+      <span class="nav-logo-dot"></span>
+      <span class="lang-en">Li Shuai</span><span class="lang-cn">李帅</span>
+    </a>
+    <div class="nav-right">
+      <a href="../index.html"><span class="lang-en">back to site</span><span class="lang-cn">返回主站</span></a>
+      <a href="index.html"><span class="lang-en">notes</span><span class="lang-cn">笔记</span></a>
+      <button class="toggle" id="lang-toggle" type="button">EN / 中</button>
+      <button class="toggle" id="theme-toggle" type="button" aria-label="Toggle theme">◐</button>
+    </div>
+  </div>
+</nav>
+
+
+<article class="container">
+  <p class="kicker"><a href="index.html" style="color:inherit;text-decoration:none">
+    <span class="lang-en">← learning</span><span class="lang-cn">← 学习笔记</span></a></p>
+
+  <div class="kick-row" style="margin-top:1.4rem">
+    <time datetime="2026-09-05">2026-09-05</time>
+    <span class="chip chip-in-progress">in-progress</span>
+    <span style="color:var(--fg3);font-size:12px">statistics · bayesian · conjugate-priors · gaussian · student-t · volatility</span>
+  </div>
+
+  <h1 class="note-title">Conjugate priors: the Gaussian cases, and where fat tails actually come from</h1>
+
+  <div class="prose">
+    <p>The sequel to the Beta–Bernoulli note, from the same ML-foundations deck (FE5225,
+Bayesian Statistics → Gaussian Distribution, slides 27–42). Where that note had a single
+unknown bounded between 0 and 1, this one has two unknowns living on different domains,
+and the deck splits into three slide-groups that <em>look</em> like three unrelated recipes:</p>
+<ul>
+<li>σ² known → infer \(\mu\)  (slides 27–29) — <strong>derived in full in the sibling note
+<a href="gaussian-conjugate-posterior.html">Gaussian conjugate priors: the posterior for an unknown mean</a>,
+so this note quotes its result rather than repeating it</strong></li>
+<li>\(\mu\) known → infer σ²  (slides 32–36) — derived here</li>
+<li>both unknown  (slides 37–39) — derived here</li>
+</ul>
+<p><strong>The question that started this note was &quot;why are there two separate formulas, and what
+links them?&quot;</strong> The answer turns out to be the whole point of the chapter, and it is not
+stated on any single slide.</p>
+<p>Everything below was verified numerically before being written down — the scripts are
+<code>figures/verify_gaussian_conjugacy.py</code> and <code>figures/verify_gaussian_predictive.py</code>, both
+re-runnable. Two things I asserted mid-session turned out to be wrong when measured, and
+both corrections are kept in place rather than quietly fixed.</p>
+<p>The one-line version: <strong>it is one likelihood read through different variables; the shape
+you see — and therefore the conjugate prior you're allowed to pick — depends on which
+parameter you hold still.</strong></p>
+<h2>The symbols</h2>
+<ul>
+<li>\(\mu\) — the mean. \(\sigma^2\) — the variance.</li>
+<li>\(\lambda = 1/\sigma^2\) — the <strong>precision</strong>. The deck switches to this early and never
+switches back; §&quot;Why precision&quot; says why.</li>
+<li>\(\mathcal{D} = \{x_1,\dots,x_N\}\) — the data, \(N\) i.i.d. draws.</li>
+<li><strong>Conjugate prior</strong> — a prior whose family the posterior stays inside, so updating is
+arithmetic instead of an integral. Same meaning as in the Beta–Bernoulli note.</li>
+</ul>
+<p>⚠️ <strong>The PDF's text layer mangles the Greek.</strong> Reading the slides directly, the
+substitutions are: <code>ϑ² / ω²</code> → \(\sigma^2\), <code>ε</code> → \(\lambda\), <code>ϖ / ϱ</code> → \(\alpha\) / \(\beta\)
+(the Gamma shape and rate), <code>↑</code> → minus, <code>↓ / ↔</code> → \(\propto\), <code>!(·)</code> → \(\Gamma(\cdot)\).
+Worth having next to you or the slides read as nonsense.</p>
+<h2>Start here: the surface, on three data points</h2>
+<p><em>Added after re-teaching this section. Everything below the next heading assumes
+you can picture a two-argument function as a surface and take slices of it. If
+that is not already second nature, this section is the missing floor — skip it
+only if it is.</em></p>
+<p>Take three observations and nothing else: \(x = [1, 3, 5]\), so \(N = 3\).</p>
+<p>The likelihood has <strong>two</strong> inputs, which in code is just:</p>
+<div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">L</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">lam</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">lam</span><span class="o">**</span><span class="p">(</span><span class="n">N</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">lam</span><span class="o">/</span><span class="mi">2</span> <span class="o">*</span> <span class="nb">sum</span><span class="p">((</span><span class="n">x</span> <span class="o">-</span> <span class="n">mu</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+</pre></div>
+<p>A one-argument function draws as a curve. A two-argument one cannot — it needs a
+table, and <strong>that table is the surface</strong>:</p>
+<pre><code>                mu=1        mu=2        mu=3        mu=4        mu=5
+  lam=0.02    | 0.002316   0.002534  [0.002611]  0.002534   0.002316
+  lam=0.05    | 0.006781   0.008492  [0.009154]  0.008492   0.006781
+  lam=0.10    | 0.011633   0.018245  [0.021197]  0.018245   0.011633   &lt;== SLICE 1
+  lam=0.20    | 0.012105   0.029773  [0.040189]  0.029773   0.012105
+  lam=0.40    | 0.004634   0.028031  [0.051076]  0.028031   0.004634
+                                  ^^^^^^^^^^ SLICE 2
+</code></pre>
+<p>25 cells, <strong>one function</strong>, called 25 times. A &quot;slice&quot; is not an exotic operation —
+it is a for-loop with one argument frozen:</p>
+<div class="highlight"><pre><span></span><span class="p">[</span><span class="n">L</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="mf">0.10</span><span class="p">)</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">mus</span><span class="p">]</span>     <span class="c1"># a ROW    -&gt; &quot;sigma^2 known&quot;</span>
+<span class="p">[</span><span class="n">L</span><span class="p">(</span><span class="mf">3.0</span><span class="p">,</span> <span class="n">l</span><span class="p">)</span>  <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">lams</span><span class="p">]</span>    <span class="c1"># a COLUMN -&gt; &quot;mu known&quot;</span>
+</pre></div>
+<p><strong>The proof that these are one object:</strong> read the two slices out as lists —</p>
+<pre><code>SLICE 1 (row)    : [0.011633, 0.018245, 0.021197, 0.018245, 0.011633]
+SLICE 2 (column) : [0.002611, 0.009154, 0.021197, 0.040189, 0.051076]
+</code></pre>
+<p><code>0.021197</code> appears in both. It is the cell where the row and the column cross.
+They are not two formulas; they are two readings of one table.</p>
+<p><strong>Analogy that makes it obvious:</strong> implied vol is a function of (strike, expiry).
+Freeze expiry, walk strikes → the <strong>smile</strong>. Freeze strike, walk expiries → the
+<strong>term structure</strong>. Two completely different-looking curves, and nobody says
+implied vol has two formulas. Same situation exactly.</p>
+<h3>What the numbers in the cells actually are</h3>
+<p>Each cell is a <strong>candidate Gaussian</strong>, scored by how well it explains the data
+you actually saw. Concretely, for the cell \(\mu=3, \lambda=0.4\):</p>
+<blockquote>
+<p>ask the candidate how dense it is at each observed point, then multiply.</p>
+</blockquote>
+<pre><code>density at x=1  =  sqrt(0.4/2pi) * exp(-0.2*(1-3)^2)  =  0.113372
+density at x=3  =  sqrt(0.4/2pi) * exp(-0.2*(3-3)^2)  =  0.252313
+density at x=5  =  sqrt(0.4/2pi) * exp(-0.2*(5-3)^2)  =  0.113372
+                                        product       =  0.00324302
+</code></pre>
+<p>You multiply because the slides assume the \(N\) observations are <strong>independent</strong>.
+Collecting the three terms gives the slide's form — three \(\exp\)s multiply into
+one, which is where \(S=\sum(x_n-\mu)^2\) comes from:</p>
+<pre><code>S = (1-3)^2 + (3-3)^2 + (5-3)^2 = 8
+lam^(N/2) = 0.4^1.5 = 0.252982        exp(-lam*S/2) = exp(-1.6) = 0.201897
+                       product = 0.051076   &lt;- the table value
+</code></pre>
+<p>The table value and the full product differ by exactly \((2\pi)^{-N/2} = 0.063494\),
+a constant containing neither \(\mu\) nor \(\lambda\). It rescales every cell
+identically, so it cannot move the peak or change a slice's shape — verified:
+<code>argmax</code> and normalised shape are unchanged with or without it. <strong>Every \(\propto\)
+in the slides means &quot;I dropped a constant that has no parameter in it.&quot;</strong></p>
+<p>The peak of the whole surface is the <strong>MLE</strong>: here \(\mu_{\text{MLE}}=3\),
+\(\lambda_{\text{MLE}}=0.375\), matching the largest cell.</p>
+<h3>The trap in the word &quot;likelihood&quot;</h3>
+<p>Same expression, two readings, and only one of them is a probability distribution:</p>
+<table>
+<thead>
+<tr>
+  <th></th>
+  <th>fix</th>
+  <th>sweep</th>
+  <th>what it is</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><strong>density</strong></td>
+  <td>the parameters</td>
+  <td>the data \(x\)</td>
+  <td>a real p.d.f. — integrates to <strong>1</strong></td>
+</tr>
+<tr>
+  <td><strong>likelihood</strong></td>
+  <td>the data</td>
+  <td>\(\mu, \lambda\)</td>
+  <td>a <strong>score</strong> — integrates to 0.0904</td>
+</tr>
+</tbody>
+</table>
+<p>Both measured on this dataset. So \(L\) is <em>not</em> &quot;the probability of the
+parameters&quot; — it is an unnormalised score over hypotheses. Turning scores into
+probabilities is what multiplying by a prior and normalising does, i.e. Bayes.
+This is what slide 34's footnote is protecting against.</p>
+<h3>Reading the two slices</h3>
+<p><strong>Row (\(\lambda\) frozen at 0.10):</strong> symmetric hill, peak at the sample mean, mirror
+image either side, defined for negative \(\mu\) too. A Gaussian shape.</p>
+<p><strong>Column (\(\mu\) frozen at 3.0):</strong> a wall on the left at \(\lambda=0\), long tail
+right, mean 0.625 vs mode 0.375. Not a Gaussian shape.</p>
+<p>Walking down that column means walking from very wide candidates to very narrow
+ones, since \(\sigma = 1/\sqrt{\lambda}\) — precision up, width down, which is why
+it is called <em>precision</em>:</p>
+<pre><code>lam     0.02    0.10    0.40    1.00    4.00
+sigma   7.07    3.16    1.58    1.00    0.50
+</code></pre>
+<p>Both ends of that walk fail, for different reasons: \(\lambda \to 0\) spreads the
+candidate so thin that producing exactly \([1,3,5]\) becomes vanishingly dense;
+\(\lambda \to \infty\) makes a spike at 3 that cannot account for \(x=1\) and
+\(x=5\). The optimum sits between, at 0.375.</p>
+<blockquote>
+<p><strong>Correction — why that slice is right-skewed.</strong> My first explanation blamed the
+decay rates and had them backwards. Measured, the <em>right</em> side decays
+<strong>exponentially</strong> (\(e^{-S\lambda/2}\)) and the <em>left</em> side only
+<strong>polynomially</strong> (\(\lambda^{N/2}\), hitting zero exactly at \(\lambda=0\)) — so the
+right decays faster in form and still owns the long tail. The real cause is
+<strong>available room</strong>: the mode sits at 0.375 with a hard wall 0.375 away on the
+left and nothing at all on the right. At 1% of peak height the left has 0.369 of
+room and the right has 1.813 — a 4.9× asymmetry. This generalises: <em>any</em>
+strictly-positive quantity whose mode is not near zero is right-skewed for
+boundary reasons, independent of its decay form.</p>
+</blockquote>
+<p>Now the three slide-groups have a one-line reading: <strong>&quot;σ² known&quot; locks you to a
+row, &quot;μ known&quot; locks you to a column, and the general case refuses to lock
+anything.</strong> Everything after this is working out the consequences.</p>
+<h2>The thing no slide says out loud</h2>
+<p>There is only ever <strong>one</strong> likelihood:</p>
+<p>$$L(\mu, \lambda) \;\propto\; \lambda^{N/2}\,\exp\!\Big\{-\tfrac{\lambda}{2}\textstyle\sum_n (x_n-\mu)^2\Big\}$$</p>
+<p>Two unknowns in one expression. The conjugate prior you may choose is dictated by what
+shape this has <em>as a function of the parameter you're inferring</em> — and that shape is
+completely different depending on which one you fix:</p>
+<table>
+<thead>
+<tr>
+  <th>Hold fixed</th>
+  <th>What's left</th>
+  <th>Family</th>
+  <th>So the prior is</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>\(\lambda\) (σ² known)</td>
+  <td>\(\exp\{\text{quadratic in }\mu\}\)</td>
+  <td>Gaussian kernel</td>
+  <td><strong>Normal</strong></td>
+</tr>
+<tr>
+  <td>\(\mu\) (mean known)</td>
+  <td>\(\lambda^{N/2}e^{-\lambda\cdot\text{const}}\)</td>
+  <td>Gamma kernel</td>
+  <td><strong>Gamma</strong></td>
+</tr>
+<tr>
+  <td>neither</td>
+  <td>the two are entangled</td>
+  <td>Normal-Gamma</td>
+  <td><strong>Normal-Gamma</strong></td>
+</tr>
+</tbody>
+</table>
+<p>So the three slide-groups are <strong>three slices of one object</strong>, not three recipes. The first
+two pin a variable down so the expression degenerates into something recognisable; the
+third refuses to, and the coupling that appears is the actual content of the chapter.</p>
+<p>Checked by scanning the <em>same</em> <code>loglik(mu, lam)</code> function along each axis and comparing to
+the claimed family:</p>
+<pre><code>as a function of mu   : max|L - N(xbar, 1/(N*lam))| = 7.088e-11
+as a function of lam  : max|L - Gamma(N/2+1, S/2)|  = 4.554e-17
+</code></pre>
+<p>One function, two shapes.</p>
+<h2>The \(\mu\)-known case, line by line</h2>
+<p><strong>Step 1 — knowing \(\mu\) collapses the sum to a number.</strong></p>
+<p>$$L(\lambda) = \prod_n \sqrt{\tfrac{\lambda}{2\pi}}\,e^{-\frac{\lambda}{2}(x_n-\mu)^2}
+\;\propto\; \lambda^{N/2}\,e^{-\lambda S/2},\qquad S = \sum_n (x_n-\mu)^2$$</p>
+<p>This is the whole trick. With \(\mu\) known there is nothing unknown inside \(S\) — it is
+an ordinary number computed from the data, and the likelihood reduces to the single
+structure \(\lambda^{(\cdot)}e^{-(\cdot)\lambda}\).</p>
+<p><strong>Step 2 — recognise the Gamma kernel.</strong> A Gamma density is
+\(\mathrm{Gamma}(\lambda \mid a,b) \propto \lambda^{a-1}e^{-b\lambda}\); matching gives
+\(a-1 = N/2\) and \(b = S/2\).</p>
+<blockquote>
+<p>Slide 34's footnote matters here: <em>&quot;likelihood is not a p.d.f. for parameters.&quot;</em> The
+likelihood does not integrate to 1 over \(\lambda\). We are only claiming its <strong>functional
+shape</strong> matches a Gamma — which is the only property conjugacy ever uses.</p>
+</blockquote>
+<p><strong>Step 3 — multiply by a Gamma prior and read off.</strong> With
+\(p(\lambda)=\mathrm{Gamma}(\lambda\mid a_0,b_0)\):</p>
+<p>$$p(\lambda\mid\mathcal{D}) \;\propto\; \underbrace{\lambda^{N/2}e^{-\lambda S/2}}_{\text{likelihood}}\cdot\underbrace{\lambda^{a_0-1}e^{-b_0\lambda}}_{\text{prior}} = \lambda^{a_0+N/2-1}\exp\!\Big\{-\big(b_0+\tfrac{S}{2}\big)\lambda\Big\}$$</p>
+<p>Exponents add, the structure is untouched, so it is Gamma again:</p>
+<p>$$a_N = a_0 + \tfrac{N}{2}, \qquad b_N = b_0 + \tfrac{N}{2}\sigma^2_{\mathrm{MLE}}$$</p>
+<p>Verified against a brute-force grid posterior (compute likelihood × prior pointwise,
+normalise): <code>max|grid - Gamma(aN,bN)| = 5.898e-17</code>.</p>
+<p>📌 <strong>Easy to miss:</strong> \(\sigma^2_{\mathrm{MLE}} = \frac{1}{N}\sum(x_n-\mu)^2\) divides by
+\(N\), not \(N-1\), and uses the <strong>known \(\mu\), not \(\bar{x}\)</strong>. Bessel's \(N-1\) exists
+because estimating \(\mu\) by \(\bar{x}\) spends a degree of freedom. Here it isn't spent.</p>
+<h3>Why precision instead of variance</h3>
+<p>In \(\lambda\) the likelihood is Gamma-shaped — a clean exponential-family kernel
+\(\lambda^{a-1}e^{-b\lambda}\). In \(\sigma^2\) the same object is <em>inverse</em>-Gamma: the same
+distribution, but the algebra is uglier, and the joint prior in the both-unknown case needs
+\(\lambda\) anyway to express the coupling. The substitution is bookkeeping, not insight.</p>
+<h2>Correction: what &quot;\(a_0\) = effective prior observations&quot; actually means</h2>
+<p>Slide 36 says observing \(N\) points raises \(a\) by \(N/2\), so \(a_0\) can be read as
+<em>effective prior observations</em>. I took that at face value and asserted it applies to
+\(\mathbb{E}[\sigma^2\mid\mathcal{D}]\). <strong>Measured, that is false:</strong></p>
+<pre><code>n      E[var|D]      weighted avg   equal?
+2      0.00022633    0.00018861     False
+1000   0.00038796    0.00038720     False
+</code></pre>
+<p>The statement is exact for \(b_N/a_N\), not for the posterior mean of the variance. Setting
+\(N_0 = 2a_0\) and \(b_0 = \frac{N_0}{2}\sigma_0^2\):</p>
+<p>$$\frac{b_N}{a_N} = \frac{N_0\sigma_0^2 + \sum_n (x_n-\mu)^2}{N_0 + N} \qquad\text{(exact to }10^{-15})$$</p>
+<p>which is a textbook <strong>pooled variance</strong>: the prior contributes \(N_0\) pseudo-observations
+of variance \(\sigma_0^2\), weighted against the \(N\) real ones. The prior's pull is
+exactly \(N_0/(N_0+N)\) and vanishes on its own:</p>
+<pre><code>N        E[sigma|D]    sigma_MLE
+0        0.01626       ---        &lt;- pure prior
+20       0.02018       0.02163
+10000    0.02002       0.02002    &lt;- data has taken over completely
+</code></pre>
+<p>This is the same shrinkage story as the Beta–Bernoulli note, and the same fix for the same
+failure: MLE on tiny \(N\) produces absurd variance estimates (at \(N=1\), exactly zero),
+and the prior holds it up until the data can stand on its own.</p>
+<h2>Why the general case is not the two answers multiplied</h2>
+<p>This is slide 38, and it rests on one algebraic identity worth deriving rather than
+quoting, because the move that makes it work is a term <strong>vanishing</strong>.</p>
+<p><strong>Step 1 — add and subtract the sample mean.</strong> Note \(\mu_{\mathrm{MLE}} = \bar{x}\):</p>
+<p>$$x_n - \mu = (x_n - \bar{x}) + (\bar{x} - \mu)$$</p>
+<p>Nothing has changed, but the bracket is now <em>data-only</em> plus <em>parameter-only</em>.</p>
+<p><strong>Step 2 — square and sum.</strong> With \((a+b)^2 = a^2 + 2ab + b^2\):</p>
+<p>$$\sum_n (x_n-\mu)^2 = \underbrace{\sum_n (x_n-\bar{x})^2}_{\text{(1)}}
++ \underbrace{2(\bar{x}-\mu)\sum_n (x_n-\bar{x})}_{\text{(2)}}
++ \underbrace{N(\bar{x}-\mu)^2}_{\text{(3)}}$$</p>
+<p><strong>Step 3 — term (2) is identically zero</strong>, because \(\sum_n (x_n-\bar{x}) = 0\) <em>by the
+definition of the mean</em> — it is the point where positive and negative deviations cancel.
+This holds for any \(\mu\) and any data; measured on three datasets the term came out
+0, 0, and 5.2e-14 (float noise). That cancellation is the entire trick.</p>
+<p>$$\sum_n (x_n-\mu)^2 = \sum_n (x_n-\bar{x})^2 + N(\mu-\bar{x})^2$$</p>
+<blockquote>
+<p>The &quot;± a middle quantity so the cross term dies&quot; manoeuvre is worth naming: it is the
+same one behind the <strong>bias–variance decomposition</strong> and the <strong>ANOVA</strong> sum-of-squares
+split. Recognising it once pays off repeatedly.</p>
+</blockquote>
+<p><strong>Step 4 — recognise \(\sigma^2_{\mathrm{MLE}}\).</strong> Since
+\(\sigma^2_{\mathrm{MLE}} = \frac{1}{N}\sum_n (x_n-\bar{x})^2\), the first term is
+\(N\sigma^2_{\mathrm{MLE}}\), giving
+\(\sum_n (x_n-\mu)^2 = N\sigma^2_{\mathrm{MLE}} + N(\mu-\mu_{\mathrm{MLE}})^2\).</p>
+<p><strong>Step 5 — substitute back.</strong> The sum inside the exponential becomes a sum of two terms,
+so the exponential splits into a product, and</p>
+<p>$$L(\mu,\lambda) \propto \underbrace{\lambda^{1/2}e^{-\frac{N\lambda}{2}(\mu-\bar{x})^2}}_{\text{Gaussian in }\mu}\cdot\underbrace{\lambda^{(N-1)/2}e^{-\lambda N\sigma^2_{\mathrm{MLE}}/2}}_{\text{Gamma in }\lambda}$$</p>
+<p><strong>Look at the precision of that Gaussian: \(N\lambda\).</strong> It carries \(\lambda\) inside it.</p>
+<p>You can see this on the same 25-cell table without any algebra. Normalise each row
+to its own peak and the surface is a <strong>funnel</strong>:</p>
+<pre><code>  lam=0.02  |.................#######################################.................|  sd=4.082
+  lam=0.05  |           .............#########################.............           |  sd=2.582
+  lam=0.10  |                   .........#################.........                   |  sd=1.826
+  lam=0.20  |                        ......#############......                        |  sd=1.291
+  lam=0.40  |                            ....#########....                            |  sd=0.913
+</code></pre>
+<p>Every row is a Gaussian in \(\mu\) — but <strong>4.47× wider at the top than the bottom</strong>.
+If \(\mu\) and \(\lambda\) were independent, every row would have the <em>same</em> shape
+and differ only by a scale factor, which is exactly what would let you write
+\(L = f(\mu)\,g(\lambda)\). They don't, so you can't.</p>
+<p>And note what this means for the two special cases: <strong>freezing one variable is
+precisely the operation that hides the funnel.</strong> Locked to a single row, you never
+see that the other rows have different widths. Each special case is correct and
+each one conceals the coupling — which is why they cannot be glued back together.</p>
+<p>Intuitively correct — noisier data means a worse fix on the mean:</p>
+<pre><code>lam=  625 -&gt; sd of the mu-slice = 0.00516   (sigma=0.0400)
+lam=10000 -&gt; sd of the mu-slice = 0.00129   (sigma=0.0100)
+</code></pre>
+<p>So the conjugate prior must be
+\(p(\mu,\lambda)=\mathcal{N}\big(\mu\mid\mu_0,(b\lambda)^{-1}\big)\,\mathrm{Gamma}(\lambda\mid a,b)\),
+with \(\lambda\) sitting in \(\mu\)'s variance. And that is precisely why slide 39's warning
+holds: an <strong>independent</strong> \(\mathcal{N}(\mu\mid\mu_0,\sigma_0^2)\times\mathrm{Gamma}(\lambda\mid a,b)\)
+prior is <em>not</em> conjugate — a fixed \(\sigma_0^2\) has no \(\lambda\) to match the \(N\lambda\),
+the product leaves the family, and conjugacy breaks.</p>
+<p><strong>The link, stated plainly:</strong> each of the first two cases is genuinely what you see when you
+hold one variable still, but they cannot be glued back together, because the variable each
+one holds still <em>is</em> the coupling term.</p>
+<h2>Posterior predictive: integrating \(\lambda\) away</h2>
+<p>Every result so far is a distribution over a <strong>parameter</strong>. What you actually want is the
+next observation, so marginalise \(\lambda\) out — the same move as line 1 of the
+Beta–Bernoulli note:</p>
+<p>$$p(x\mid\mathcal{D}) = \int \mathcal{N}(x\mid\mu,\lambda^{-1})\,\mathrm{Gamma}(\lambda\mid a_N,b_N)\,d\lambda$$</p>
+<p>Collecting every \(\lambda\) term leaves another Gamma kernel, so the integral closes in one
+step via \(\int\lambda^{c-1}e^{-d\lambda}d\lambda = \Gamma(c)/d^{\,c}\):</p>
+<p>$$p(x\mid\mathcal{D}) \;\propto\; \Big(b_N + \tfrac{(x-\mu)^2}{2}\Big)^{-(a_N+1/2)}$$</p>
+<p><strong>The shape changed.</strong> \(x\) was inside \(\exp\{-(\cdot)(x-\mu)^2\}\); now it sits in a
+negative power of a polynomial. Exponential decay became <strong>power-law decay</strong> — that single
+substitution is the entire fat-tail mechanism. Slide 42's reparameterisation names it:</p>
+<p>$$x \mid \mathcal{D} \;\sim\; t_\nu\big(\mu,\; \text{scale}^2\big), \qquad \nu = 2a_N,\quad \text{scale}^2 = b_N/a_N$$</p>
+<p>Verified against numerical integration: worst disagreement <code>4.594e-12</code>.</p>
+<p>Both parameters are quantities already derived above, which is the elegant part:</p>
+<p>$$\nu = 2a_N = N_0 + N \qquad \text{scale}^2 = \frac{b_N}{a_N} = \text{the pooled variance}$$</p>
+<p><strong>Degrees of freedom = total effective sample size</strong> (prior pseudo-observations plus real
+ones). One number encodes how much you know, and it controls tail thickness directly: as
+\(N\to\infty\), \(\nu\to\infty\) and the Student-\(t\) becomes Gaussian — <em>your ignorance
+about σ and the fat tail disappear together.</em></p>
+<h2>Correction: how much of the fat tail this actually explains</h2>
+<p>Mid-session I said the fat tails in returns are &quot;partly&quot; caused by not knowing σ. The
+mechanism is real, but I stated the magnitude without measuring it. Measured:</p>
+<pre><code>window N   nu=N0+N   excess kurt   P(|x|&gt;4sd)     [Gaussian = 6.3e-05]
+3          13        0.6667        7.892e-04
+10         20        0.3750        4.242e-04
+60         70        0.0909        1.268e-04
+250        260       0.0234        7.768e-05
+</code></pre>
+<p>Real S&amp;P 500 daily returns run <strong>excess kurtosis ≈ 4–8</strong>. A 60-day vol window contributes
+<strong>0.09</strong>. To reach 4 you'd need \(6/(\nu-4)=4 \Rightarrow \nu\approx 5.5\) — a total
+effective sample of about five observations.</p>
+<p><strong>So parameter uncertainty explains on the order of 2% of the observed fat tail, not &quot;part&quot;
+of it.</strong> The other 98% is volatility clustering and jumps — real properties of the market,
+not estimation error.</p>
+<p>One nuance worth not discarding with it: <strong>low kurtosis does not mean unchanged tail
+probability.</strong> At \(N=60\), \(P(|x|>4\text{sd})\) goes from \(6.3\times10^{-5}\) to
+\(1.27\times10^{-4}\) — it <strong>doubles</strong>. Kurtosis is a fourth-moment average and is
+insensitive to the far tail; for VaR-type work the doubling is the number that matters and
+the 0.09 would have talked you out of caring.</p>
+<h2>Why the mechanism is still worth having</h2>
+<p>Simulating it directly — draw \(\lambda\) from the posterior, then draw a return from that
+\(\lambda\):</p>
+<pre><code>N=3    simulated excess kurt =  0.639   theory 6/(nu-4) =  0.667
+N=60   simulated excess kurt =  0.093   theory 6/(nu-4) =  0.091
+</code></pre>
+<p><strong>Every single draw is Gaussian; the pile is not.</strong> This is a <strong>normal variance mixture</strong>,
+and it is the skeleton of stochastic-volatility models. The only difference is where the
+mixing comes from:</p>
+<table>
+<thead>
+<tr>
+  <th></th>
+  <th>source of varying \(\lambda\)</th>
+  <th>fat-tail magnitude</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>this chapter</td>
+  <td>ignorance about one <strong>fixed</strong> σ</td>
+  <td>dies off as \(N\) grows; ~0.09</td>
+</tr>
+<tr>
+  <td>SV / GARCH</td>
+  <td>σ <strong>genuinely varies in time</strong></td>
+  <td>persists; reaches 4–8</td>
+</tr>
+</tbody>
+</table>
+<p>So the derivation isn't wasted — swap &quot;posterior over λ&quot; for &quot;λ that moves&quot;, and the same
+algebra produces the real thing.</p>
+<h2>Where this touches the trading work</h2>
+<p>The \(\mu\)-known case is not an academic simplification — <strong>it is what volatility
+estimation already does.</strong> Daily mean return is ~0.03% against 1–2% daily vol, so the mean
+is pure noise and essentially every vol estimator (EWMA/RiskMetrics included) sets
+\(\mu = 0\). That is slide 32's branch, not slide 27's.</p>
+<p>What the Bayesian version adds over the MLE is a <strong>distribution for σ rather than a point</strong>,
+so &quot;how wide is the 95% interval on my 60-day vol estimate&quot; becomes answerable — a direct
+input to position sizing. Same theme as the volume-at-price work: stop shipping point
+estimates.</p>
+<h2>Status</h2>
+<p><strong>Closed — can state without looking up:</strong></p>
+<ul>
+<li>One likelihood, three readings; the conjugate prior is dictated by which parameter is
+held fixed</li>
+<li>\(\mu\) known ⇒ \(S=\sum(x_n-\mu)^2\) is a constant ⇒ Gamma kernel ⇒ Gamma prior;
+\(a_N=a_0+N/2\), \(b_N=b_0+\frac{N}{2}\sigma^2_{\mathrm{MLE}}\)</li>
+<li>\(\sigma^2_{\mathrm{MLE}}\) here divides by \(N\) and uses known \(\mu\) — no
+degree of freedom is spent</li>
+<li>\(b_N/a_N\) is exactly a pooled variance with \(N_0=2a_0\) pseudo-observations (the
+correct form of &quot;effective prior observations&quot;)</li>
+<li>The general case doesn't factor because the Gaussian half's precision is \(N\lambda\);
+hence Normal-Gamma, and hence an independent prior is not conjugate</li>
+<li>Predictive = Student-\(t\) with \(\nu = N_0+N\) and scale² = pooled variance; \(x\) moves
+from an exponential to a negative power, which is the fat tail</li>
+<li>Parameter uncertainty accounts for ~2% of real return kurtosis; the far-tail probability
+still doubles at \(N=60\)</li>
+</ul>
+<p><strong>Open — next:</strong></p>
+<ul>
+<li>[x] <del>Do the σ²-known derivation by hand</del> — <strong>already done</strong>, in the sibling note
+published 2026-09-01 (coefficient-matching through five steps, plus the
+&quot;prior is κ pseudo-observations&quot; reading that matches this note's \(N_0\))</li>
+<li>[ ] Derive the Normal-Gamma posterior for the both-unknown case, not just the prior form</li>
+<li>[ ] Slide 43's <strong>improper prior</strong> (\(p(\mu)\propto C\), integrates to \(\infty\)) — why the
+posterior can still be proper, and when it isn't</li>
+<li>[ ] Fit the Bayesian vol estimate to real IBKR daily bars and compare the 95% band against
+the EWMA point estimate on the same window</li>
+</ul>
+<h2>Methodological note: I rebuilt the always-passing check</h2>
+<p>The first run of the predictive script returned zeros from <code>scipy.integrate.quad</code> — the
+Gamma mass sits near \(\lambda\approx3000\) and the adaptive sampler over \((0,\infty)\)
+never found it. <strong>The script printed <code>slide 42 confirmed</code> anyway</strong>, because that <code>print</code> was
+unconditional and didn't depend on the number above it.</p>
+<p>This is the same defect as the launch-gate bug in the curtain-business repo, written by me
+this time, two weeks after documenting it. Fixed by making the claim contingent
+(<code>assert worst &lt; 1e-8</code>) and by integrating over <code>gamma.ppf(1e-13)</code> to <code>gamma.ppf(1-1e-13)</code>.</p>
+<p>The rule generalises: <strong>any statement of success whose execution does not depend on the
+quantity being checked is not a check.</strong> It is worth grepping for unconditional
+success-prints in anything that reports a verification.</p>
+<p><strong>Three things to watch in this deck — two are outright errors, the third is not.</strong>
+All verified by rendering the pages rather than trusting the mangled text layer:</p>
+<ul>
+<li><p><strong>Slide 35</strong> drops a \(-1\) in the posterior exponent. It prints
+\(p(\lambda\mid\mathcal{D}) \propto \lambda^{N/2+\alpha_0}\); it must be
+\(\lambda^{N/2+\alpha_0-1}\), because the Gamma prior on the line directly above it
+already carries \(\lambda^{\alpha_0-1}\). Checked against a brute-force posterior: the
+\(-1\) version matches Gamma\((\alpha_N,\beta_N)\) to 1.8e-10, the printed version is off
+by 5.3e-01. It also contradicts slide 36 outright — with \(\alpha_N=\alpha_0+N/2\), the
+exponent <em>has</em> to be \(\alpha_N-1\). Size of the error: with \(\alpha_0=2, N=3\) it
+inflates \(\mathbb{E}[\lambda\mid\mathcal{D}]\) by 29%. <strong>Caught by the user, not by me.</strong></p>
+</li>
+<li><p><strong>Slide 40</strong> writes \(\beta_N = \beta_0 + N/2\), dropping \(\sigma^2_{\mathrm{MLE}}\).
+Slide 36 has it right. This one also fails a units check — \(\beta_0\) carries squared
+data units and \(N/2\) is a pure number, so the two cannot be added. Slide 40 is the
+starting point for the predictive, so the error propagates into the Student-\(t\) scale.</p>
+</li>
+<li><p><strong>\(\sigma^2_{\mathrm{MLE}}\) silently changes meaning between sections.</strong> This one is
+<em>not</em> a typo — it is correct in both places — which makes it worse, because nothing
+looks wrong. In the \(\mu\)-known section (slide 36) it is
+\(\frac{1}{N}\sum_n (x_n-\mu)^2\), against the <strong>known</strong> \(\mu\). In the general case
+(slide 38) it must be \(\frac{1}{N}\sum_n (x_n-\bar{x})^2\), against the <strong>sample
+mean</strong>, or the sum-of-squares identity does not hold. The two differ by exactly
+\((\mu-\bar{x})^2\):</p>
+<p>$$\tfrac{1}{N}\textstyle\sum_n (x_n-\mu)^2 \;=\; \tfrac{1}{N}\sum_n (x_n-\bar{x})^2 + (\mu-\bar{x})^2$$</p>
+<p>The reason is structural rather than careless: <strong>an MLE is defined relative to what is
+unknown.</strong> With \(\mu\) known there is nothing to estimate for the mean, so \(\sigma^2\)'s
+MLE uses it directly; with \(\mu\) unknown you must estimate it first, and everything
+reorganises around \(\bar{x}\). Reading slide 38, always take the \(\bar{x}\) version.</p>
+<p>A useful corollary falls out of that identity: the second term is a square, so it is
+\(\ge 0\) and vanishes only at \(\mu=\bar{x}\). <strong>\(\bar{x}\) is the minimiser of the sum
+of squares</strong> — which is precisely <em>why</em> it is the MLE for \(\mu\): smallest sum of
+squares means least subtracted in the exponent, hence largest likelihood.</p>
+</li>
+</ul>
+<p>The general lesson: \(\lambda^{a-1}\) is a <strong>notational convention</strong>, not content, which is
+exactly why the \(-1\) is easy to drop — it looks decorative but it is what makes reading
+\(a\) off a kernel work. Whenever matching a kernel: seeing \(\lambda^{k}e^{-c\lambda}\)
+means \(a = k+1\), \(b = c\).</p>
+
+  </div>
+</article>
+
+
+<footer>
+  <div class="container">
+    <p>
+      <span class="lang-en">Li Shuai · notes from real work, dated and revised. Figures are generated, not drawn.</span>
+      <span class="lang-cn">李帅 · 来自实际工作的笔记，注明日期并持续修订。图表由脚本生成，非手工绘制。</span>
+    </p>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  if (localStorage.getItem('theme') === 'light') root.classList.add('light');
+  if (localStorage.getItem('lang') === 'cn') root.classList.add('cn');
+
+  document.getElementById('theme-toggle').addEventListener('click', function () {
+    var mode = root.classList.contains('light') ? 'dark' : 'light';
+    root.classList.toggle('light');
+    localStorage.setItem('theme', mode);
+  });
+  document.getElementById('lang-toggle').addEventListener('click', function () {
+    var lang = root.classList.contains('cn') ? 'en' : 'cn';
+    root.classList.toggle('cn');
+    localStorage.setItem('lang', lang);
+  });
+
+  // Diagrams are normally baked to SVG at build time. This path only runs if a
+  // note still carries a live ```mermaid block.
+  //
+  // document.fonts.ready is load-bearing: mermaid sizes each node box by
+  // measuring its label, and this page loads a webfont with display=swap. Render
+  // before the swap lands and every box is measured in the fallback font, then
+  // redrawn in a wider one — labels overflow and get clipped. Measure only once
+  // the real metrics are final.
+  if (document.querySelector('pre.mermaid')) {
+    import('https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs')
+      .then(function (m) {
+        return document.fonts.ready.then(function () {
+          m.default.initialize({
+            startOnLoad: true,
+            theme: root.classList.contains('light') ? 'neutral' : 'dark'
+          });
+        });
+      })
+      .catch(function () { /* diagram stays readable as source */ });
+  }
+
+  document.querySelectorAll('.prose table').forEach(function (t) {
+    var w = document.createElement('div');
+    w.className = 'table-wrap';
+    t.parentNode.insertBefore(w, t);
+    w.appendChild(t);
+  });
+})();
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body, {delimiters:[
+    {left:'$$', right:'$$', display:true},
+    {left:'\\[', right:'\\]', display:true},
+    {left:'\\(', right:'\\)', display:false}
+  ], throwOnError:false});"></script>
+</body>
