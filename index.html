@@ -654,6 +654,8 @@
   .blog-grid {
     display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
   }
+  /* a lone card would otherwise sit in one third of the row */
+  .blog-card:only-child { grid-column: span 2; }
   .blog-card {
     background: var(--bg2); border: 1px solid var(--line2);
     border-radius: 4px; padding: 32px;
@@ -664,10 +666,6 @@
   .blog-card:hover {
     border-color: var(--amber-dim);
     transform: translateY(-2px);
-  }
-  .blog-card.coming-soon {
-    opacity: 0.55;
-    border-style: dashed;
   }
   .blog-date {
     font-family: var(--font-mono); font-size: 10px; color: var(--fg3);
@@ -784,6 +782,7 @@
     .hero-panel { display: none; }
     .about-layout, .contact-layout { grid-template-columns: 1fr; gap: 40px; }
     .now-grid, .proj-grid, .lab-grid, .skills-layout, .blog-grid { grid-template-columns: 1fr; }
+    .blog-card:only-child { grid-column: span 1; }
     .edu-item { grid-template-columns: 1fr; gap: 12px; padding: 24px; }
     footer { flex-direction: column; gap: 8px; }
   }
@@ -811,13 +810,13 @@
   </a>
   <ul class="nav-links">
     <li><a href="#about"><span class="lang-en">about</span><span class="lang-cn">关于</span></a></li>
+    <li><a href="#learning"><span class="lang-en">learning</span><span class="lang-cn">学习</span></a></li>
     <li><a href="#now"><span class="lang-en">now</span><span class="lang-cn">现在</span></a></li>
     <li><a href="#projects"><span class="lang-en">projects</span><span class="lang-cn">项目</span></a></li>
     <li><a href="#lab"><span class="lang-en">lab</span><span class="lang-cn">实验室</span></a></li>
     <li><a href="#skills"><span class="lang-en">skills</span><span class="lang-cn">技能</span></a></li>
     <li><a href="#experience"><span class="lang-en">experience</span><span class="lang-cn">经历</span></a></li>
     <li><a href="#education"><span class="lang-en">education</span><span class="lang-cn">教育</span></a></li>
-    <li><a href="#blog"><span class="lang-en">blog</span><span class="lang-cn">文章</span></a></li>
     <li><a href="#contact"><span class="lang-en">contact</span><span class="lang-cn">联系</span></a></li>
   </ul>
   <div class="nav-controls">
@@ -967,11 +966,33 @@
     </div>
   </section>
 
+  <!-- LEARNING -->
+  <section id="learning">
+    <div class="container">
+      <div class="sec-head reveal">
+        <span class="sec-num">02 /</span>
+        <h2 class="sec-title"><span class="lang-en">Learning</span><span class="lang-cn">学习</span></h2>
+        <div class="sec-rule"></div>
+      </div>
+      <div class="blog-grid">
+        <a class="blog-card" href="learning/index.html">
+          <div class="blog-date"><span class="lang-en">UPDATED 2026-09-05</span><span class="lang-cn">更新于 2026-09-05</span></div>
+          <div class="blog-title"><span class="lang-en">Learning notes</span><span class="lang-cn">学习笔记</span></div>
+          <div class="blog-excerpt"><span class="lang-en">Revision notes from real work — what broke, why, and what I actually know now as opposed to what I have merely read. Each note states plainly which parts are closed and which are still open. Ten so far: ROC and AUC as a ranking metric, logistic regression from a linear score to an honest probability, cross-validation and out-of-fold prediction, Beta–Bernoulli and Gaussian conjugate priors, volume at price, two pandas lines I misread, and meta-labeling — the last including a look-ahead I shipped in my own algo-trading code.</span><span class="lang-cn">来自实际工作的复习笔记：哪里出了问题、原因是什么，以及我现在真正掌握了什么，而不是仅仅读过什么。每篇笔记都写明哪些已经弄懂、哪些仍然存疑。目前共十篇：作为排序指标的 ROC 与 AUC；从线性得分到诚实概率的逻辑回归；交叉验证与折外预测；Beta–Bernoulli 与高斯共轭先验；价量分布；两行我读错的 pandas 代码；以及元标注——最后一篇包含我在自己的算法交易代码中写出的一处前视偏差。</span></div>
+          <div class="blog-meta">
+            <span><span class="lang-en">Statistics / ML</span><span class="lang-cn">统计 / 机器学习</span></span>
+            <span class="blog-cta">→</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
   <!-- NOW -->
   <section id="now">
     <div class="container">
       <div class="sec-head reveal">
-        <span class="sec-num">02 /</span>
+        <span class="sec-num">03 /</span>
         <h2 class="sec-title"><span class="lang-en">Now</span><span class="lang-cn">现在</span></h2>
         <div class="sec-rule"></div>
       </div>
@@ -1020,7 +1041,7 @@
   <section id="projects">
     <div class="container">
       <div class="sec-head reveal">
-        <span class="sec-num">03 /</span>
+        <span class="sec-num">04 /</span>
         <h2 class="sec-title"><span class="lang-en">Projects</span><span class="lang-cn">项目</span></h2>
         <div class="sec-rule"></div>
       </div>
@@ -1166,7 +1187,7 @@
   <section id="lab">
     <div class="container">
       <div class="sec-head reveal">
-        <span class="sec-num">04 /</span>
+        <span class="sec-num">05 /</span>
         <h2 class="sec-title"><span class="lang-en">Lab</span><span class="lang-cn">实验室</span></h2>
         <div class="sec-rule"></div>
       </div>
@@ -1514,7 +1535,7 @@
   <section id="skills">
     <div class="container">
       <div class="sec-head reveal">
-        <span class="sec-num">05 /</span>
+        <span class="sec-num">06 /</span>
         <h2 class="sec-title"><span class="lang-en">Skills</span><span class="lang-cn">技能</span></h2>
         <div class="sec-rule"></div>
       </div>
@@ -1557,7 +1578,7 @@
   <section id="experience">
     <div class="container">
       <div class="sec-head reveal">
-        <span class="sec-num">06 /</span>
+        <span class="sec-num">07 /</span>
         <h2 class="sec-title"><span class="lang-en">Experience</span><span class="lang-cn">经历</span></h2>
         <div class="sec-rule"></div>
       </div>
@@ -1628,7 +1649,7 @@
   <section id="education">
     <div class="container">
       <div class="sec-head reveal">
-        <span class="sec-num">07 /</span>
+        <span class="sec-num">08 /</span>
         <h2 class="sec-title"><span class="lang-en">Education</span><span class="lang-cn">教育</span></h2>
         <div class="sec-rule"></div>
       </div>
@@ -1672,55 +1693,6 @@
               <li><span class="lang-en">Distinctions in Chemistry, Mathematics, Chinese, Physics, and Project Work.</span><span class="lang-cn">化学、数学、中文、物理、专题作业均获优等。</span></li>
               <li><span class="lang-en">Gold Award — Singapore Mathematics Competition</span><span class="lang-cn">新加坡数学竞赛金奖</span></li>
             </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- BLOG -->
-  <section id="blog">
-    <div class="container">
-      <div class="sec-head reveal">
-        <span class="sec-num">08 /</span>
-        <h2 class="sec-title"><span class="lang-en">Writing</span><span class="lang-cn">文章</span></h2>
-        <div class="sec-rule"></div>
-      </div>
-      <div class="blog-grid">
-        <a class="blog-card" href="learning/index.html">
-          <div class="blog-date"><span class="lang-en">UPDATED 2026-08-10</span><span class="lang-cn">更新于 2026-08-10</span></div>
-          <div class="blog-title"><span class="lang-en">Learning notes</span><span class="lang-cn">学习笔记</span></div>
-          <div class="blog-excerpt"><span class="lang-en">Revision notes from real work — what broke, why, and what I actually know now as opposed to what I have merely read. Each note states plainly which parts are closed and which are still open. Currently three: ROC and AUC as a ranking metric, logistic regression from a linear score to an honest probability, and meta-labeling — the last including a look-ahead I shipped in my own algo-trading code.</span><span class="lang-cn">来自实际工作的复习笔记：哪里出了问题、原因是什么，以及我现在真正掌握了什么，而不是仅仅读过什么。每篇笔记都写明哪些已经弄懂、哪些仍然存疑。目前共三篇：作为排序指标的 ROC 与 AUC；从线性得分到诚实概率的逻辑回归；以及元标注——最后一篇包含我在自己的算法交易代码中写出的一处前视偏差。</span></div>
-          <div class="blog-meta">
-            <span><span class="lang-en">Statistics / ML</span><span class="lang-cn">统计 / 机器学习</span></span>
-            <span class="blog-cta">→</span>
-          </div>
-        </a>
-        <div class="blog-card coming-soon">
-          <div class="blog-date"><span class="lang-en">IN PROGRESS · AUG 2026</span><span class="lang-cn">进行中 · 2026 年 8 月</span></div>
-          <div class="blog-title"><span class="lang-en">Rules That Fire Against Your Instincts</span><span class="lang-cn">与直觉对着干的规则</span></div>
-          <div class="blog-excerpt"><span class="lang-en">Turning a discretionary options premium-selling habit into an executable ruleset. Why implied-minus-realised volatility is the screen and headline option yield is not — on one sample, nine names out of ten that looked attractive on yield were selling insurance below expected claims. Why theta per dollar of notional falls roughly 8× as tenor stretches from one week to seventeen months, which makes tenor a risk decision rather than a convenience. And why every gate reports BLOCKED rather than PASS when an input is missing: a safety check that fails open is worse than none, because it manufactures confidence.</span><span class="lang-cn">把凭感觉的期权卖方策略变成可执行的规则集。为什么筛选标准应是「隐含波动率减已实现波动率」而非表面的期权年化收益率——在一次样本筛查中，十个看起来收益率诱人的标的里有九个实际上是在以低于预期赔付的价格卖保险。为什么久期从一周拉长到十七个月时，每美元名义本金所赚的 theta 会下降约 8 倍，这使久期成为风险决策而非便利选择。以及为什么任何一项校验在输入缺失时返回 BLOCKED 而不是 PASS：会「静默放行」的安全检查比没有检查更糟，因为它制造出虚假的信心。</span></div>
-          <div class="blog-meta">
-            <span><span class="lang-en">Options / Risk</span><span class="lang-cn">期权 / 风险</span></span>
-            <span class="blog-cta">·</span>
-          </div>
-        </div>
-        <div class="blog-card coming-soon">
-          <div class="blog-date"><span class="lang-en">COMING SOON</span><span class="lang-cn">即将发布</span></div>
-          <div class="blog-title"><span class="lang-en">Pricing the LNG Atlantic-Pacific Spread Option</span><span class="lang-cn">为 LNG 大西洋—太平洋价差期权定价</span></div>
-          <div class="blog-excerpt"><span class="lang-en">A practitioner's walkthrough of Kirk's Approximation vs. Change-of-Numeraire methods, with code samples and intuition for when each one breaks.</span><span class="lang-cn">从从业者视角对比 Kirk 近似法与计价单位变换法，附代码示例与各自失效边界的直观解释。</span></div>
-          <div class="blog-meta">
-            <span><span class="lang-en">Quant Finance</span><span class="lang-cn">量化金融</span></span>
-            <span class="blog-cta">·</span>
-          </div>
-        </div>
-        <div class="blog-card coming-soon">
-          <div class="blog-date"><span class="lang-en">COMING SOON</span><span class="lang-cn">即将发布</span></div>
-          <div class="blog-title"><span class="lang-en">LLMs for LNG Market Intelligence</span><span class="lang-cn">大语言模型在 LNG 市场情报中的应用</span></div>
-          <div class="blog-excerpt"><span class="lang-en">Building a daily news + vessel-tracking summarizer that ranks events by trade-floor relevance — what works, what doesn't.</span><span class="lang-cn">构建一个每日新闻 + 船舶追踪摘要工具，按交易桌面相关性排序——哪些可行，哪些不行。</span></div>
-          <div class="blog-meta">
-            <span><span class="lang-en">AI / Trading</span><span class="lang-cn">AI / 交易</span></span>
-            <span class="blog-cta">·</span>
           </div>
         </div>
       </div>
