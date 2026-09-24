@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Information theory, gradients and gradient descent — Li Shuai</title>
+<meta name="description" content="A working revision note on information theory, entropy, KL divergence, mutual information, gradients, and gradient descent.">
+<meta name="author" content="Li Shuai">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230b0e14'/%3E%3Ctext x='16' y='22' font-family='monospace' font-size='15' font-weight='700' fill='%23e8a33d' text-anchor='middle'%3ELS%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+
+<style>
+:root{
+  --bg:#0b0e14;--bg2:#111520;--bg3:#161b27;--fg:#eeeae2;--fg2:#9a9488;--fg3:#5a5650;
+  --amber:oklch(76% .17 65);--amber-dim:oklch(60% .12 65);--teal:oklch(68% .14 195);
+  --line:#1e2330;--line2:#2a3040;--font-display:'Syne',sans-serif;--font-serif:'Instrument Serif',serif;
+  --font-mono:'JetBrains Mono',monospace;--nav-h:68px;--gutter:56px
+}
+.light{--bg:#f7f4ef;--bg2:#f0ebe2;--bg3:#e8e2d6;--fg:#1a1714;--fg2:#4a4540;--fg3:#8a8278;
+--amber:oklch(58% .15 50);--amber-dim:oklch(70% .13 50);--teal:oklch(50% .12 195);--line:#ddd8ce;--line2:#c9c2b3}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--font-mono);font-weight:300;font-size:15px;line-height:1.7}
+.container{width:min(100% - 2.5rem,72rem);margin-inline:auto}
+.cn .lang-en,html:not(.cn) .lang-cn{display:none}
+nav{position:sticky;top:0;z-index:20;height:var(--nav-h);display:flex;align-items:center;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+nav .container{display:flex;align-items:center;gap:1.5rem;justify-content:space-between}
+.nav-logo{display:inline-flex;align-items:center;gap:.6rem;color:var(--fg);text-decoration:none;font-family:var(--font-display);font-weight:700}
+.nav-logo-dot{width:8px;height:8px;border-radius:50%;background:var(--amber)}
+.nav-right{display:flex;align-items:center;gap:1.1rem}
+.nav-right a,.toggle{color:var(--fg2);text-decoration:none;font-size:12px;letter-spacing:.08em;text-transform:uppercase;background:none;border:0;cursor:pointer;font-family:var(--font-mono);padding:0}
+.nav-right a:hover,.toggle:hover{color:var(--amber)}
+article{padding:1rem 0 var(--gutter)}
+.kicker{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--fg3);margin:0 0 .6rem}
+.kick-row{display:flex;flex-wrap:wrap;align-items:center;gap:.8rem}
+time{color:var(--fg3);font-size:12.5px;letter-spacing:.05em}
+.chip{display:inline-block;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;padding:.2rem .55rem;border-radius:3px;border:1px solid currentColor}
+.chip-in-progress{color:var(--amber)}
+.note-title{font-family:var(--font-display);font-weight:800;letter-spacing:-.035em;font-size:clamp(2rem,1.4rem + 2.6vw,3.4rem);line-height:1.05;margin:.8rem 0 0;max-width:25ch}
+.prose{max-width:70ch;margin-top:2.5rem}
+.prose>*+*{margin-top:1.15em}
+.prose h2{font-family:var(--font-display);font-weight:700;letter-spacing:-.02em;font-size:clamp(1.35rem,1.1rem + 1vw,1.9rem);margin-top:2.6em;padding-top:.7em;border-top:1px solid var(--line);color:var(--fg)}
+.prose h3{font-family:var(--font-display);font-weight:600;font-size:1.15rem;margin-top:2em}
+.prose strong{color:var(--fg);font-weight:500}
+.prose a{color:var(--amber);text-underline-offset:3px}
+.prose code{background:var(--bg3);padding:.12em .38em;border-radius:3px;font-size:.86em;color:var(--amber-dim)}
+.prose pre{background:var(--bg2);border:1px solid var(--line);border-radius:6px;padding:1.1rem;overflow-x:auto;font-size:.82em}
+.prose blockquote{margin-inline:0;padding:.3rem 0 .3rem 1.2rem;border-left:2px solid var(--amber);color:var(--fg2)}
+.prose ul,.prose ol{padding-left:1.3rem}.prose li+li{margin-top:.45em}.prose li::marker{color:var(--amber-dim)}
+.prose table{border-collapse:collapse;width:100%;font-size:13px}.prose th,.prose td{text-align:left;padding:.55rem .7rem;border-bottom:1px solid var(--line)}
+.prose th{color:var(--fg3);font-size:11px;letter-spacing:.09em;text-transform:uppercase;font-weight:400}
+.table-wrap{overflow-x:auto}
+.prose .key{background:var(--bg2);border:1px solid var(--line);border-left:2px solid var(--amber);padding:1rem 1.1rem;border-radius:5px}
+footer{border-top:1px solid var(--line);padding:2rem 0 3rem;color:var(--fg3);font-size:12px}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<body>
+<nav>
+  <div class="container">
+    <a class="nav-logo" href="../index.html"><span class="nav-logo-dot"></span><span>Li Shuai</span></a>
+    <div class="nav-right">
+      <a href="../index.html">back to site</a>
+      <a href="index.html">notes</a>
+      <button class="toggle" id="lang-toggle" type="button">EN / 中</button>
+      <button class="toggle" id="theme-toggle" type="button" aria-label="Toggle theme">◐</button>
+    </div>
+  </div>
+</nav>
+
+<article class="container">
+  <p class="kicker"><a href="index.html" style="color:inherit;text-decoration:none">← learning</a></p>
+  <div class="kick-row" style="margin-top:1.4rem">
+    <time datetime="2026-09-24">2026-09-24</time>
+    <span class="chip chip-in-progress">in-progress</span>
+    <span style="color:var(--fg3);font-size:12px">information-theory · optimization · gradients · gradient-descent</span>
+  </div>
+
+  <h1 class="note-title">Information theory, gradients &amp; gradient descent</h1>
+
+  <div class="prose">
+    <p>This note records what I worked through over the last two days rather than just listing formulas.
+    The recurring theme is that the equations become much easier once I understand what each quantity is
+    <em>trying to measure</em>.</p>
+
+    <div class="key">
+      <strong>The mental map:</strong> entropy measures uncertainty; KL divergence measures the penalty
+      for using one distribution to represent another; mutual information measures how much knowing one
+      variable reduces uncertainty about another; gradient descent repeatedly moves model parameters in
+      the direction that reduces a cost function.
+    </div>
+
+    <h2>1. Information content: why \(-\log p(x)\)?</h2>
+    <p>If an event is certain, observing it is not surprising. If it is very unlikely, observing it
+    contains more information. So information content should decrease as probability increases.</p>
+    <p>The useful function is</p>
+    $$h(x)=-\ln p(x).$$
+    <p>The logarithm is important because independent probabilities multiply while information should add:
+    $$p(A,B)=p(A)p(B)$$
+    and therefore
+    $$-\ln[p(A)p(B)]=-\ln p(A)-\ln p(B).$$
+    This gives the additive property we want for information.</p>
+
+    <h2>2. Entropy: average surprise</h2>
+    <p>One outcome has information content \(-\ln p(x)\). A random variable has many possible outcomes,
+    so entropy is the expected information:</p>
+    $$H(X)=-\sum_x p(x)\ln p(x).$$
+    <p>The most useful interpretation is:</p>
+    <blockquote><strong>Entropy = expected surprise = average information in an observation.</strong></blockquote>
+
+    <p>For a fair binary variable, using \(\log_2\):</p>
+    $$H(X)=-\frac12\log_2\frac12-\frac12\log_2\frac12=1\text{ bit}.$$
+    <p>There is one bit of uncertainty because two equally likely outcomes require one binary decision
+    to distinguish them.</p>
+
+    <h3>Why does the uniform distribution have maximum entropy?</h3>
+    <p>If all outcomes are equally likely, the next observation is hardest to predict. A distribution
+    such as \(0.99,0.01\) is much more predictable. Thus, with a fixed number of possible outcomes,
+    the uniform distribution maximizes entropy.</p>
+
+    <h2>3. Entropy and coding</h2>
+    <p>This gives a practical interpretation of entropy. Efficient coding assigns short codewords to
+    common events and long codewords to rare events.</p>
+    <table>
+      <tr><th>Outcome</th><th>Probability</th><th>Intuition</th></tr>
+      <tr><td>A</td><td>1/2</td><td>very common → short code</td></tr>
+      <tr><td>B</td><td>1/4</td><td>less common → longer code</td></tr>
+      <tr><td>C</td><td>1/8</td><td>rare → longer code</td></tr>
+    </table>
+    <p>When the coding scheme is efficient, the ideal code length is connected to</p>
+    $$-\log_2 q(x).$$
+    <p>If \(q(x)\) matches the true probability \(p(x)\), the average code length approaches the entropy.
+    This is why entropy is also a lower bound on the average number of bits needed for efficient lossless coding.</p>
+
+    <h2>4. Conditional entropy</h2>
+    <p>Now the question changes from “how uncertain is \(X\)?” to “how uncertain is \(Y\) after I know \(X\)?”</p>
+    $$H(Y|X)=-\sum_{x,y}p(x,y)\ln p(y|x).$$
+    <p>The intuition is simple: some uncertainty can disappear once additional information is available.
+    Therefore, normally,</p>
+    $$H(Y|X)\le H(Y).$$
+    <p>Joint entropy follows the chain rule:</p>
+    $$H(X,Y)=H(X)+H(Y|X).$$
+    <p>In words: <strong>total information = information needed for the first variable + information
+    still needed for the second after seeing the first.</strong></p>
+
+    <h2>5. KL divergence</h2>
+    <p>KL divergence answers a different question. Suppose \(p(x)\) is the true distribution and
+    \(q(x)\) is the distribution I use in my model. How much extra information do I pay for using
+    \(q\) instead of \(p\)?</p>
+    $$D_{\mathrm{KL}}(p\|q)=\sum_xp(x)\ln\frac{p(x)}{q(x)}.$$
+    <p>The important properties are:</p>
+    <ul>
+      <li>\(D_{\mathrm{KL}}(p\|q)\ge0\).</li>
+      <li>\(D_{\mathrm{KL}}(p\|q)=0\) only when \(p=q\) (up to zero-probability details).</li>
+      <li>It is not generally symmetric: \(D_{\mathrm{KL}}(p\|q)\ne D_{\mathrm{KL}}(q\|p)\).</li>
+    </ul>
+    <blockquote><strong>KL divergence = the information/coding penalty caused by using the wrong distribution.</strong></blockquote>
+
+    <h3>Why is KL non-negative?</h3>
+    <p>A useful route is Jensen's inequality. Since \(\ln\) is concave,</p>
+    $$\mathbb{E}[\ln Z]\le \ln\mathbb{E}[Z].$$
+    <p>Take \(Z=q(X)/p(X)\), where \(X\sim p\):</p>
+    $$\mathbb{E}_p\left[\ln\frac{q(X)}{p(X)}\right]
+    \le \ln\mathbb{E}_p\left[\frac{q(X)}{p(X)}\right]
+    =\ln\sum_xq(x)=0.$$
+    <p>Multiplying by \(-1\) gives</p>
+    $$D_{\mathrm{KL}}(p\|q)\ge0.$$
+    <p>The key detail I was initially missing is that the expectation is taken under \(p\), and the
+    random quantity inside it is \(q(X)/p(X)\). The normalization of \(q\) then makes the final
+    expectation equal to 1.</p>
+
+    <h2>6. Mutual information</h2>
+    <p>Mutual information asks:</p>
+    <blockquote><strong>How much does knowing \(Y\) tell me about \(X\)?</strong></blockquote>
+    <p>One definition is</p>
+    $$I(X;Y)=D_{\mathrm{KL}}\left(p(x,y)\,\|\,p(x)p(y)\right).$$
+    <p>Why compare these two distributions? \(p(x,y)\) is the actual joint distribution. If \(X\)
+    and \(Y\) were independent, the joint distribution would factor as \(p(x)p(y)\). Therefore
+    mutual information measures how far the actual relationship is from independence.</p>
+
+    <p>The most useful equivalent form is</p>
+    $$I(X;Y)=H(X)-H(X|Y).$$
+    <p>So:</p>
+    $$\boxed{\text{information gained from }Y
+    =\text{uncertainty before }Y-\text{uncertainty remaining after }Y.}$$
+    <p>If \(X\) and \(Y\) are independent, then \(H(X|Y)=H(X)\), so \(I(X;Y)=0\).</p>
+
+    <h2>7. From optimization to gradient descent</h2>
+    <p>Gradient descent is much easier to understand if I picture the cost function as a landscape.
+    The model has parameters \(\theta\), and the cost \(J(\theta)\) tells me how bad the model is.</p>
+
+    <p>For a simple linear regression model:</p>
+    $$h_\theta(x)=\theta_0+\theta_1x.$$
+    <p>A common squared-error objective is</p>
+    $$J(\theta)=\frac{1}{2N}\sum_{i=1}^N
+    \left(h_\theta(x^{(i)})-y^{(i)}\right)^2.$$
+    <p>Training means finding parameters that make \(J(\theta)\) small.</p>
+
+    <h2>8. What is the gradient?</h2>
+    <p>If \(J\) depends on several parameters, there is not just one slope. We use partial derivatives:</p>
+    $$\frac{\partial J}{\partial\theta_0},\qquad
+    \frac{\partial J}{\partial\theta_1}.$$
+    <p>Put all the partial derivatives together and we get the gradient:</p>
+    $$\nabla J=
+    \begin{bmatrix}
+    \frac{\partial J}{\partial\theta_0}\\
+    \frac{\partial J}{\partial\theta_1}\\
+    \vdots
+    \end{bmatrix}.$$
+    <p>The gradient points in the direction of <strong>steepest increase</strong> of the cost. Therefore,
+    the negative gradient points downhill.</p>
+
+    <blockquote><strong>Gradient descent = repeatedly take a step in the direction opposite to the gradient.</strong></blockquote>
+
+    <h2>9. Why do we subtract the gradient?</h2>
+    <p>The basic update is</p>
+    $$\boxed{\theta_{\text{new}}=\theta_{\text{old}}-\alpha\nabla J(\theta)}$$
+    <p>where \(\alpha\) is the learning rate.</p>
+    <p>The minus sign is not arbitrary. If the derivative is positive, increasing \(\theta\) increases
+    the cost, so we move \(\theta\) down. If the derivative is negative, increasing \(\theta\) decreases
+    the cost, so subtracting a negative number moves \(\theta\) up.</p>
+    <p>In one dimension, for \(J(\theta)=\theta^2\), the derivative is \(2\theta\). Starting at
+    \(\theta=4\) with \(\alpha=0.1\):</p>
+    $$\theta_{\text{new}}=4-0.1(8)=3.2.$$
+    <p>Repeating this moves toward the minimum at \(\theta=0\).</p>
+
+    <h2>10. Deriving the linear-regression gradient</h2>
+    <p>Start with</p>
+    $$J(\theta)=\frac{1}{2N}\sum_i
+    (h_\theta(x^{(i)})-y^{(i)})^2.$$
+    <p>Differentiate with respect to one parameter \(\theta_j\). The chain rule gives</p>
+    $$\frac{\partial J}{\partial\theta_j}
+    =\frac1N\sum_i
+    (h_\theta(x^{(i)})-y^{(i)})
+    \frac{\partial h_\theta(x^{(i)})}{\partial\theta_j}.$$
+    <p>For a linear model written as</p>
+    $$h_\theta(x)=\sum_j\theta_jx_j,$$
+    <p>we have</p>
+    $$\frac{\partial h_\theta(x)}{\partial\theta_j}=x_j.$$
+    <p>Therefore</p>
+    $$\boxed{
+    \frac{\partial J}{\partial\theta_j}
+    =\frac1N\sum_i
+    (h_\theta(x^{(i)})-y^{(i)})x_j^{(i)}
+    }$$
+    <p>and the update becomes</p>
+    $$\boxed{
+    \theta_j\leftarrow\theta_j-\alpha\frac1N\sum_i
+    (h_\theta(x^{(i)})-y^{(i)})x_j^{(i)}
+    }.$$
+
+    <h2>11. Batch gradient descent — the question that finally made sense</h2>
+    <p>At first I wondered: if batch gradient descent averages the gradient over <em>all</em> training
+    examples every time, shouldn't that average stay the same?</p>
+    <p><strong>No.</strong> The dataset stays fixed, but the model parameters do not.</p>
+    <p>The gradient contains the prediction error:</p>
+    $$h_\theta(x^{(i)})-y^{(i)}.$$
+    <p>But the prediction depends on \(\theta\):</p>
+    $$h_\theta(x)=\theta_0+\theta_1x.$$
+    <p>After one update, \(\theta_0,\theta_1\) change, so the predictions change, so the errors change,
+    and therefore the gradient changes.</p>
+
+    <p>More precisely, at iteration \(t\):</p>
+    $$\nabla J(\theta^{(t)})=
+    \frac1N\sum_i\nabla J_i(\theta^{(t)}),$$
+    <p>followed by</p>
+    $$\theta^{(t+1)}=
+    \theta^{(t)}-\alpha\nabla J(\theta^{(t)}).$$
+    <p>At the next iteration we calculate</p>
+    $$\nabla J(\theta^{(t+1)}),$$
+    <p>which is generally different because we are now standing at a different point on the cost surface.</p>
+
+    <div class="key">
+      <strong>The mountain picture:</strong> the training data determines the shape of the cost
+      landscape. Updating \(\theta\) moves me to a new location on that same landscape. The landscape
+      has not changed, but the slope under my feet has changed, so I must recalculate the gradient.
+    </div>
+
+    <h2>12. Learning rate</h2>
+    <p>The learning rate \(\alpha\) controls the size of each step.</p>
+    <ul>
+      <li>Too small → very slow convergence.</li>
+      <li>Reasonable → steady movement toward a minimum.</li>
+      <li>Too large → the algorithm can overshoot the minimum and potentially diverge.</li>
+    </ul>
+    <p>Near a minimum, the gradient tends to become small, so the updates naturally become smaller.</p>
+
+    <h2>13. Batch vs stochastic gradient descent</h2>
+    <p><strong>Batch gradient descent</strong> uses all \(N\) training examples to calculate one gradient
+    before each parameter update:</p>
+    $$\nabla J=\frac1N\sum_{i=1}^N\nabla J_i.$$
+    <p><strong>Stochastic gradient descent (SGD)</strong> updates the parameters using one training
+    example at a time:</p>
+    $$\theta\leftarrow\theta-\alpha\nabla J_i.$$
+    <p>Batch GD therefore gives a smoother, deterministic direction for a fixed parameter vector.
+    SGD is noisier because each individual observation gives only an estimate of the full-data direction.
+    That noise can make the path oscillate, but the updates can still move toward a good solution.</p>
+
+    <h2>14. The compact mental model</h2>
+    <table>
+      <tr><th>Question</th><th>Concept</th><th>Formula</th></tr>
+      <tr><td>How surprising is one outcome?</td><td>Information content</td><td>\(-\ln p(x)\)</td></tr>
+      <tr><td>How uncertain is \(X\)?</td><td>Entropy</td><td>\(H(X)\)</td></tr>
+      <tr><td>How uncertain is \(X\) after knowing \(Y\)?</td><td>Conditional entropy</td><td>\(H(X|Y)\)</td></tr>
+      <tr><td>How different are \(p\) and \(q\)?</td><td>KL divergence</td><td>\(D_{\rm KL}(p\|q)\)</td></tr>
+      <tr><td>How much does \(Y\) tell me about \(X\)?</td><td>Mutual information</td><td>\(I(X;Y)=H(X)-H(X|Y)\)</td></tr>
+      <tr><td>Which way does the cost increase fastest?</td><td>Gradient</td><td>\(\nabla J\)</td></tr>
+      <tr><td>How do I reduce the cost?</td><td>Gradient descent</td><td>\(\theta\leftarrow\theta-\alpha\nabla J\)</td></tr>
+    </table>
+
+    <h2>Status</h2>
+    <p><strong>Closed — I can explain these without treating the formulas as black boxes:</strong></p>
+    <ul>
+      <li>Information content is \(-\log p(x)\) because independent probabilities multiply while information should add.</li>
+      <li>Entropy is expected information, so it measures average uncertainty.</li>
+      <li>KL divergence is a non-negative penalty for representing \(p\) with \(q\), and is not symmetric.</li>
+      <li>Mutual information is the reduction in uncertainty obtained from another variable.</li>
+      <li>The gradient is a vector of partial derivatives and points uphill; gradient descent therefore subtracts it.</li>
+      <li>Batch GD averages over the same data each iteration, but the average changes because the model parameters,
+      predictions, and errors change after every update.</li>
+      <li>SGD uses one observation at a time, so its gradient estimate is noisier and its path can oscillate.</li>
+    </ul>
+
+    <p><strong>Next:</strong> work through a complete numerical linear-regression gradient-descent example by hand,
+    then implement the same algorithm in Python and plot the cost \(J(\theta)\) against iteration.</p>
+  </div>
+</article>
+
+<footer>
+  <div class="container">
+    <p>Li Shuai · notes from real work, dated and revised. Figures are generated, not drawn.</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var root=document.documentElement;
+  if(localStorage.getItem('theme')==='light')root.classList.add('light');
+  if(localStorage.getItem('lang')==='cn')root.classList.add('cn');
+  document.getElementById('theme-toggle').addEventListener('click',function(){
+    var mode=root.classList.contains('light')?'dark':'light';
+    root.classList.toggle('light');localStorage.setItem('theme',mode);
+  });
+  document.getElementById('lang-toggle').addEventListener('click',function(){
+    var lang=root.classList.contains('cn')?'en':'cn';
+    root.classList.toggle('cn');localStorage.setItem('lang',lang);
+  });
+  document.querySelectorAll('.prose table').forEach(function(t){
+    var w=document.createElement('div');w.className='table-wrap';
+    t.parentNode.insertBefore(w,t);w.appendChild(t);
+  });
+})();
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+ onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'\\(',right:'\\)',display:false}],throwOnError:false});"></script>
+</body>
