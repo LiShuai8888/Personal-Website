@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Linear regression: likelihood, ridge and the bias–variance split — Li Shuai</title>
+<meta name="description" content="Why least squares is maximum likelihood under Gaussian noise, why the basis functions stop at M−1, what the identity matrix does in the ridge solution, and how prediction error splits into bias², variance and irreducible noise.">
+<meta name="author" content="Li Shuai">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230b0e14'/%3E%3Ctext x='16' y='22' font-family='monospace' font-size='15' font-weight='700' fill='%23e8a33d' text-anchor='middle'%3ELS%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0b0e14; --bg2:#111520; --bg3:#161b27;
+  --fg:#eeeae2; --fg2:#9a9488; --fg3:#5a5650;
+  --amber:oklch(76% 0.17 65); --amber-dim:oklch(60% 0.12 65);
+  --teal:oklch(68% 0.14 195);
+  --line:#1e2330; --line2:#2a3040;
+  --font-display:'Syne',sans-serif; --font-serif:'Instrument Serif',serif; --font-mono:'JetBrains Mono',monospace;
+  --nav-h:68px; --gutter:56px;
+}
+.light{
+  --bg:#f7f4ef; --bg2:#f0ebe2; --bg3:#e8e2d6;
+  --fg:#1a1714; --fg2:#4a4540; --fg3:#8a8278;
+  --amber:oklch(58% 0.15 50); --amber-dim:oklch(70% 0.13 50);
+  --teal:oklch(50% 0.12 195);
+  --line:#ddd8ce; --line2:#c9c2b3;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--font-mono);
+  font-weight:300;font-size:15px;line-height:1.7;-webkit-text-size-adjust:100%}
+.container{width:min(100% - 2.5rem,72rem);margin-inline:auto}
+.cn .lang-en,html:not(.cn) .lang-cn{display:none}
+
+nav{position:sticky;top:0;z-index:20;height:var(--nav-h);display:flex;align-items:center;
+  background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line)}
+nav .container{display:flex;align-items:center;gap:1.5rem;justify-content:space-between}
+.nav-logo{display:inline-flex;align-items:center;gap:.6rem;color:var(--fg);text-decoration:none;
+  font-family:var(--font-display);font-weight:700;letter-spacing:-.02em}
+.nav-logo-dot{width:8px;height:8px;border-radius:50%;background:var(--amber)}
+.nav-right{display:flex;align-items:center;gap:1.1rem}
+.nav-right a,.toggle{color:var(--fg2);text-decoration:none;font-size:12px;letter-spacing:.08em;
+  text-transform:uppercase;background:none;border:0;cursor:pointer;font-family:var(--font-mono);padding:0}
+.nav-right a:hover,.toggle:hover{color:var(--amber)}
+
+.sec-head{display:flex;align-items:baseline;gap:1rem;margin:0 0 1.5rem}
+.sec-num{font-size:12px;color:var(--amber);letter-spacing:.1em}
+.sec-title{font-family:var(--font-display);font-size:clamp(1.9rem,1.4rem+2vw,3.1rem);
+  font-weight:800;letter-spacing:-.03em;margin:0;line-height:1.05}
+.sec-rule{flex:1;height:1px;background:var(--line2)}
+
+header.page{padding:calc(var(--gutter)*.9) 0 1.5rem}
+.kicker{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--fg3);margin:0 0 .6rem}
+.blurb{color:var(--fg2);max-width:62ch;margin:1rem 0 0}
+.meta-line{color:var(--fg3);font-size:12.5px;margin:.9rem 0 0;letter-spacing:.04em}
+
+.note-grid{display:grid;gap:1px;background:var(--line);border:1px solid var(--line);
+  border-radius:6px;overflow:hidden;margin:0 0 var(--gutter)}
+.note-card{display:block;background:var(--bg2);padding:1.6rem 1.5rem;text-decoration:none;color:inherit;
+  transition:background .18s}
+.note-card:hover{background:var(--bg3)}
+.note-card h3{font-family:var(--font-display);font-weight:700;font-size:1.3rem;letter-spacing:-.02em;
+  margin:.7rem 0 .5rem;line-height:1.2;color:var(--fg)}
+.note-card:hover h3{color:var(--amber)}
+.note-card p{margin:0;color:var(--fg2);font-size:13.5px}
+.card-foot{margin-top:1rem;color:var(--fg3);font-size:12px;letter-spacing:.05em}
+
+.chip{display:inline-block;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+  padding:.2rem .55rem;border-radius:3px;border:1px solid currentColor}
+.chip-covered{color:var(--teal)}
+.chip-open,.chip-in-progress{color:var(--amber)}
+.chip-cat{color:var(--fg2);border-color:var(--line2)}
+time{color:var(--fg3);font-size:12.5px;letter-spacing:.05em}
+
+article{padding:1rem 0 var(--gutter)}
+.note-title{font-family:var(--font-display);font-weight:800;letter-spacing:-.035em;
+  font-size:clamp(2rem,1.4rem+2.6vw,3.4rem);line-height:1.05;margin:.8rem 0 0;max-width:22ch}
+.kick-row{display:flex;flex-wrap:wrap;align-items:center;gap:.8rem}
+.prose{max-width:70ch;margin-top:2.5rem}
+.prose>*+*{margin-top:1.15em}
+.prose h2{font-family:var(--font-display);font-weight:700;letter-spacing:-.02em;
+  font-size:clamp(1.35rem,1.1rem+1vw,1.9rem);margin-top:2.6em;padding-top:.7em;
+  border-top:1px solid var(--line);color:var(--fg)}
+.prose h3{font-family:var(--font-display);font-weight:600;font-size:1.15rem;margin-top:2em;letter-spacing:-.01em}
+.prose h4{font-size:.95rem;color:var(--fg2);margin-top:1.6em}
+.prose a{color:var(--amber);text-underline-offset:3px}
+.prose strong{color:var(--fg);font-weight:500}
+.prose code{background:var(--bg3);padding:.12em .38em;border-radius:3px;font-size:.86em;color:var(--amber-dim)}
+.prose pre{background:var(--bg2);border:1px solid var(--line);border-radius:6px;padding:1.1rem;
+  overflow-x:auto;font-size:.82em}
+.prose pre code{background:none;padding:0;color:inherit}
+.prose blockquote{margin-inline:0;padding:.3rem 0 .3rem 1.2rem;border-left:2px solid var(--amber);
+  color:var(--fg2)}
+.prose ul,.prose ol{padding-left:1.3rem}
+.prose li+li{margin-top:.45em}
+.prose li::marker{color:var(--amber-dim)}
+.prose hr{border:0;border-top:1px solid var(--line);margin:2.6em 0}
+.prose table{border-collapse:collapse;width:100%;font-size:13px}
+.prose th,.prose td{text-align:left;padding:.55rem .7rem;border-bottom:1px solid var(--line)}
+.prose th{color:var(--fg3);font-size:11px;letter-spacing:.09em;text-transform:uppercase;font-weight:400}
+.prose td:not(:first-child){font-variant-numeric:tabular-nums}
+.table-wrap{overflow-x:auto}
+.prose figure.fig{margin:2.4rem 0;padding:1.2rem;background:var(--bg2);border:1px solid var(--line);
+  border-radius:6px;overflow-x:auto}
+.prose figure.fig svg{max-width:100%;height:auto;display:block;margin-inline:auto}
+.prose figcaption{margin-top:.9rem;color:var(--fg3);font-size:12px;line-height:1.6;
+  padding-left:.9rem;border-left:1px solid var(--line2)}
+
+footer{border-top:1px solid var(--line);padding:2rem 0 3rem;color:var(--fg3);font-size:12px}
+footer a{color:var(--fg2)}
+a:focus-visible,button:focus-visible{outline:2px solid var(--amber);outline-offset:3px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+<body>
+<nav>
+  <div class="container">
+    <a class="nav-logo" href="../index.html">
+      <span class="nav-logo-dot"></span>
+      <span class="lang-en">Li Shuai</span><span class="lang-cn">李帅</span>
+    </a>
+    <div class="nav-right">
+      <a href="../index.html"><span class="lang-en">back to site</span><span class="lang-cn">返回主站</span></a>
+      <a href="index.html"><span class="lang-en">notes</span><span class="lang-cn">笔记</span></a>
+      <button class="toggle" id="lang-toggle" type="button">EN / 中</button>
+      <button class="toggle" id="theme-toggle" type="button" aria-label="Toggle theme">◐</button>
+    </div>
+  </div>
+</nav>
+
+
+<article class="container">
+  <p class="kicker"><a href="index.html" style="color:inherit;text-decoration:none">
+    <span class="lang-en">← learning</span><span class="lang-cn">← 学习笔记</span></a></p>
+
+  <div class="kick-row" style="margin-top:1.4rem">
+    <time datetime="2026-09-24">2026-09-24</time>
+    <span class="chip chip-in-progress">in-progress</span>
+    <span class="chip chip-cat">machine learning</span>
+    <span style="color:var(--fg3);font-size:12px">regression · maximum-likelihood · ridge · bias-variance · statistics</span>
+  </div>
+
+  <h1 class="note-title">Linear regression: likelihood, ridge and the bias–variance split</h1>
+
+  <div class="prose">
+    <p>A revision note on the FE5225 regression deck. It covers four questions I had to work
+through line by line, not just nod at: where least squares actually comes from, why the basis
+functions stop at <code>M−1</code>, what the <code>I</code> is doing in the ridge solution, and how
+the prediction error splits into bias, variance and noise.</p>
+    <p>The one-line version: <strong>least squares is maximum likelihood under Gaussian noise; ridge adds
+λ to the diagonal so the solve always works and the weights shrink; and the error at any point is
+bias² + variance + noise you can never remove.</strong></p>
+
+    <h2>1. The likelihood, and why it collapses to least squares</h2>
+    <p>Everything starts from one assumption about how the data was generated:</p>
+    <pre><code>y = wᵀφ(x) + ε,     ε ~ N(0, β⁻¹)        β = precision = 1/σ²
+⇒  y | x ~ N(wᵀφ(x), β⁻¹)</code></pre>
+    <p>Each observation is a Gaussian centred on the model's prediction. The points are independent,
+so the likelihood is a product of N Gaussians, and the product of exponentials becomes one exponential
+of a sum:</p>
+    <pre><code>L(w) = ∏ₙ N(yₙ | wᵀφ(xₙ), β⁻¹)
+     = (β/2π)^(N/2) · exp( −β/2 · Σₙ (yₙ − wᵀφ(xₙ))² )</code></pre>
+    <p>(The printed slide keeps both the ∏ <em>and</em> the <code>N/2</code> exponent. That counts the
+product twice; only one belongs there.)</p>
+    <p>Take the log:</p>
+    <pre><code>ℓ(w) = (N/2)·log(β/2π)  −  (β/2)·Σₙ (yₙ − wᵀφ(xₙ))²
+       └ constant in w ┘     └──── β × (sum of squared errors)/2 ────┘</code></pre>
+    <p>The first term does not depend on <code>w</code>, and β is positive, so <strong>maximising the
+likelihood is exactly minimising the sum of squared errors</strong>. Least squares is not an arbitrary
+choice of loss. It is what the Gaussian-noise assumption forces.</p>
+
+    <h3>Batch gradient ascent</h3>
+    <pre><code>∂ℓ/∂w = β · Σₙ (yₙ − wᵀφ(xₙ)) · φ(xₙ)
+w ← w + α · Σₙ (yₙ − wᵀφ(xₙ)) · φ(xₙ)        (β folded into the step size α)</code></pre>
+    <ul>
+    <li>Ascent on ℓ and descent on <code>J = ½·SSE</code> are the same algorithm, because
+<code>ℓ = −β·J + C</code>.</li>
+    <li><strong>Batch</strong> sums over all N points per step. <strong>Stochastic</strong> uses one point,
+and <strong>mini-batch</strong> uses a subset.</li>
+    <li>Logistic regression ends with the <em>same-shaped</em> update, <code>θⱼ += α·Σ(y − h(x))·xⱼ</code>,
+because the sigmoid's derivative <code>g′ = g(1−g)</code> cancels cleanly. That shared "error × input" form
+is the canonical GLM update (see the <a href="logistic-regression.html">logistic regression note</a>).</li>
+    </ul>
+
+    <h2>2. Why φ stops at M−1</h2>
+    <pre><code>y(x; w) = w₀·φ₀(x) + w₁·φ₁(x) + … + w_{M−1}·φ_{M−1}(x),     φ₀(x) = 1</code></pre>
+    <p>The indexing starts at zero, so φ₀ … φ_{M−1} is <strong>M</strong> functions. φ₀ is the constant 1
+that carries the bias <code>w₀</code>. The design matrix Φ is therefore <strong>N × M</strong>.</p>
+    <p>What tripped me up: <strong>M counts basis functions, not input dimensions.</strong> The input
+<code>x</code> has d components, and M is a separate modelling choice. A degree-9 polynomial on scalar
+<code>x</code> has d = 1 but M = 10. Only for plain linear regression (<code>φⱼ(x) = xⱼ</code>) does
+M = d + 1. This is the same device as Andrew Ng's <code>x₀ = 1</code> with n + 1 parameters.</p>
+
+    <h2>3. Ridge regression: what the I is for</h2>
+    <pre><code>L = ½ (y − Φw)ᵀ(y − Φw) + (λ/2) wᵀw
+
+∇L = −Φᵀ(y − Φw) + λw = 0
+   ⇒  ΦᵀΦ w + λ w  = Φᵀy
+   ⇒  ΦᵀΦ w + λ I w = Φᵀy          (I w = w, so nothing changed)
+   ⇒  (ΦᵀΦ + λI) w  = Φᵀy
+   ⇒  ŵ = (ΦᵀΦ + λI)⁻¹ Φᵀy</code></pre>
+    <p><strong>I is the M × M identity matrix.</strong> It is there for the algebra. ΦᵀΦ is a matrix and λ
+is a number, and "matrix + number" is not defined. Writing λ as λI turns it into a matrix of the same
+shape, so <code>w</code> can be factored out. It comes straight from the gradient of the penalty:
+∇(½wᵀw) = w = Iw.</p>
+    <pre><code>ΦᵀΦ + λI = [ a₀₀+λ   a₀₁     a₀₂   ]
+           [ a₁₀     a₁₁+λ   a₁₂   ]        λ added to the diagonal only
+           [ a₂₀     a₂₁     a₂₂+λ ]</code></pre>
+    <ul>
+    <li><strong>It is always invertible.</strong> The eigenvalues of ΦᵀΦ are all ≥ 0, and some can be 0 or
+close to it when features are collinear or M approaches N. Adding λI raises every eigenvalue by λ, so
+for λ &gt; 0 all of them are strictly positive. Plain least squares has no such guarantee.</li>
+    <li><strong>It shrinks the weights.</strong> A larger λ pulls <code>w</code> toward 0. That is exactly what
+tames the huge ± coefficients of the M = 9 polynomial fit.</li>
+    </ul>
+    <blockquote><p>Caveat the slide skips: it says the bias <code>w₀</code> is usually <em>not</em> penalised,
+but the formula with a full I penalises it. The exact version uses <code>I′ = diag(0, 1, …, 1)</code>.
+The alternative is to centre the data, drop the intercept and use the full I.</p></blockquote>
+
+    <h2>4. The bias–variance decomposition</h2>
+    <h3>Why y = f(x₀) + ε</h3>
+    <p>This is an assumption, not a result. There is a true deterministic function <code>f</code> (the
+sin(2πx) green curve), and what we observe is that function plus zero-mean noise with variance σ². It is
+less restrictive than it looks. For <em>any</em> data you can define</p>
+    <pre><code>f(x) := E[y | x]          the best possible prediction of y from x
+ε    := y − f(x)          whatever x cannot explain</code></pre>
+    <p>and then <code>E[ε | x] = 0</code> holds automatically. So the assumption just splits y into the
+part x can explain and the part it can't.</p>
+
+    <h3>Two sources of randomness</h3>
+    <p>Fix a test point x₀. Two things are still random: <strong>f̂</strong>, because a different training
+sample gives different weights, and <strong>ε</strong>, the noise on the new observation. They are
+<strong>independent</strong>, because the new point's noise was never in the training data. E[·]
+averages over both.</p>
+
+    <h3>The derivation</h3>
+    <pre><code>error(x₀) = E[(y − f̂(x₀))²]
+          = E[(f(x₀) − f̂(x₀) + ε)²]                          substitute y
+          = E[(f − f̂)²] + 2·E[(f − f̂)·ε] + E[ε²]            expand
+          = E[(f − f̂)²] + 0 + σ²                             independent, E[ε] = 0
+
+add and subtract  f̄ = E[f̂(x₀)]:
+   f − f̂ = (f − f̄)  +  (f̄ − f̂)
+           constant    random, mean 0
+   cross term 2·(f − f̄)·E[f̄ − f̂] = 0
+
+error(x₀) = (f(x₀) − E f̂(x₀))²  +  E[(f̂(x₀) − E f̂(x₀))²]  +  σ²
+                  bias²                   variance               noise</code></pre>
+    <table>
+    <thead><tr><th>term</th><th>what it measures</th><th>driven by</th></tr></thead>
+    <tbody>
+    <tr><td>bias²</td><td>how far the <em>average</em> model is from the truth</td><td>too simple a model (M = 0, 1 for sin)</td></tr>
+    <tr><td>variance</td><td>how much f̂ jumps between training sets</td><td>too flexible a model (M = 9, N = 10)</td></tr>
+    <tr><td>σ²</td><td>noise in y itself</td><td>nothing — irreducible</td></tr>
+    </tbody>
+    </table>
+    <p>This is where the regression deck comes together. Raising M trades bias for variance. More data and
+a larger λ both cut variance, so ridge deliberately accepts a little bias for a lot less variance. And
+since <code>E[f̂]</code> means averaging over infinitely many training sets, while in practice we only
+ever get one, you cannot compute bias and variance directly. That is why model selection falls to
+<a href="cross-validation-and-oof.html">cross-validation</a>.</p>
+
+    <h2>Status</h2>
+    <p><strong>Closed — I can state these without looking them up:</strong></p>
+    <ul>
+    <li>Gaussian noise ⇒ log-likelihood = constant − β·SSE/2 ⇒ MLE is least squares</li>
+    <li>batch gradient ascent on ℓ = descent on J; the update is (error × feature) summed over the batch</li>
+    <li>φ₀ … φ_{M−1} is M functions including the bias φ₀ = 1; M is not d</li>
+    <li>ridge's I is the M × M identity; λI lifts every eigenvalue by λ (always invertible) and shrinks w; strictly, the bias entry should be 0</li>
+    <li>error(x₀) = bias² + variance + σ², from substituting y = f + ε and adding and subtracting E[f̂]</li>
+    </ul>
+    <p><strong>Open — these are next:</strong></p>
+    <ul>
+    <li>[ ] the normal equation <code>w = (ΦᵀΦ)⁻¹Φᵀy</code> derived myself, plus its projection geometry</li>
+    <li>[ ] ridge as MAP estimation with a Gaussian prior on w — the bridge to Bayesian linear regression</li>
+    <li>[ ] why Lasso gives exact zeros (diamond vs circle constraint region)</li>
+    </ul>
+
+  </div>
+</article>
+
+
+
+<footer>
+  <div class="container">
+    <p>
+      <span class="lang-en">Li Shuai · notes from real work, dated and revised. Figures are generated, not drawn.</span>
+      <span class="lang-cn">李帅 · 来自实际工作的笔记，注明日期并持续修订。图表由脚本生成，非手工绘制。</span>
+    </p>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  if (localStorage.getItem('theme') === 'light') root.classList.add('light');
+  if (localStorage.getItem('lang') === 'cn') root.classList.add('cn');
+
+  document.getElementById('theme-toggle').addEventListener('click', function () {
+    var mode = root.classList.contains('light') ? 'dark' : 'light';
+    root.classList.toggle('light');
+    localStorage.setItem('theme', mode);
+  });
+  document.getElementById('lang-toggle').addEventListener('click', function () {
+    var lang = root.classList.contains('cn') ? 'en' : 'cn';
+    root.classList.toggle('cn');
+    localStorage.setItem('lang', lang);
+  });
+
+  document.querySelectorAll('.prose table').forEach(function (t) {
+    var w = document.createElement('div');
+    w.className = 'table-wrap';
+    t.parentNode.insertBefore(w, t);
+    w.appendChild(t);
+  });
+})();
+</script>
+</body>
